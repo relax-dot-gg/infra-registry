@@ -1,0 +1,20 @@
+{% set _elastic_exporter_image = elasticsearch_exporter_image|default('prometheuscommunity/elasticsearch-exporter:latest') %}
+{% set _elastic_password = elasticsearch_password|default('') %}
+{% set _elastic_host = elasticsearch_host|default('127.0.0.1') %}
+{% set _elastic_port = elasticsearch_port|default('9200') %}
+{% if _elastic_password %}
+{% set _elastic_uri = "http://elastic:" ~ _elastic_password ~ "@" ~ _elastic_host ~ ":" ~ _elastic_port %}
+{% else %}
+{% set _elastic_uri = "http://" ~ _elastic_host ~ ":" ~ _elastic_port %}
+{% endif %}
+  elasticsearch-exporter:
+    image: {{ _elastic_exporter_image }}
+    container_name: {{ elasticsearch_exporter_container_name|default('elasticsearch-exporter') }}
+    restart: always
+    network_mode: host
+    command:
+      - "--es.uri={{ _elastic_uri }}"
+      - "--web.listen-address=:9114"
+      - "--es.indices"
+      - "--es.indices_settings"
+      - "--es.shards"

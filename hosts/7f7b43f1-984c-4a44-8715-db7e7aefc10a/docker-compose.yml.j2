@@ -1,0 +1,61 @@
+services:
+{% include "services/cadvisor.yml.j2" %}
+{% include "services/node-exporter.yml.j2" %}
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared
+    restart: unless-stopped
+    command: tunnel run
+    network_mode: host
+    environment:
+      - TUNNEL_TOKEN={{ _7f7b43f1_cloudflare_tunnel_token }}
+
+  cloudflared-status:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared-status
+    restart: always
+    command: tunnel --no-autoupdate run
+    network_mode: host
+    environment:
+      - TUNNEL_TOKEN={{ _7f7b43f1_cloudflare_tunnel_token }}
+
+  openclaw-gateway:
+    image: ghcr.io/openclaw/openclaw:latest
+    container_name: openclaw-gateway
+    # Note: gateway enforces device pairing. The shared token here only gets past
+    # auth; the client must also present a paired device token (see
+    # /home/node/.openclaw/devices/{pending,paired}.json). If clients see
+    # “pairing required”, approve the pending request or copy a paired token.
+    restart: unless-stopped
+    env_file:
+      - /opt/services/config/openclaw/env
+      - /opt/services/config/openclaw/telegram.env
+    environment:
+      HOME: /home/node
+      TERM: xterm-256color
+      CLAUDE_AI_SESSION_KEY: "{{ _openclaw_claude_ai_session_key | default('') }}"
+      CLAUDE_WEB_SESSION_KEY: "{{ _openclaw_claude_web_session_key | default('') }}"
+      CLAUDE_WEB_COOKIE: "{{ _openclaw_claude_web_cookie | default('') }}"
+      OPENCLAW_GATEWAY_TOKEN: "{{ _openclaw_gateway_token }}"
+    volumes:
+      - /opt/services/config/openclaw-home:/home/node
+      - /opt/services/config/openclaw/openclaw.json:/home/node/.openclaw/openclaw.json:ro
+    ports:
+      - "127.0.0.1:18789:18789"
+      - "[::1]:18789:18789"
+      - "100.82.66.12:18789:18789"
+    init: true
+    command:
+      - node
+      - dist/index.js
+      - gateway
+      - --bind
+      - lan
+      - --port
+      - "18789"
+      - --allow-unconfigured
+      - --token
+      - "{{ _openclaw_gateway_token }}"
+
+{% include "services/edge-prober.yml.j2" %}

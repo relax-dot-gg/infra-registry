@@ -1,0 +1,36 @@
+  golem:
+    image: ghcr.io/cyberstorm-dev/golem:latest
+    container_name: golem
+    restart: unless-stopped
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        set -euo pipefail
+        mkdir -p /run/secrets
+        echo "$${GOLEM_DEPLOY_KEY_B64}" | base64 -d > /run/secrets/deploy_key
+        chmod 600 /run/secrets/deploy_key
+        # Build HTTP repo URL from token (avoid embedding secrets in compose)
+        TOKEN=$$(cat /run/secrets/deploy_key)
+        if [ -z "$${LEDGER_REPO:-}" ]; then
+          LEDGER_REPO="http://$${TOKEN}@100.73.228.90:3000/relaxgg/golem-ledger.git"
+        fi
+        export LEDGER_REPO
+        git config --global --add safe.directory /ledger
+        exec /opt/golem/entrypoint.sh
+    environment:
+      LEDGER_DIR: /ledger
+      # LEDGER_REPO will be derived from GOLEM_DEPLOY_KEY_B64 if not provided
+      POLL_INTERVAL: "3"
+      GIT_REMOTE: origin
+      GIT_USER_NAME: "relaxgg-devops"
+      GIT_USER_EMAIL: "devops@relax.gg"
+      GIT_SSH_COMMAND: "ssh -i /run/secrets/deploy_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+      GOLEM_DEPLOY_KEY_B64: "{{ golem_ledger_deploy_key_b64 }}"
+    volumes:
+      - /opt/services/golem/ledger:/ledger
+      - /etc/machine-uuid:/etc/machine-uuid:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /:/host:rw
+    network_mode: host
+    pid: host

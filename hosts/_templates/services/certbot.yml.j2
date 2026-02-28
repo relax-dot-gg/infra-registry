@@ -1,0 +1,75 @@
+  certbot:
+    image: certbot/certbot:latest
+    container_name: certbot
+    restart: unless-stopped
+    network_mode: host
+    environment:
+{% if certbot_domains is defined %}
+      - CERTBOT_DOMAINS={{ certbot_domains | join(' ') }}
+{% else %}
+      - CERTBOT_DOMAINS=
+{% endif %}
+      - CERTBOT_EMAIL={{ certbot_email | default("ops@freechat.zone") }}
+{% if postfix_instances is defined %}
+      # Mapping of certbot domains to cert directories (for sync script)
+      - CERT_SYNC_MAP={% for inst in postfix_instances %}{% if inst.fullchain_path is defined and not inst.fullchain_path.startswith('/opt/services/mta/certbot') %}mta.{{ inst.primary_domain }}:{{ inst.fullchain_path | replace('/fullchain.pem', '') }}{% if not loop.last %},{% endif %}{% endif %}{% endfor %}
+
+{% endif %}
+    entrypoint:
+      - /bin/sh
+      - -c
+    volumes:
+      - /opt/services/mta/certbot:/etc/letsencrypt
+      - /opt/services/mta/certbot/lib:/var/lib/letsencrypt
+      - /opt/services/mta/certbot/log:/var/log/letsencrypt
+{% if postfix_instances is defined %}
+      # Mount mta directories for cert sync (Docker can't mount symlinks)
+{% for inst in postfix_instances %}
+{% if inst.fullchain_path is defined and not inst.fullchain_path.startswith('/opt/services/mta/certbot') %}
+      - {{ inst.fullchain_path | replace('/fullchain.pem', '') }}:/mta/{{ inst.primary_domain }}
+{% endif %}
+{% endfor %}
+{% endif %}
+    command:
+      - |
+{% if postfix_instances is defined %}
+        # Deploy hook script to sync certs to mta directories
+        cat > /tmp/sync-certs.sh << 'EOFHOOK'
+        #!/bin/sh
+        # Parse CERT_SYNC_MAP to find target directory
+        IFS=','
+        for mapping in $CERT_SYNC_MAP; do
+          domain=$${mapping%%:*}
+          dir=$${mapping#*:}
+          if [ "$$domain" = "$$RENEWED_DOMAINS" ] && [ -d "/mta/$${domain#mta.}" ]; then
+            cat "$$RENEWED_LINEAGE/fullchain.pem" > "/mta/$${domain#mta.}/fullchain.pem"
+            cat "$$RENEWED_LINEAGE/privkey.pem" > "/mta/$${domain#mta.}/privkey.pem"
+            echo "Synced certs for $$domain"
+          fi
+        done
+        EOFHOOK
+        chmod +x /tmp/sync-certs.sh
+
+        # Initial cert sync for mapped domains
+        IFS=','
+        for mapping in $$CERT_SYNC_MAP; do
+          domain=$${mapping%%:*}
+          if [ -d "/mta/$${domain#mta.}" ] && [ -f "/etc/letsencrypt/live/$$domain/fullchain.pem" ]; then
+            cat "/etc/letsencrypt/live/$$domain/fullchain.pem" > "/mta/$${domain#mta.}/fullchain.pem"
+            cat "/etc/letsencrypt/live/$$domain/privkey.pem" > "/mta/$${domain#mta.}/privkey.pem"
+            echo "Initial sync: $$domain"
+          fi
+        done
+        unset IFS
+
+{% endif %}
+        # Ensure each requested certificate exists/upgrades; keep-until-expiring prevents unnecessary reissue.
+        for domain in $${CERTBOT_DOMAINS}; do
+          certbot certonly --standalone --non-interactive --agree-tos --keep-until-expiring \
+            --preferred-challenges http-01 --http-01-address 0.0.0.0 \
+            --email "$${CERTBOT_EMAIL}" -d "$${domain}" --deploy-hook "{% if postfix_instances is defined %}/tmp/sync-certs.sh{% else %}/bin/true{% endif %}" || true;
+        done
+        while true; do
+          certbot renew --non-interactive --standalone --preferred-challenges http-01 --http-01-address 0.0.0.0 --deploy-hook "{% if postfix_instances is defined %}/tmp/sync-certs.sh{% else %}/bin/true{% endif %}";
+          sleep "$${CERTBOT_INTERVAL:-12h}";
+        done

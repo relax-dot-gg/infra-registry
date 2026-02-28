@@ -1,0 +1,22 @@
+services:
+  mariadb:
+    image: ghcr.io/relax-dot-gg/mariadb:latest
+    container_name: mariadb
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: {{ _46ed4f16_mariadb_root_password }}
+    volumes:
+      - /var/lib/mysql:/var/lib/mysql
+      - ./config/mariadb/conf.d:/etc/mysql/conf.d
+    ports:
+      - "3306:3306"
+{% set redis_password = _46ed4f16_redis_password %}
+{% set redis_data_dir = './redis-data' %}
+{% set redis_exporter_port = '9121' %}
+{% set redis_port = '6379' %}
+{% include "services/redis.yml.j2" %}
+{% set mysqld_exporter_dsn = _46ed4f16_mariadb_exporter_dsn %}
+{% set mysqld_exporter_port = '9104' %}
+{% include "services/mysqld-exporter.yml.j2" %}
+{% include "services/node-exporter.yml.j2" %}
+{% include "services/edge-prober.yml.j2" %}

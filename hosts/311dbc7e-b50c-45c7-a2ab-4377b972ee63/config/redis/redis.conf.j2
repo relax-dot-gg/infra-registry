@@ -1,0 +1,11 @@
+port 6379
+bind 0.0.0.0
+protected-mode yes
+dir /data
+
+appendonly yes
+appendfsync everysec
+
+save ""
+maxmemory 32gb
+requirepass {{ _311dbc7e_redis_password }}

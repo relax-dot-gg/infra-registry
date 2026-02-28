@@ -1,0 +1,15 @@
+[mysqld]
+server_id = 20251230
+log_bin = /var/log/mysql/mariadb-bin
+binlog_format = ROW
+relay_log = /var/log/mysql/relay-bin
+relay_log_index = /var/log/mysql/relay-bin.index
+read_only = 1
+log_slave_updates = 1
+innodb_buffer_pool_size = 128G
+innodb_log_file_size = 2G
+innodb_flush_method = O_DIRECT
+innodb_flush_log_at_trx_commit = 1
+max_connections = 500
+tmp_table_size = 512M
+max_heap_table_size = 512M

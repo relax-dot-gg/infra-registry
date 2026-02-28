@@ -1,0 +1,21 @@
+ALTER USER IF EXISTS 'root'@'localhost' IDENTIFIED BY '{{ mariadb_admin_password }}';
+CREATE USER IF NOT EXISTS 'root'@'%' IDENTIFIED BY '{{ mariadb_admin_password }}';
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
+
+CREATE USER IF NOT EXISTS 'rw_app'@'%' IDENTIFIED BY '{{ mariadb_rw_password_app }}';
+CREATE USER IF NOT EXISTS 'ro_app'@'%' IDENTIFIED BY '{{ mariadb_ro_password_app }}';
+CREATE USER IF NOT EXISTS 'rw_wordpress'@'%' IDENTIFIED BY '{{ mariadb_rw_password_wordpress }}';
+CREATE USER IF NOT EXISTS 'ro_wordpress'@'%' IDENTIFIED BY '{{ mariadb_ro_password_wordpress }}';
+CREATE USER IF NOT EXISTS 'ops'@'%' IDENTIFIED BY '{{ mariadb_ops_password }}';
+
+CREATE DATABASE IF NOT EXISTS wordpress;
+GRANT ALL PRIVILEGES ON wordpress.* TO 'rw_wordpress'@'%';
+GRANT SELECT ON wordpress.* TO 'ro_wordpress'@'%';
+
+CREATE DATABASE IF NOT EXISTS app;
+GRANT ALL PRIVILEGES ON app.* TO 'rw_app'@'%';
+GRANT SELECT ON app.* TO 'ro_app'@'%';
+
+GRANT REPLICATION CLIENT, PROCESS, RELOAD ON *.* TO 'ops'@'%';
+
+FLUSH PRIVILEGES;

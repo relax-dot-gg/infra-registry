@@ -1,0 +1,93 @@
+# relaxgg-databases (d1b9e5d5-36b0-459d-a556-96622811fbd5)
+# Services: PostgreSQL, MariaDB, Redis + exporters
+
+services:
+  # === DATABASES ===
+  postgresql:
+    image: postgres:16
+    container_name: postgresql
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: {{ _d1b9e5d5_postgresql_root_password }}
+    volumes:
+      - /var/lib/postgresql/data:/var/lib/postgresql/data
+      - ./config/postgresql/init:/docker-entrypoint-initdb.d
+    ports:
+      - "100.78.109.111:5432:5432"
+    networks:
+      - databases
+
+  mariadb:
+    image: ghcr.io/relax-dot-gg/mariadb:latest
+    container_name: mariadb
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: {{ _d1b9e5d5_mariadb_root_password }}
+    volumes:
+      - /var/lib/mysql:/var/lib/mysql
+      - ./config/mariadb/conf.d:/etc/mysql/conf.d
+    ports:
+      - "3306:3306"
+    networks:
+      - databases
+
+{% set redis_password = _d1b9e5d5_redis_password %}
+{% set redis_data_dir = '/var/lib/redis' %}
+{% set redis_exporter_port = '9121' %}
+{% set redis_port = '6379' %}
+{% set redis_port_bindings = ['100.78.109.111:6379:6379'] %}
+{% include "services/redis.yml.j2" %}
+
+  # === EXPORTERS ===
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    restart: always
+    command:
+      - '--path.rootfs=/host'
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+      - '--web.config.file=/etc/node_exporter/web.config.yml'
+    volumes:
+      - /:/host:ro,rslave
+      - ./config/node_exporter/web.config.yml:/etc/node_exporter/web.config.yml:ro
+    ports:
+      - "9100:9100"
+    network_mode: host
+    pid: host
+
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: postgres-exporter
+    restart: always
+    environment:
+      DATA_SOURCE_NAME: "postgresql://postgres:{{ _d1b9e5d5_postgresql_root_password }}@postgresql:5432/postgres?sslmode=disable"
+    ports:
+      - "9187:9187"
+    networks:
+      - databases
+    depends_on:
+      - postgresql
+
+  mysqld-exporter:
+    image: prom/mysqld-exporter:latest
+    container_name: mysqld-exporter
+    restart: always
+    environment:
+      MYSQLD_EXPORTER_PASSWORD: {{ _d1b9e5d5_mariadb_root_password }}
+    command:
+      - '--mysqld.username=root'
+      - '--mysqld.address=mariadb:3306'
+    ports:
+      - "9104:9104"
+    networks:
+      - databases
+    depends_on:
+      - mariadb
+
+networks:
+  databases:
+    driver: bridge
+{% include "services/edge-prober.yml.j2" %}

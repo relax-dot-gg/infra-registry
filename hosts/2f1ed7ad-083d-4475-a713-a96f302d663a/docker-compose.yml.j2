@@ -1,0 +1,58 @@
+# relaxgg-db4 (2f1ed7ad-083d-4475-a713-a96f302d663a)
+# Services: golem, MariaDB + exporter, PostgreSQL + exporter, Redis + exporter, node-exporter, cadvisor
+
+{% set mariadb_data_dir = '/data/mysql' %}
+{% set postgres_data_dir = '/data/postgresql' %}
+{% set redis_data_dir = '/data/redis' %}
+{% set redis_port = '6379' %}
+{% set redis_exporter_port = '9121' %}
+{% set redis_password = _2f1ed7ad_redis_password %}
+
+services:
+  # === DATABASES ===
+  postgresql:
+    image: postgres:16
+    container_name: postgresql
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: {{ _2f1ed7ad_postgresql_root_password }}
+    volumes:
+      - {{ postgres_data_dir }}:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  mariadb:
+    image: mariadb:10.11
+    container_name: mariadb
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: {{ _2f1ed7ad_mariadb_root_password }}
+    volumes:
+      - {{ mariadb_data_dir }}:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+{% set mysqld_exporter_dsn = "root:" ~ _2f1ed7ad_mariadb_root_password ~ "@(127.0.0.1:3306)/" %}
+{% set mysqld_exporter_port = '9104' %}
+{% include "services/mysqld-exporter.yml.j2" %}
+
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: postgres-exporter
+    restart: always
+    environment:
+      DATA_SOURCE_NAME: "postgresql://postgres:{{ _2f1ed7ad_postgresql_root_password }}@127.0.0.1:5432/postgres?sslmode=disable"
+    ports:
+      - "9187:9187"
+    network_mode: host
+    depends_on:
+      - postgresql
+
+{% set redis_port_bindings = ['6379:6379'] %}
+{% include "services/redis.yml.j2" %}
+
+  # === INFRA ===
+{% include "services/cadvisor.yml.j2" %}
+{% include "services/node-exporter.yml.j2" %}
+{% include "services/golem.yml.j2" %}

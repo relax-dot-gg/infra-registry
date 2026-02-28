@@ -1,0 +1,12 @@
+  statsd-exporter:
+    image: prom/statsd-exporter:v0.26.0
+    container_name: statsd-exporter
+    restart: always
+    ports:
+      - "9102:9102"
+      - "9125:9125/udp"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:9102/metrics"]
+      interval: 30s
+      timeout: 10s
+      retries: 3

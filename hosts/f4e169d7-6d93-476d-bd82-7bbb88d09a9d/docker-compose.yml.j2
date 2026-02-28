@@ -1,0 +1,84 @@
+services:
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared
+    restart: always
+    network_mode: host
+    command: tunnel --protocol http2 run
+    environment:
+      TUNNEL_TOKEN: "{{ cloudflared_tunnel_token }}"
+
+  nginx:
+    image: ghcr.io/relax-dot-gg/nginx:latest
+    container_name: nginx
+    restart: always
+    network_mode: host
+    volumes:
+      - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./config/nginx/conf.d:/etc/nginx/conf.d:ro
+      - /opt/services/wordpress/bedrock:/var/www/bedrock
+    depends_on:
+      - wordpress
+
+  wordpress:
+    image: strarsis/docker-php-bedrock:8.3.13-fpm
+    container_name: wordpress
+    restart: always
+    environment:
+      DB_NAME: wordpress
+      DB_USER: rw_wordpress
+      DB_PASSWORD: {{ mariadb_rw_password_wordpress }}
+      DB_HOST: "infralink2.shrimp-crested.ts.net:3306"
+      WP_ENV: development
+      WP_HOME: "http://infralink3.shrimp-crested.ts.net"
+      WP_SITEURL: "http://infralink3.shrimp-crested.ts.net"
+      FLUENTSMTP_HOST: "{{ smtp_gateway_host | default('100.127.45.55') }}"
+      FLUENTSMTP_PORT: "{{ smtp_gateway_port | default('2586') }}"
+      FLUENTSMTP_ENCRYPTION: "{{ smtp_gateway_encryption | default('none') }}"
+      FLUENTSMTP_USERNAME: "{{ smtp_gateway_username }}"
+      FLUENTSMTP_PASSWORD: "{{ smtp_gateway_password }}"
+      FLUENTSMTP_FROM_EMAIL: "devops-sa@relax.gg"
+      FLUENTSMTP_FROM_NAME: "Relax DevOps"
+      FLUENTSMTP_TEST_TO: "{{ external_gmail_username }}"
+      FLUENTSMTP_AUTH: "{{ smtp_gateway_auth | default('no') }}"
+      FLUENTSMTP_AUTO_TLS: "{{ smtp_gateway_auto_tls | default('no') }}"
+      CF_TURNSTILE_SITE_KEY: "{{ turnstile_site_key }}"
+      CF_TURNSTILE_SECRET_KEY: "{{ turnstile_secret_key }}"
+    volumes:
+      - /opt/services/wordpress/bedrock:/var/www/bedrock
+      - ./config/wordpress/bedrock/mu-plugins:/var/www/bedrock/web/app/mu-plugins:ro
+    ports:
+      - "127.0.0.1:9000:9000"
+
+  php-fpm:
+    image: strarsis/docker-php-bedrock:8.3.13-fpm
+    container_name: php-fpm
+    restart: always
+    environment:
+      DB_NAME: wordpress
+      DB_USER: rw_wordpress
+      DB_PASSWORD: {{ mariadb_rw_password_wordpress }}
+      DB_HOST: "infralink2.shrimp-crested.ts.net:3306"
+      WP_ENV: development
+      CF_TURNSTILE_SITE_KEY: "{{ turnstile_site_key }}"
+      CF_TURNSTILE_SECRET_KEY: "{{ turnstile_secret_key }}"
+    volumes:
+      - /opt/services/wordpress/bedrock:/var/www/bedrock
+    ports:
+      - "127.0.0.1:9001:9000"
+
+  apache:
+    image: httpd:2.4
+    container_name: apache
+    restart: always
+    ports:
+      - "8082:80"
+
+{% set nginx_vts_scrape_uri = 'http://127.0.0.1:8081/status' %}
+{% include "services/nginx-vts-exporter.yml.j2" %}
+{% include "services/certbot.yml.j2" %}
+{% include "services/node-exporter.yml.j2" %}
+{% include "services/cadvisor.yml.j2" %}
+{% include "services/edge-prober.yml.j2" %}
+{% include "services/golem.yml.j2" %}

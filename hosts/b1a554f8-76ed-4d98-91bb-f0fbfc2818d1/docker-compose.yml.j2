@@ -1,0 +1,95 @@
+# relaxgg-gex44 (b1a554f8-76ed-4d98-91bb-f0fbfc2818d1)
+# GPU-enabled Airflow worker + exporters
+# GPU: NVIDIA RTX 4000 SFF Ada Generation (20GB)
+
+services:
+  # === AIRFLOW WORKER (GPU-enabled) ===
+{% set airflow_worker_container_name = "airflow-worker" %}
+{% set airflow_worker_hostname = "gex44-gpu@%h" %}
+{% set airflow_worker_volumes = [
+  '/mnt/storagebox0/airflow/dags:/opt/airflow/dags',
+  '/mnt/storagebox0/airflow/plugins:/opt/airflow/plugins',
+  '/mnt/storagebox0/airflow/data:/opt/airflow/data',
+  './logs:/opt/airflow/logs'
+] %}
+{% set airflow_worker_user = "${AIRFLOW_UID:-50000}:0" %}
+{% set airflow_worker_deploy_gpu = true %}
+{% include "services/airflow-worker.yml.j2" %}
+
+  # === N8N ===
+  n8n:
+    image: docker.n8n.io/n8nio/n8n
+    container_name: n8n
+    restart: always
+    ports:
+      - "127.0.0.1:5678:5678"
+    environment:
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: "100.78.109.111"
+      DB_POSTGRESDB_PORT: "5432"
+      DB_POSTGRESDB_DATABASE: {{ _b1a554f8_n8n_postgres_db }}
+      DB_POSTGRESDB_USER: {{ _b1a554f8_n8n_postgres_user }}
+      DB_POSTGRESDB_PASSWORD: {{ _b1a554f8_n8n_postgres_password }}
+      EXECUTIONS_MODE: queue
+      QUEUE_BULL_REDIS_HOST: "100.78.109.111"
+      QUEUE_BULL_REDIS_PORT: "6379"
+      QUEUE_BULL_REDIS_PASSWORD: {{ _b1a554f8_n8n_redis_password }}
+      QUEUE_BULL_REDIS_DB: "0"
+      QUEUE_HEALTH_CHECK_ACTIVE: "true"
+      N8N_ENCRYPTION_KEY: {{ _b1a554f8_n8n_encryption_key }}
+    volumes:
+      - /opt/services/n8n:/home/node/.n8n
+
+  n8n-worker:
+    image: docker.n8n.io/n8nio/n8n
+    container_name: n8n-worker
+    restart: always
+    command: worker
+    environment:
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: "100.78.109.111"
+      DB_POSTGRESDB_PORT: "5432"
+      DB_POSTGRESDB_DATABASE: {{ _b1a554f8_n8n_postgres_db }}
+      DB_POSTGRESDB_USER: {{ _b1a554f8_n8n_postgres_user }}
+      DB_POSTGRESDB_PASSWORD: {{ _b1a554f8_n8n_postgres_password }}
+      EXECUTIONS_MODE: queue
+      QUEUE_BULL_REDIS_HOST: "100.78.109.111"
+      QUEUE_BULL_REDIS_PORT: "6379"
+      QUEUE_BULL_REDIS_PASSWORD: {{ _b1a554f8_n8n_redis_password }}
+      QUEUE_BULL_REDIS_DB: "0"
+      QUEUE_HEALTH_CHECK_ACTIVE: "true"
+      N8N_ENCRYPTION_KEY: {{ _b1a554f8_n8n_encryption_key }}
+    volumes:
+      - /opt/services/n8n:/home/node/.n8n
+    depends_on:
+      - n8n
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: always
+    network_mode: host
+    command: tunnel --protocol http2 run
+    environment:
+      - TUNNEL_TOKEN={{ b1a554f8_cloudflare_tunnel }}
+
+  # === REDIS (local) ===
+{% set redis_password = '' %}
+{% set redis_data_dir = './redis-data' %}
+{% set redis_port = '6379' %}
+{% set redis_exporter_port = '9121' %}
+{% set redis_service_enabled = false %}
+{% set redis_host = 'withpostgresandworker-redis-1' %}
+{% set redis_exporter_network_mode = '' %}
+{% set redis_exporter_networks = ['withpostgresandworker_default'] %}
+{% include "services/redis.yml.j2" %}
+
+  # === EXPORTERS (shared templates) ===
+{% include "services/node-exporter.yml.j2" %}
+{% include "services/cadvisor.yml.j2" %}
+{% include "services/statsd-exporter.yml.j2" %}
+{% include "services/dcgm-exporter.yml.j2" %}
+
+networks:
+  withpostgresandworker_default:
+    external: true
+{% include "services/edge-prober.yml.j2" %}

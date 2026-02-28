@@ -1,0 +1,17 @@
+#!/bin/bash
+set -euo pipefail
+
+window_start="${1:-}"
+if [[ -z "$window_start" ]]; then
+  window_start="$(date -u -d '1 hour ago' '+%Y-%m-%d %H:00:00')"
+else
+  window_start="$(date -u -d "$window_start" '+%Y-%m-%d %H:00:00')"
+fi
+
+mysql -umetrics_rollup -p'{{ _002d015e_metrics_rollup_password }}' -h 127.0.0.1 pelilutka <<SQL
+SET max_statement_time=0;
+SET @window_start = '${window_start}';
+SET @window_end   = DATE_ADD(@window_start, INTERVAL 1 HOUR);
+SET @duration     = 3600;
+SOURCE /opt/services/config/metrics/rollup_metrics_hourly.sql;
+SQL

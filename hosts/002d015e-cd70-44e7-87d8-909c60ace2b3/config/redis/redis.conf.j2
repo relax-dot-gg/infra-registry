@@ -1,0 +1,12 @@
+port 6379
+bind 0.0.0.0
+protected-mode yes
+dir /data
+
+appendonly yes
+appendfsync everysec
+
+save ""
+maxmemory 24gb
+maxmemory-policy allkeys-lru
+requirepass {{ _002d015e_redis_password }}

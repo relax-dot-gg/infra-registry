@@ -1,0 +1,15 @@
+{% set _php_fpm_exporter_image = php_fpm_exporter_image|default('bakins/php-fpm-exporter:v0.6.1') %}
+{% set _php_fpm_exporter_addr = php_fpm_exporter_addr|default('0.0.0.0:9253') %}
+{% set _php_fpm_status_path = php_fpm_status_path|default('/status') %}
+{% set _php_fpm_fastcgi = php_fpm_fastcgi|default('unix:///var/run/php/php7.4-fpm.sock') %}
+  php-fpm-exporter:
+    image: {{ _php_fpm_exporter_image }}
+    container_name: {{ php_fpm_exporter_container_name|default('php-fpm-exporter') }}
+    restart: always
+    network_mode: host
+    command:
+      - "--addr={{ _php_fpm_exporter_addr }}"
+      - "--fastcgi={{ _php_fpm_fastcgi }}"
+      - "--endpoint={{ _php_fpm_status_path }}"
+    volumes:
+      - /var/run/php:/var/run/php

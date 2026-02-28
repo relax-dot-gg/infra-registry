@@ -1,0 +1,56 @@
+{% set _mysqld_exporter_host_override = mysqld_exporter_host_override | default('') %}
+{% set _mysqld_exporter_port_override = mysqld_exporter_port_override | default('') %}
+  mysqld-exporter:
+    image: prom/mysqld-exporter:latest
+    container_name: mysqld-exporter
+    restart: always
+    network_mode: host
+    environment:
+      MYSQLD_EXPORTER_DSN: "{{ mysqld_exporter_dsn }}"
+      MYSQLD_EXPORTER_MY_CNF: "{{ mysqld_exporter_my_cnf | default('') }}"
+      MYSQLD_EXPORTER_HOST_OVERRIDE: "{{ _mysqld_exporter_host_override }}"
+      MYSQLD_EXPORTER_PORT_OVERRIDE: "{{ _mysqld_exporter_port_override }}"
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        set -euo pipefail
+        if [ -n "$$MYSQLD_EXPORTER_MY_CNF" ]; then
+          printf "%s\n" "$$MYSQLD_EXPORTER_MY_CNF" > /tmp/.my.cnf
+        elif [ -n "$$MYSQLD_EXPORTER_DSN" ]; then
+          DSN="$$MYSQLD_EXPORTER_DSN"
+          user="$${DSN%%:*}"
+          rest="$${DSN#*:}"
+          pass="$${rest%%@*}"
+          hostport="$${rest#*@}"
+          hostport="$${hostport%%/*}"
+          hostport="$${hostport#(}"
+          hostport="$${hostport%)}"
+          host="$${hostport%%:*}"
+          port="$${hostport#*:}"
+          if [ "$$hostport" = "$$port" ]; then
+            port="3306"
+          fi
+          if [ -n "$$MYSQLD_EXPORTER_HOST_OVERRIDE" ]; then
+            host="$$MYSQLD_EXPORTER_HOST_OVERRIDE"
+          fi
+          if [ -n "$$MYSQLD_EXPORTER_PORT_OVERRIDE" ]; then
+            port="$$MYSQLD_EXPORTER_PORT_OVERRIDE"
+          fi
+          {
+            echo "[client]"
+            echo "user=$${user}"
+            echo "password=$${pass}"
+            echo "host=$${host}"
+            echo "port=$${port}"
+          } > /tmp/.my.cnf
+        else
+          echo "ERROR: No MYSQLD_EXPORTER_DSN or MYSQLD_EXPORTER_MY_CNF provided" >&2
+          exit 1
+        fi
+        exec /bin/mysqld_exporter --config.my-cnf=/tmp/.my.cnf --web.listen-address=":{{ mysqld_exporter_port|default('9104') }}"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:9104/metrics"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

@@ -1,0 +1,117 @@
+services:
+  mariadb:
+    image: ghcr.io/relax-dot-gg/mariadb:latest
+    container_name: mariadb
+    restart: always
+    network_mode: host
+    environment:
+      MARIADB_ROOT_PASSWORD: {{ _f15fa76f_mariadb_root_password }}
+    volumes:
+      - /var/lib/mysql:/var/lib/mysql
+      - /opt/services/config/mariadb/custom.cnf:/etc/mysql/conf.d/custom.cnf:ro
+
+{% set redis_password = _f15fa76f_redis_password %}
+{% set redis_data_dir = '/opt/services/redis/data' %}
+{% set redis_exporter_port = '9121' %}
+{% set redis_port = '6379' %}
+{% include "services/redis.yml.j2" %}
+
+{% set mysqld_exporter_dsn = _f15fa76f_mariadb_exporter_dsn %}
+{% set mysqld_exporter_port = '9104' %}
+{% include "services/mysqld-exporter.yml.j2" %}
+
+{% include "services/cadvisor.yml.j2" %}
+{% include "services/node-exporter.yml.j2" %}
+
+  zookeeper:
+    image: zookeeper:3.9
+    container_name: docstore-zookeeper
+    restart: always
+    ports:
+      - "2181:2181"
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=zookeeper:2888:3888;2181
+    volumes:
+      - /opt/services/solr/zookeeper/data:/data
+      - /opt/services/solr/zookeeper/datalog:/datalog
+    networks:
+      - solr-net
+
+  solr-init:
+    image: solr:9.5
+    container_name: docstore-solr-init
+    restart: "no"
+    user: "0:0"
+    command:
+      - /bin/sh
+      - -c
+      - |
+        set -e
+        mkdir -p /var/solr/solr1 /var/solr/solr2
+        chown -R 8983:8983 /var/solr/solr1 /var/solr/solr2
+    volumes:
+      - /opt/services/solr/solr1/data:/var/solr/solr1
+      - /opt/services/solr/solr2/data:/var/solr/solr2
+    networks:
+      - solr-net
+
+  solr1:
+    image: solr:9.5
+    container_name: docstore-solr1
+    restart: always
+    ports:
+      - "8983:8983"
+    environment:
+      - ZK_HOST=zookeeper:2181
+      - SOLR_JAVA_MEM=-Xms1g -Xmx1g
+    volumes:
+      - /opt/services/solr/solr1/data:/var/solr
+    depends_on:
+      - zookeeper
+      - solr-init
+    networks:
+      - solr-net
+    command:
+      - solr-foreground
+      - -c
+      - -z
+      - zookeeper:2181
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:8983/solr"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  solr2:
+    image: solr:9.5
+    container_name: docstore-solr2
+    restart: always
+    ports:
+      - "8984:8983"
+    environment:
+      - ZK_HOST=zookeeper:2181
+      - SOLR_JAVA_MEM=-Xms1g -Xmx1g
+    volumes:
+      - /opt/services/solr/solr2/data:/var/solr
+    depends_on:
+      - zookeeper
+      - solr-init
+      - solr1
+    networks:
+      - solr-net
+    command:
+      - solr-foreground
+      - -c
+      - -z
+      - zookeeper:2181
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:8983/solr"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+networks:
+  solr-net:
+    driver: bridge
+{% include "services/edge-prober.yml.j2" %}

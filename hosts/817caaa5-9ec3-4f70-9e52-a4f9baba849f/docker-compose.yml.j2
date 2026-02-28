@@ -1,0 +1,65 @@
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--config.expand-env"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=90d"
+      - "--web.enable-admin-api"
+      - "--web.enable-lifecycle"
+    user: "65534:65534"
+    volumes:
+      - /opt/infra/monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - /opt/infra/monitoring/prometheus/blackbox_targets.json:/etc/prometheus/blackbox_targets.json:ro
+      - /opt/infra/monitoring/prometheus/alerts:/etc/prometheus/alerts:ro
+      - /opt/infra/monitoring/data/prometheus:/prometheus
+    ports:
+      - "9090:9090"
+
+  blackbox-exporter:
+    image: prom/blackbox-exporter:latest
+    container_name: blackbox-exporter
+    restart: unless-stopped
+    command:
+      - "--config.file=/etc/blackbox_exporter/config.yml"
+    volumes:
+      - /opt/infra/monitoring/blackbox/config.yml:/etc/blackbox_exporter/config.yml:ro
+    ports:
+      - "9115:9115"
+
+  grafana:
+    image: grafana/grafana:12.1-ubuntu
+    container_name: grafana
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD={{ grafana_admin_password | default('admin') }}
+    volumes:
+      - /opt/infra/monitoring/grafana/grafana.ini:/etc/grafana/grafana.ini:ro
+      - /opt/infra/monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - /opt/infra/monitoring/grafana/dashboards:/etc/grafana/dashboards:ro
+      - /opt/infra/monitoring/data/grafana:/var/lib/grafana
+    ports:
+      - "3000:3000"
+
+  gatus:
+    image: ghcr.io/twin/gatus:stable
+    container_name: gatus
+    restart: unless-stopped
+    dns:
+      - 100.100.100.100
+      - 1.1.1.1
+    volumes:
+      - /opt/services/config/gatus/config.yaml:/config/config.yaml:ro
+      - /opt/infra/gatus/data:/data
+    ports:
+      - "3003:8080"
+
+{% include "services/woodpecker-server.yml.j2" %}
+{% include "services/email-prober.yml.j2" %}
+{% include "services/node-exporter.yml.j2" %}
+{% include "services/cadvisor.yml.j2" %}
+{% include "services/edge-prober.yml.j2" %}
+{% include "services/golem.yml.j2" %}

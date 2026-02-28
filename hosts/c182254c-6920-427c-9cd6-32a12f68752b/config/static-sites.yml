@@ -1,0 +1,78 @@
+sites:
+  # Base chat sites
+  - domain: chat.isexychat.com
+    repo: git@github.com:relax-dot-gg/chat.isexychat.com.git
+    branch: main
+  - domain: chat.bdsmlr.com
+    repo: git@github.com:relax-dot-gg/chat.bdsmlr.com.git
+    branch: main
+  - domain: chat.freechat.zone
+    repo: git@github.com:relax-dot-gg/chat.freechat.zone.git
+    branch: main
+
+  # isexychat sites
+  - domain: isexychat.com
+    repo: git@github.com:relax-dot-gg/isexychat.com.git
+    branch: main
+  - domain: dev.isexychat.com
+    repo: git@github.com:relax-dot-gg/isexychat.com.git
+    branch: dev
+  - domain: isexychat.in
+    repo: git@github.com:relax-dot-gg/isexychat.in.git
+    branch: main
+
+  # Reblogme web
+  - domain: reblogme.com
+    repo: git@github.com:relax-dot-gg/reblogme.com.git
+    branch: main
+
+  # Additional sites
+  - domain: adultreviews.today
+    repo: git@github.com:relax-dot-gg/adultreviews.today.git
+    branch: main
+  - domain: camming.pro
+    repo: git@github.com:relax-dot-gg/camming.pro.git
+    branch: main
+  - domain: isexychat.app
+    repo: git@github.com:relax-dot-gg/isexychat.app.git
+    branch: main
+  - domain: isexychat.net
+    repo: git@github.com:relax-dot-gg/isexychat.net.git
+    branch: main
+  - domain: legacy.isexychat.com
+    repo: git@github.com:relax-dot-gg/legacy.isexychat.com.git
+    branch: main
+  - domain: mylifecom.com
+    repo: git@github.com:relax-dot-gg/mylifecom.com.git
+    branch: main
+  - domain: relax.gg
+    repo: git@github.com:relax-dot-gg/relax.gg.git
+    branch: main
+
+  # Reblogme apps (legacy Flutter build artifacts)
+  - domain: app-dev.reblogme.com
+    repo: git@github.com:relax-dot-gg/app-dev.reblogme.com.git
+    branch: main
+  - domain: beta.reblogme.com
+    repo: git@github.com:relax-dot-gg/beta.reblogme.com.git
+    branch: main
+
+  # Cyberstorm / Didgit (external repos)
+  - domain: cyberstorm.dev
+    repo: https://github.com/cyberstorm-dev/cyberstorm.dev.git
+    branch: main
+  - domain: dev.cyberstorm.dev
+    repo: https://github.com/cyberstorm-dev/cyberstorm.dev.git
+    branch: dev
+  - domain: staging.cyberstorm.dev
+    repo: https://github.com/cyberstorm-dev/cyberstorm.dev.git
+    branch: staging
+  - domain: didgit.dev
+    repo: https://github.com/cyberstorm-dev/didgit.git
+    branch: main
+  - domain: dev.didgit.dev
+    repo: https://github.com/cyberstorm-dev/didgit.git
+    branch: dev
+  - domain: staging.didgit.dev
+    repo: https://github.com/cyberstorm-dev/didgit.git
+    branch: staging

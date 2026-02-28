@@ -1,0 +1,45 @@
+services:
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: always
+    network_mode: host
+    command: tunnel --protocol http2 run
+    environment:
+      - TUNNEL_TOKEN={{ _9d45e76a_cloudflare_tunnel }}
+
+  nginx:
+    image: ghcr.io/relax-dot-gg/nginx:latest
+    container_name: nginx
+    restart: always
+    network_mode: host
+    volumes:
+      - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./config/nginx/conf.d:/etc/nginx/conf.d:ro
+      - /var/www/html:/var/www/html:ro
+      - /var/www/subdomains:/var/www/subdomains:ro
+      - /var/www/api:/var/www/api:ro
+      - /var/run/php:/var/run/php
+      - /etc/ssl:/etc/ssl:ro
+{% set nginx_vts_scrape_uri = 'http://127.0.0.1:8081/status' %}
+{% include "services/nginx-vts-exporter.yml.j2" %}
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    restart: always
+    command:
+      - '--path.rootfs=/host'
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+      - '--web.config.file=/etc/node_exporter/web.config.yml'
+    volumes:
+      - /:/host:ro,rslave
+      - ./config/node_exporter/web.config.yml:/etc/node_exporter/web.config.yml:ro
+    ports:
+      - "9100:9100"
+    network_mode: host
+    pid: host
+
+{% include "services/php-fpm-exporter.yml.j2" %}
+{% include "services/cadvisor.yml.j2" %}
+{% include "services/edge-prober.yml.j2" %}

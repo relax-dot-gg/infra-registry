@@ -1,0 +1,52 @@
+services:
+  wordpress-shop:
+    image: wordpress:php7.4-fpm
+    container_name: wordpress-shop
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: "100.68.254.62:3306"
+      WORDPRESS_DB_USER: "{{ _a2911f1a_wp_shop_db_user }}"
+      WORDPRESS_DB_PASSWORD: "{{ _a2911f1a_wp_shop_db_password }}"
+      WORDPRESS_DB_NAME: "{{ _a2911f1a_wp_shop_db_name }}"
+    volumes:
+      - /opt/services/wordpress/shop:/var/www/html
+      - ./config/wordpress/shop/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf:ro
+    ports:
+      - "127.0.0.1:9001:9000"
+
+  wordpress-account:
+    image: wordpress:php8.2-fpm
+    container_name: wordpress-account
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: "100.68.254.62:3306"
+      WORDPRESS_DB_USER: "{{ _a2911f1a_wp_account_db_user }}"
+      WORDPRESS_DB_PASSWORD: "{{ _a2911f1a_wp_account_db_password }}"
+      WORDPRESS_DB_NAME: "{{ _a2911f1a_wp_account_db_name }}"
+      WORDPRESS_TABLE_PREFIX: "{{ _a2911f1a_wp_account_table_prefix }}"
+    volumes:
+      - /opt/services/wordpress/account:/var/www/html
+      - ./config/wordpress/account/custom-php.ini:/usr/local/etc/php/conf.d/custom.ini:ro
+    ports:
+      - "127.0.0.1:9002:9000"
+
+  nginx:
+    image: ghcr.io/relax-dot-gg/nginx:latest
+    container_name: nginx
+    restart: always
+    network_mode: host
+    volumes:
+      - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./config/nginx/conf.d:/etc/nginx/conf.d:ro
+      - /opt/services/wordpress/shop:/var/www/shop:ro
+      - /opt/services/wordpress/account:/var/www/account:ro
+    depends_on:
+      - wordpress-shop
+      - wordpress-account
+
+{% set nginx_vts_scrape_uri = 'http://127.0.0.1:8081/status' %}
+{% include "services/nginx-vts-exporter.yml.j2" %}
+
+{% include "services/cadvisor.yml.j2" %}
+{% include "services/node-exporter.yml.j2" %}
+{% include "services/edge-prober.yml.j2" %}

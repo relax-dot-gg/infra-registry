@@ -1,0 +1,424 @@
+# Service + role definitions for host validation and templating
+#
+# Roles describe reusable behaviors that may span multiple compose services
+# (e.g., airflow-worker depends on a storagebox mount). Service labels describe
+# the expected compose service(s) when a host lists the item in
+# uuid_registry.yml `services:`.
+#
+# Schema keys:
+#   requires_params: Parameters that must exist on the host's role config
+#   requires_roles:  Other roles that must also be present
+#   compose_service: Primary compose service name to enforce presence of
+#   requires_secrets: Environment variables that must be set when rendering
+#   prom_check:      Prometheus freshness check metadata
+#     metric:        Metric name expected for freshness
+#     probe_metric:  Metric string to look for when probing exporter (optional)
+#     port:          Exporter port
+#     auth:          Whether to use basic auth (optional)
+#   description:     Human readable summary (optional)
+#
+# Hosts declare roles in uuid_registry.yml:
+#   roles:
+#     airflow-worker:
+#       concurrency: 2
+#     storagebox0: {}
+
+roles:
+  storagebox0:
+    description: "Hetzner storagebox CIFS/SSHFS mount at /mnt/storagebox0"
+    requires_params: []
+    requires_roles: []
+    requires_secrets: []
+    compose_service: null  # Not a container, it's a mount
+    mount_point: /mnt/storagebox0
+
+  airflow-worker:
+    description: "Airflow Celery worker connecting to central broker"
+    requires_params:
+      - concurrency
+    requires_roles:
+      - storagebox0  # Workers need access to DAGs on shared storage
+    compose_service: airflow-worker
+    requires_secrets:
+      - postgresql_rw_password_airflow
+      - redis_password
+      - airflow_fernet_key
+    environment:
+      # These are templated from BWS secrets at deploy time
+      broker_url: "redis://:{{ redis_password }}@100.78.109.111:6379/0"
+      result_backend: "db+postgresql://rw_airflow:{{ postgresql_rw_password_airflow }}@100.78.109.111:5432/airflow"
+
+services:
+  node-exporter:
+    description: "Prometheus node exporter"
+    group: nodes
+    compose_service: node-exporter
+    requires_secrets:
+      - node_exporter_password
+      - node_exporter_hash
+    prom_check:
+      metric: node_cpu_seconds_total
+      probe_metric: node_cpu_seconds_total
+      port: 9100
+      auth: true
+
+  cadvisor:
+    description: "Container metrics exporter"
+    group: nodes
+    compose_service: cadvisor
+    requires_secrets: []
+    prom_check:
+      metric: container_cpu_usage_seconds_total
+      probe_metric: container_cpu_usage_seconds_total
+      port: 8080
+
+  prometheus:
+    description: "Prometheus server"
+    group: observability
+    compose_service: prometheus
+    requires_secrets: []
+
+  grafana:
+    description: "Grafana server"
+    group: observability
+    compose_service: grafana
+    requires_secrets: []
+
+  blackbox:
+    description: "Prometheus blackbox exporter"
+    group: observability
+    compose_service: blackbox-exporter
+    requires_secrets: []
+    prom_check:
+      metric: probe_success
+      probe_metric: probe_success
+      port: 9115
+
+  stackdriver-dataflow:
+    description: "Stackdriver exporter (Dataflow)"
+    group: observability
+    compose_service: stackdriver-exporter
+    requires_secrets: []
+    prom_check:
+      metric: stackdriver_dataflow_job_dataflow_googleapis_com_job_active_worker_instances
+      probe_metric: stackdriver_dataflow_job_dataflow_googleapis_com_job_active_worker_instances
+      port: 9255
+      instance: stackdriver-exporter:9255
+
+  stackdriver-bigquery:
+    description: "Stackdriver exporter (BigQuery streaming)"
+    group: observability
+    compose_service: stackdriver-exporter-bq
+    requires_secrets: []
+    prom_check:
+      metric: stackdriver_bigquery_job_dataflow_googleapis_com_job_active_worker_instances
+      probe_metric: stackdriver_bigquery_job_dataflow_googleapis_com_job_active_worker_instances
+      port: 9256
+      instance: stackdriver-exporter-bq:9256
+
+  stackdriver-pubsub:
+    description: "Stackdriver exporter (Pub/Sub subscriptions)"
+    group: observability
+    compose_service: stackdriver-exporter-pubsub
+    requires_secrets: []
+    prom_check:
+      metric: stackdriver_pubsub_subscription_pubsub_googleapis_com_subscription_num_undelivered_messages
+      probe_metric: stackdriver_pubsub_subscription_pubsub_googleapis_com_subscription_num_undelivered_messages
+      port: 9257
+      instance: stackdriver-exporter-pubsub:9257
+
+  chatflow:
+    description: "Chatflow pipeline metrics on bbchat-irc"
+    group: observability
+    compose_service: chatflow
+    requires_secrets: []
+    prom_check:
+      metric: last_processed_timestamp
+      probe_metric: last_processed_timestamp
+      port: 9404
+
+  airflow:
+    description: "Airflow scheduler/webserver stack"
+    group: infra
+    compose_service: airflow-webserver
+    requires_secrets:
+      - postgresql_rw_password_airflow
+      - redis_password
+      - airflow_fernet_key
+      - airflow_webserver_secret
+      - airflow_admin_password
+    prom_check:
+      metric: airflow_scheduler_heartbeat
+      probe_metric: airflow_scheduler_heartbeat
+      port: 9102
+
+  airflow-worker:
+    description: "Airflow Celery worker"
+    group: infra
+    compose_service: airflow-worker
+    requires_secrets:
+      - postgresql_rw_password_airflow
+      - redis_password
+      - airflow_fernet_key
+    prom_check:
+      metric: airflow_serde_load_serializers_count
+      probe_metric: airflow_serde_load_serializers_count
+      port: 9102
+
+  woodpecker:
+    description: "Woodpecker CI controller"
+    group: ci
+    compose_service: woodpecker-server
+    requires_secrets:
+      - woodpecker_github_client
+      - woodpecker_github_secret
+      - woodpecker_agent_secret
+      - postgresql_rw_password_woodpecker
+
+  woodpecker-agent:
+    description: "Woodpecker CI agent"
+    group: ci
+    compose_service: woodpecker-agent
+    requires_secrets:
+      - woodpecker_agent_secret
+
+  email-prober:
+    description: "Email end-to-end prober (SMTP + Gmail API)"
+    group: infra
+    compose_service: email-prober
+    requires_secrets:
+      - smtp_gateway_host
+      - smtp_gateway_port
+      - smtp_gateway_username
+      - smtp_gateway_password
+      - external_gmail_username
+      - external_gmail_app_password
+
+  deploy-marker:
+    description: "Self-deploy textfile collector marker (infralink_deploy_info)"
+    group: ci
+    compose_service: null
+    requires_secrets: []
+  golem:
+    description: "Golem ledger sync + ops automation"
+    group: infra
+    compose_service: golem
+    requires_secrets:
+      - golem_ledger_deploy_key_b64
+
+  disk-space:
+    description: "Disk free checks for / via Prometheus"
+    group: nodes
+    compose_service: null
+    requires_secrets: []
+
+  tls-certs:
+    description: "TLS certificate expiry checks via Prometheus/blackbox"
+    group: tls
+    compose_service: null
+    requires_secrets: []
+
+  mariadb:
+    description: "MariaDB server"
+    group: databases
+    compose_service: mariadb
+    requires_secrets:
+      - mariadb_admin_password
+    prom_check:
+      metric: mysql_up
+      probe_metric: mysql_up
+      port: 9104
+
+  mysqld-exporter:
+    description: "MySQL/MariaDB metrics exporter"
+    group: databases
+    compose_service: mysqld-exporter
+    requires_secrets:
+      - mariadb_exporter_dsn
+    prom_check:
+      metric: mysql_up
+      probe_metric: mysql_up
+      port: 9104
+
+  mysql:
+    description: "MySQL server"
+    group: databases
+    compose_service: mariadb
+    requires_secrets:
+      - mariadb_admin_password
+    prom_check:
+      metric: mysql_up
+      probe_metric: mysql_up
+      port: 9104
+
+  redis:
+    description: "Redis server"
+    group: databases
+    compose_service: redis
+    requires_secrets: []
+    prom_check:
+      metric: redis_up
+      probe_metric: redis_up
+      port: 9121
+
+  redis-exporter:
+    description: "Redis metrics exporter"
+    group: databases
+    compose_service: redis-exporter
+    requires_secrets: []
+    prom_check:
+      metric: redis_up
+      probe_metric: redis_up
+      port: 9121
+
+  postgres-exporter:
+    description: "PostgreSQL metrics exporter"
+    group: databases
+    compose_service: postgres-exporter
+    requires_secrets: []
+    prom_check:
+      metric: pg_up
+      probe_metric: pg_up
+      port: 9187
+
+  postgres:
+    description: "PostgreSQL server"
+    group: databases
+    compose_service: postgres
+    requires_secrets: []
+
+  postgresql:
+    description: "PostgreSQL server (alias)"
+    group: databases
+    compose_service: postgres
+    requires_secrets: []
+
+  nginx:
+    description: "Nginx reverse proxy (vts metrics via nginx container)"
+    group: web
+    compose_service: nginx
+    requires_secrets: []
+    prom_check:
+      metric: nginx_server_connections
+      probe_metric: nginx_server_connections
+      port: 9113
+      gap_window: 24h
+      max_gap: 600
+
+  apache:
+    description: "Apache httpd"
+    group: web
+    compose_service: apache
+    requires_secrets: []
+
+  php-fpm:
+    description: "PHP-FPM worker pool"
+    group: web
+    compose_service: php-fpm
+    requires_secrets: []
+
+  cloudflared:
+    description: "Cloudflare tunnel agent"
+    group: infra
+    compose_service: cloudflared
+    requires_secrets:
+      - cloudflared_tunnel_token
+
+  wordpress:
+    description: "WordPress app"
+    group: web
+    compose_service: wordpress
+    requires_secrets:
+      - wp_admin_user
+      - wp_admin_password
+      - wp_admin_email
+      - wp_site_title
+      - turnstile_site_key
+      - turnstile_secret_key
+
+
+  postfix:
+    description: "Postfix MTA"
+    group: mail
+    compose_service: postfix
+    requires_secrets: []
+    prom_check:
+      metric: postfix_up
+      probe_metric: postfix_up
+      port: 9154
+
+  certbot:
+    description: "Let's Encrypt cert renewal"
+    group: infra
+    compose_service: certbot
+    requires_secrets: []
+
+  elasticsearch:
+    description: "Elasticsearch node"
+    group: search
+    compose_service: elasticsearch
+    requires_secrets: []
+
+  elasticsearch-exporter:
+    description: "Elasticsearch metrics exporter"
+    group: search
+    compose_service: elasticsearch-exporter
+    requires_secrets: []
+    prom_check:
+      metric: elasticsearch_cluster_health_status
+      port: 9114
+
+  n8n:
+    description: "n8n workflow automation"
+    group: web
+    compose_service: n8n
+    requires_secrets: []
+
+  qdrant:
+    description: "Qdrant vector DB"
+    group: search
+    compose_service: qdrant
+    requires_secrets: []
+
+  solr:
+    description: "Solr node (cloud mode)"
+    group: search
+    compose_service: solr
+    requires_secrets: []
+
+  zookeeper:
+    description: "Zookeeper for Solr cloud"
+    group: search
+    compose_service: zookeeper
+    requires_secrets: []
+
+  cdn:
+    description: "CDN edge (nginx-based frontends)"
+    group: web
+    compose_service: nginx
+    requires_secrets: []
+
+  postfix-exporter:
+    description: "Postfix metrics exporter"
+    group: mail
+    compose_service: postfix-exporter
+    requires_secrets: []
+
+  otel-collector:
+    description: "OpenTelemetry collector"
+    group: telemetry
+    compose_service: otel-collector
+    requires_secrets: []
+    prom_check:
+      metric: otelcol_process_uptime
+      port: 9464
+
+  gpu:
+    description: "GPU metrics exporter"
+    group: telemetry
+    compose_service: null
+    requires_secrets: []
+    prom_check:
+      metric: DCGM_FI_DEV_GPU_UTIL
+      probe_metric: DCGM_FI_DEV_GPU_UTIL
+      port: 9400

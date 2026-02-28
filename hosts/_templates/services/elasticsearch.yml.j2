@@ -1,0 +1,26 @@
+{% set _elastic_image = elasticsearch_image|default('docker.elastic.co/elasticsearch/elasticsearch:7.10.2') %}
+{% set _elastic_password = elasticsearch_password|default('') %}
+{% set _elastic_data_dir = elasticsearch_data_dir|default('/srv/docker/elasticsearch/data') %}
+{% set _elastic_discovery_type = elasticsearch_discovery_type|default('single-node') %}
+{% set _elastic_env = elasticsearch_env|default({}) %}
+{% set _elastic_security_enabled = elasticsearch_security_enabled|default(_elastic_password != '') %}
+  elasticsearch:
+    image: {{ _elastic_image }}
+    container_name: {{ elasticsearch_container_name|default('elasticsearch') }}
+    restart: always
+    network_mode: host
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    environment:
+{% if _elastic_discovery_type %}      discovery.type: {{ _elastic_discovery_type }}
+{% endif %}
+{% if _elastic_security_enabled and _elastic_password %}      ELASTIC_PASSWORD: {{ _elastic_password }}
+{% endif %}{% if _elastic_security_enabled %}      xpack.security.enabled: "true"
+{% else %}      xpack.security.enabled: "false"
+{% endif %}      bootstrap.memory_lock: "true"
+{% for key, value in _elastic_env.items() %}      {{ key }}: {{ value }}
+{% endfor %}
+    volumes:
+      - {{ _elastic_data_dir }}:/usr/share/elasticsearch/data:rw

@@ -1,0 +1,22 @@
+  email-prober:
+    image: ghcr.io/relax-dot-gg/email-prober:latest
+    container_name: email-prober
+    restart: unless-stopped
+    environment:
+      - SMTP_HOST={{ smtp_gateway_host | default("100.127.45.55") }}
+      - SMTP_PORT={{ smtp_gateway_port | default("2586") }}
+      - SMTP_TLS_SERVERNAME=mta.relax.gg
+      - SMTP_AUTH_MODE={{ smtp_gateway_auth_mode | default("auto") }}
+      - SMTP_USERNAME={{ smtp_gateway_username }}
+      - SMTP_PASSWORD={{ smtp_gateway_password }}
+      - SMTP_FROM=devops-sa@relax.gg
+      - SMTP_TO={{ external_gmail_username }}
+      - IMAP_HOST=imap.gmail.com
+      - IMAP_PORT=993
+      - IMAP_USER={{ external_gmail_username }}
+      - IMAP_PASSWORD={{ external_gmail_app_password }}
+      - EMAIL_POLL_TIMEOUT={{ email_poll_timeout | default("8") }}
+      - EMAIL_POLL_INTERVAL={{ email_poll_interval | default("2") }}
+      - IMAP_TIMEOUT={{ imap_timeout | default("6") }}
+    ports:
+      - "9118:9118"

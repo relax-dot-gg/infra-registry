@@ -1,0 +1,21 @@
+hosts:
+  7ffe46b7-0eb4-40cb-8e14-ea679b9948f4:
+    tailscale_name: cyberstorm-watchtower
+    tailscale_ip: 100.123.0.63
+    canonical_name: cyberstorm-watchtower
+    group: cyberstorm
+    cloud: hetzner-robot
+    status: active
+    use_exit_node: false
+    services:
+      - golem
+    observability:
+      ready: false
+      managed_services: []
+      unmanaged_services: []
+      notes: "Initial golem-only deployment."
+    docker_version: '28'
+    dns_hostnames: []
+    legacy_instances: []
+    bws_project: cyberstorm-infra
+    bws_machine_account: cyberstorm-watchtower

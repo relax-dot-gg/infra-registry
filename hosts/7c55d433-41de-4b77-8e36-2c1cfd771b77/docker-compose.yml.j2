@@ -1,0 +1,50 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: {{ postgresql_admin_password }}
+    volumes:
+      - /var/lib/postgresql/data:/var/lib/postgresql/data
+      - /opt/services/config/postgres/init.sql:/docker-entrypoint-initdb.d/10-init.sql:ro
+    ports:
+      - "5432:5432"
+
+  mariadb:
+    image: ghcr.io/relax-dot-gg/mariadb:latest
+    container_name: mariadb
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: {{ mariadb_admin_password }}
+    volumes:
+      - /var/lib/mysql:/var/lib/mysql
+      - /opt/services/config/mariadb/init.sql:/docker-entrypoint-initdb.d/10-init.sql:ro
+    ports:
+      - "3306:3306"
+
+{% set redis_password = _7c55d433_redis_password %}
+{% set redis_data_dir = '/opt/services/redis/data' %}
+{% set redis_exporter_port = '9121' %}
+{% set redis_port = '6379' %}
+{% include "services/redis.yml.j2" %}
+
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: postgres-exporter
+    restart: always
+    environment:
+      DATA_SOURCE_NAME: "postgresql://postgres:{{ postgresql_admin_password }}@postgres:5432/postgres?sslmode=disable"
+    ports:
+      - "9187:9187"
+    depends_on:
+      - postgres
+
+{% set mysqld_exporter_dsn = _7c55d433_mariadb_exporter_dsn %}
+{% set mysqld_exporter_port = '9104' %}
+{% include "services/mysqld-exporter.yml.j2" %}
+{% include "services/node-exporter.yml.j2" %}
+{% include "services/cadvisor.yml.j2" %}
+{% include "services/edge-prober.yml.j2" %}
+{% include "services/golem.yml.j2" %}

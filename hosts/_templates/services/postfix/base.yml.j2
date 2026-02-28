@@ -1,0 +1,34 @@
+  {{ service_name|default("postfix") }}:
+    image: cisagov/postfix:0.1.1
+    init: true
+    restart: always
+    environment:
+      - PRIMARY_DOMAIN={{ primary_domain }}
+      - RELAY_IP={{ relay_ip }}
+      - POSTFIX_EXPORTER_LOGFILE=/var/log/postfix
+      - POSTFIX_EXPORTER_SHOWQ_PATH=/var/spool/postfix/public/showq
+    volumes:
+      - {{ spool_path }}/postfix:/var/spool/postfix
+      - /opt/services/config/postfix/virtual:/etc/postfix/virtual:ro
+      - {{ fullchain_path }}:/run/secrets/fullchain.pem:ro
+      - {{ privkey_path }}:/run/secrets/privkey.pem:ro
+      - {{ users_path }}:/run/secrets/users.txt:ro
+{% if main_cf_path %}
+      - {{ main_cf_path }}:/root/templates/main.cf:ro
+{% endif %}
+{% if opendkim_path %}
+      - {{ opendkim_path }}:/etc/opendkim/
+{% endif %}
+    ports:
+{% if smtp_port %}
+      - target: "25"
+        published: "{{ smtp_port }}"
+        protocol: tcp
+        mode: host
+{% endif %}
+{% if submission_port %}
+      - target: "587"
+        published: "{{ submission_port }}"
+        protocol: tcp
+        mode: host
+{% endif %}

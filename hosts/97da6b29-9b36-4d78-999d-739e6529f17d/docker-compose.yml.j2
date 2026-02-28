@@ -1,0 +1,183 @@
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--config.expand-env"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=1y"
+      - "--storage.tsdb.retention.size=400GB"
+      - "--web.enable-admin-api"
+      - "--web.enable-lifecycle"
+    user: "65534:65534"
+    volumes:
+      - /opt/infra/monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - /opt/infra/monitoring/prometheus/blackbox_targets.json:/etc/prometheus/blackbox_targets.json:ro
+      - /opt/infra/monitoring/prometheus/alerts:/etc/prometheus/alerts:ro
+      - /opt/infra/monitoring/data/prometheus:/prometheus
+    ports:
+      - "9090:9090"
+
+  blackbox-exporter:
+    image: prom/blackbox-exporter:latest
+    container_name: blackbox-exporter
+    restart: unless-stopped
+    command:
+      - "--config.file=/etc/blackbox_exporter/config.yml"
+    volumes:
+      - /opt/infra/monitoring/blackbox/config.yml:/etc/blackbox_exporter/config.yml:ro
+    ports:
+      - "9115:9115"
+
+  stackdriver-exporter:
+    image: prometheuscommunity/stackdriver-exporter:latest
+    container_name: stackdriver-exporter
+    restart: unless-stopped
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/credentials/stackdriver-exporter-key.json
+    volumes:
+      - /opt/infra/monitoring/secrets/gcp:/credentials
+    ports:
+      - "9255:9255"
+    command:
+      - --google.project-ids=freechat-zone
+      - --monitoring.metrics-prefixes=dataflow.googleapis.com/job
+      - --web.listen-address=:9255
+
+  stackdriver-exporter-bq:
+    image: prometheuscommunity/stackdriver-exporter:latest
+    container_name: stackdriver-exporter-bq
+    restart: unless-stopped
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/credentials/stackdriver-exporter-key.json
+    volumes:
+      - /opt/infra/monitoring/secrets/gcp:/credentials
+    ports:
+      - "9256:9256"
+    command:
+      - --google.project-ids=freechat-zone
+      - --monitoring.metrics-prefixes=bigquery.googleapis.com
+      - --monitoring.metrics-interval=5m
+      - --monitoring.metrics-offset=2m
+      - --web.listen-address=:9256
+
+  stackdriver-exporter-pubsub:
+    image: prometheuscommunity/stackdriver-exporter:latest
+    container_name: stackdriver-exporter-pubsub
+    restart: unless-stopped
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/credentials/stackdriver-exporter-key.json
+    volumes:
+      - /opt/infra/monitoring/secrets/gcp:/credentials
+    ports:
+      - "9257:9257"
+    command:
+      - --google.project-ids=freechat-zone
+      - --monitoring.metrics-prefixes=pubsub.googleapis.com/subscription
+      - --monitoring.metrics-interval=5m
+      - --monitoring.metrics-offset=2m
+      - --web.listen-address=:9257
+
+  grafana:
+    image: grafana/grafana:12.1-ubuntu
+    container_name: grafana
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD={{ grafana_admin_password | default('admin') }}
+      - BDSMLR_METRICS_DB_HOST=100.99.100.7:3306
+      - BDSMLR_METRICS_DB_USER={{ bdsmlr_metrics_db_user }}
+      - BDSMLR_METRICS_DB_PASSWORD={{ bdsmlr_metrics_db_password }}
+      - BDSMLR_SHOP_DB_HOST=100.68.254.62:3306
+      - BDSMLR_SHOP_DB_USER={{ _a2911f1a_wp_shop_db_user }}
+      - BDSMLR_SHOP_DB_PASSWORD={{ _a2911f1a_wp_shop_db_password }}
+    volumes:
+      - /opt/infra/monitoring/grafana/grafana.ini:/etc/grafana/grafana.ini:ro
+      - /opt/infra/monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - /opt/infra/monitoring/grafana/dashboards:/etc/grafana/dashboards:ro
+      - /opt/infra/monitoring/data/grafana:/var/lib/grafana
+    ports:
+      - "3000:3000"
+
+  loki:
+    image: grafana/loki:3.1.1
+    container_name: loki
+    restart: unless-stopped
+    command: -config.file=/etc/loki/config.yaml
+    volumes:
+      - /opt/services/config/loki/config.yaml:/etc/loki/config.yaml:ro
+      - /opt/services/data/loki:/loki
+    ports:
+      - "3100:3100"
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.106.0
+    container_name: otel-collector
+    restart: unless-stopped
+    command: ["--config=/etc/otelcol/config.yaml"]
+    volumes:
+      - /opt/services/config/otel-collector/config.yaml:/etc/otelcol/config.yaml:ro
+    depends_on:
+      - loki
+    ports:
+      - "4317:4317" # OTLP gRPC
+      - "4318:4318" # OTLP HTTP
+      - "9464:9464" # Prometheus metrics exporter
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared
+    restart: unless-stopped
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN={{ cloudflare_tunnel_token }}
+    depends_on:
+      - grafana
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    restart: always
+    command:
+      - '--path.rootfs=/host'
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+      - '--web.config.file=/etc/node_exporter/web.config.yml'
+    volumes:
+      - /:/host:ro,rslave
+      - ./config/node_exporter/web.config.yml:/etc/node_exporter/web.config.yml:ro
+    ports:
+      - "9100:9100"
+    network_mode: host
+    pid: host
+
+  gatus:
+    image: ghcr.io/twin/gatus:stable
+    container_name: gatus
+    restart: unless-stopped
+    volumes:
+      - /opt/services/config/gatus/config.yaml:/config/config.yaml:ro
+      - /opt/infra/gatus/data:/data
+    ports:
+      - "3003:8080"
+
+  cloudflared-status:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared-status
+    restart: always
+    command: tunnel --no-autoupdate run
+    environment:
+      - TUNNEL_TOKEN={{ cloudflare_tunnel_token }}
+    depends_on:
+      - gatus
+{% include "services/edge-prober.yml.j2" %}
+  gh-hooks-proxy:
+    image: nginx:1.27
+    container_name: gh-hooks-proxy
+    restart: unless-stopped
+    volumes:
+      - ./config/gh-hooks/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "8189:8189"

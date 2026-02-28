@@ -1,0 +1,15 @@
+storage:
+  type: sqlite
+  path: /data/data.db
+
+web:
+  port: 8080
+  address: 0.0.0.0
+
+endpoints:
+  - name: gatus-self
+    group: infra
+    url: http://localhost:8080/health
+    interval: 60s
+    conditions:
+      - "[STATUS] == 200"

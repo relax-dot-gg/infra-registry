@@ -1,0 +1,37 @@
+hosts:
+  d4bf50fc-48eb-41d1-9921-0f5ac4348774:
+    canonical_name: infralink1
+    status: active
+    group: infralink-dev
+    cloud: hetzner-cloud
+    tailscale_name: infralink1
+    tailscale_ip: 100.83.152.112
+    public_ip: 178.156.150.185
+    use_exit_node: true
+    services:
+    - node-exporter
+    - cadvisor
+    - woodpecker-agent
+    - airflow-worker
+    - deploy-marker
+    - disk-space
+    - golem
+    observability:
+      managed_services:
+      - node-exporter
+      - cadvisor
+      missing_exporters: []
+      notes: "cloudflared running; review tunnel mgmt. exporter TBD."
+    roles:
+      storagebox0: {}
+      airflow-worker:
+        concurrency: 2
+    role_overrides:
+      airflow-worker:
+        concurrency: 2
+    docker_version: '28'
+    dns_hostnames: []
+    legacy_instances: []
+    bws_project: infralink-dev
+    bws_machine_account: infralink1
+    notes: "dev template from relaxgg_woodpecker; update tailscale_ip and BWS settings"

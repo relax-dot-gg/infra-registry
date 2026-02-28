@@ -1,0 +1,1 @@
+*/5 * * * * root . /etc/environment && /opt/infra/scripts/audit_runner.sh >> /var/log/infra-audit.log 2>&1

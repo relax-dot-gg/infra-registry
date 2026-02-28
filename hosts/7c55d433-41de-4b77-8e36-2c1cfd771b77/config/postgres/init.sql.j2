@@ -1,0 +1,101 @@
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'root') THEN
+    CREATE ROLE root LOGIN SUPERUSER PASSWORD '{{ postgresql_admin_password }}';
+  ELSE
+    ALTER ROLE root WITH PASSWORD '{{ postgresql_admin_password }}';
+  END IF;
+END $$;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'ops') THEN
+    CREATE ROLE ops LOGIN PASSWORD '{{ postgresql_ops_password }}';
+  ELSE
+    ALTER ROLE ops WITH PASSWORD '{{ postgresql_ops_password }}';
+  END IF;
+END $$;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'rw_woodpecker') THEN
+    CREATE ROLE rw_woodpecker LOGIN PASSWORD '{{ postgresql_rw_password_woodpecker }}';
+  ELSE
+    ALTER ROLE rw_woodpecker WITH PASSWORD '{{ postgresql_rw_password_woodpecker }}';
+  END IF;
+END $$;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'ro_woodpecker') THEN
+    CREATE ROLE ro_woodpecker LOGIN PASSWORD '{{ postgresql_ro_password_woodpecker }}';
+  ELSE
+    ALTER ROLE ro_woodpecker WITH PASSWORD '{{ postgresql_ro_password_woodpecker }}';
+  END IF;
+END $$;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'woodpecker') THEN
+    CREATE DATABASE woodpecker OWNER rw_woodpecker;
+  END IF;
+END $$;
+
+GRANT CONNECT ON DATABASE woodpecker TO ro_woodpecker;
+GRANT CONNECT ON DATABASE woodpecker TO ops;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'rw_app') THEN
+    CREATE ROLE rw_app LOGIN PASSWORD '{{ postgresql_rw_password_app }}';
+  ELSE
+    ALTER ROLE rw_app WITH PASSWORD '{{ postgresql_rw_password_app }}';
+  END IF;
+END $$;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'ro_app') THEN
+    CREATE ROLE ro_app LOGIN PASSWORD '{{ postgresql_ro_password_app }}';
+  ELSE
+    ALTER ROLE ro_app WITH PASSWORD '{{ postgresql_ro_password_app }}';
+  END IF;
+END $$;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'app') THEN
+    CREATE DATABASE app OWNER rw_app;
+  END IF;
+END $$;
+
+GRANT CONNECT ON DATABASE app TO ro_app;
+GRANT CONNECT ON DATABASE app TO ops;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'rw_airflow') THEN
+    CREATE ROLE rw_airflow LOGIN PASSWORD '{{ postgresql_rw_password_airflow }}';
+  ELSE
+    ALTER ROLE rw_airflow WITH PASSWORD '{{ postgresql_rw_password_airflow }}';
+  END IF;
+END $$;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'ro_airflow') THEN
+    CREATE ROLE ro_airflow LOGIN PASSWORD '{{ postgresql_ro_password_airflow }}';
+  ELSE
+    ALTER ROLE ro_airflow WITH PASSWORD '{{ postgresql_ro_password_airflow }}';
+  END IF;
+END $$;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'airflow') THEN
+    CREATE DATABASE airflow OWNER rw_airflow;
+  END IF;
+END $$;
+
+GRANT CONNECT ON DATABASE airflow TO ro_airflow;
+GRANT CONNECT ON DATABASE airflow TO ops;

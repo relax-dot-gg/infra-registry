@@ -1,0 +1,10 @@
+hosts:
+  ef0ee03f-ca36-4ada-ae0e-ddc1cb3e29a7:
+    canonical_name: infralink-storagebox
+    status: active
+    group: infralink-dev
+    cloud: hetzner-storagebox
+    provider_metadata:
+      hostname: u541661.your-storagebox.de
+      username: u541661
+    notes: "Pseudo-host for storagebox0 (sshfs)"

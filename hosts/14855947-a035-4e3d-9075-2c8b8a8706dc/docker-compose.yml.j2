@@ -1,0 +1,21 @@
+services:
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    restart: always
+    privileged: true
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    ports:
+      - "8082:8080"
+
+{% include "services/node-exporter.yml.j2" %}
+{% set redis_password = _14855947_redis_password %}
+{% set redis_port = '6379' %}
+{% set redis_exporter_port = '9121' %}
+{% include "services/redis.yml.j2" %}
+{% include "services/edge-prober.yml.j2" %}

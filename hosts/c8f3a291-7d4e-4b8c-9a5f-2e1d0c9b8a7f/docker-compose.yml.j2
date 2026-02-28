@@ -1,0 +1,176 @@
+{% set mta_base = "/opt/services/mta" %}
+{% set postfix_instances = [
+  {
+    "service_name": "postfix",
+    "primary_domain": "freechat.zone",
+    "relay_ip": "172.16.202.1/32",
+    "main_cf_path": "/opt/services/config/postfix/main.cf",
+    "spool_path": mta_base ~ "/spool",
+    "opendkim_path": mta_base ~ "/opendkim",
+    "fullchain_path": mta_base ~ "/certbot/live/mta.freechat.zone-0001/fullchain.pem",
+    "privkey_path": mta_base ~ "/certbot/live/mta.freechat.zone-0001/privkey.pem",
+    "users_path": "/opt/services/config/postfix/freechat/users.txt",
+    "users_secret_user": "_freechat_zone_smtp_username",
+    "users_secret_password": "_freechat_zone_smtp_password",
+    "smtp_bind_address": "5.161.26.199",
+    "smtp_port": "1025",
+    "submission_port": "1587"
+  },
+  {
+    "service_name": "postfix-bbchat",
+    "primary_domain": "bb.chat",
+    "relay_ip": "5.161.17.242/32",
+    "main_cf_path": "/opt/services/config/postfix/main.cf",
+    "spool_path": "/opt/services/mta-bb.chat/spool",
+    "opendkim_path": "/opt/services/mta-bb.chat/opendkim",
+    "fullchain_path": "/opt/services/mta-bb.chat/fullchain.pem",
+    "privkey_path": "/opt/services/mta-bb.chat/privkey.pem",
+    "users_path": "/opt/services/config/postfix/bbchat/users.txt",
+    "users_secret_user": "_bb_chat_smtp_username",
+    "users_secret_password": "_bb_chat_smtp_password",
+    "smtp_bind_address": "5.161.26.199",
+    "smtp_port": "2125",
+    "submission_port": "2187"
+  },
+  {
+    "service_name": "postfix-aiplaymates",
+    "primary_domain": "aiplaymates.ai",
+    "relay_ip": "5.161.17.242/32",
+    "main_cf_path": "/opt/services/config/postfix/main.cf",
+    "spool_path": "/opt/services/mta-aiplaymates.ai/spool",
+    "opendkim_path": "/opt/services/mta-aiplaymates.ai/opendkim",
+    "fullchain_path": "/opt/services/mta-aiplaymates.ai/fullchain.pem",
+    "privkey_path": "/opt/services/mta-aiplaymates.ai/privkey.pem",
+    "users_path": "/opt/services/config/postfix/aiplaymates/users.txt",
+    "users_secret_user": "_aiplaymates_ai_smtp_username",
+    "users_secret_password": "_aiplaymates_ai_smtp_password",
+    "smtp_bind_address": "5.161.26.199",
+    "smtp_port": "2025",
+    "submission_port": "2587"
+  },
+  {
+    "service_name": "postfix-i4chan",
+    "primary_domain": "i4chan.org",
+    "relay_ip": "5.161.17.242/32",
+    "main_cf_path": "/opt/services/config/postfix/main.cf",
+    "spool_path": "/opt/services/mta-i4chan.org/spool",
+    "opendkim_path": "/opt/services/mta-i4chan.org/opendkim",
+    "fullchain_path": "/opt/services/mta-i4chan.org/fullchain.pem",
+    "privkey_path": "/opt/services/mta-i4chan.org/privkey.pem",
+    "users_path": "/opt/services/config/postfix/i4chan/users.txt",
+    "users_secret_user": "_i4chan_org_smtp_username",
+    "users_secret_password": "_i4chan_org_smtp_password",
+    "smtp_bind_address": "5.161.26.199",
+    "submission_port": "2588"
+  },
+  {
+    "service_name": "postfix-relaxgg",
+    "primary_domain": "relax.gg",
+    "relay_ip": "5.161.17.242/32",
+    "main_cf_path": "/opt/services/config/postfix/main.cf",
+    "spool_path": "/opt/services/mta-relax.gg/spool",
+    "opendkim_path": "/opt/services/mta-relax.gg/opendkim",
+    "fullchain_path": "/opt/services/mta-relax.gg/fullchain.pem",
+    "privkey_path": "/opt/services/mta-relax.gg/privkey.pem",
+    "users_path": "/opt/services/config/postfix/relaxgg/users.txt",
+    "users_secret_user": "_relax_gg_smtp_username",
+    "users_secret_password": "_relax_gg_smtp_password",
+    "smtp_bind_address": "5.161.26.199",
+    "smtp_port": "2255",
+    "submission_port": "2586"
+  },
+  {
+    "service_name": "postfix-reblogme",
+    "primary_domain": "reblogme.com",
+    "relay_ip": "5.161.17.242/32",
+    "main_cf_path": "/opt/services/config/postfix/main.cf",
+    "spool_path": "/opt/services/mta-reblogme.com/spool",
+    "opendkim_path": "/opt/services/mta-reblogme.com/opendkim",
+    "fullchain_path": "/opt/services/mta-reblogme.com/fullchain.pem",
+    "privkey_path": "/opt/services/mta-reblogme.com/privkey.pem",
+    "users_path": "/opt/services/config/postfix/reblogme/users.txt",
+    "users_secret_user": "_reblogme_com_smtp_username",
+    "users_secret_password": "_reblogme_com_smtp_password",
+    "smtp_bind_address": "5.161.26.199",
+    "smtp_port": "2425",
+    "submission_port": "2589"
+  },
+  {
+    "service_name": "postfix-bdsmlr",
+    "primary_domain": "bdsmlr.com",
+    "relay_ip": "5.161.17.242/32",
+    "main_cf_path": "/opt/services/config/postfix/main.cf",
+    "spool_path": "/opt/services/mta-bdsmlr.com/spool",
+    "opendkim_path": "/opt/services/mta-bdsmlr.com/opendkim",
+    "fullchain_path": "/opt/services/mta-bdsmlr.com/fullchain.pem",
+    "privkey_path": "/opt/services/mta-bdsmlr.com/privkey.pem",
+    "users_path": "/opt/services/config/postfix/bdsmlr/users.txt",
+    "users_secret_user": "_bdsmlr_com_smtp_username",
+    "users_secret_password": "_bdsmlr_com_smtp_password",
+    "smtp_bind_address": "5.161.26.199",
+    "smtp_port": "2525",
+    "submission_port": "2590"
+  },
+  {
+    "service_name": "postfix-isexychat",
+    "primary_domain": "isexychat.com",
+    "relay_ip": "5.161.17.242/32",
+    "main_cf_path": "/opt/services/config/postfix/main.cf",
+    "spool_path": "/opt/services/mta-isexychat.com/spool",
+    "opendkim_path": "/opt/services/mta-isexychat.com/opendkim",
+    "fullchain_path": "/opt/services/mta-isexychat.com/certs/fullchain.pem",
+    "privkey_path": "/opt/services/mta-isexychat.com/certs/privkey.pem",
+    "users_path": "/opt/services/config/postfix/isexychat/users.txt",
+    "users_secret_user": "_isexychat_com_smtp_username",
+    "users_secret_password": "_isexychat_com_smtp_password",
+    "smtp_bind_address": "5.161.26.199",
+    "smtp_port": "2625",
+    "submission_port": "2591"
+  }
+] %}
+{% set certbot_domains = [
+  "mta.freechat.zone",
+  "mta.reblogme.com",
+  "mta.bdsmlr.com",
+  "mta.bb.chat",
+  "mta.aiplaymates.ai",
+  "mta.i4chan.org",
+  "mta.relax.gg",
+  "mta.isexychat.com"
+] %}
+services:
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    restart: always
+    command:
+      - '--path.rootfs=/host'
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+      - '--web.config.file=/etc/node_exporter/web.config.yml'
+    volumes:
+      - /:/host:ro,rslave
+      - ./config/node_exporter/web.config.yml:/etc/node_exporter/web.config.yml:ro
+    ports:
+      - "9100:9100"
+    network_mode: host
+    pid: host
+{% include '_templates/services/postfix-exporter.yml.j2' %}
+{% include '_templates/services/certbot.yml.j2' %}
+{% for inst in postfix_instances %}
+{% set service_name = inst.service_name %}
+{% set primary_domain = inst.primary_domain %}
+{% set relay_ip = inst.relay_ip %}
+{% set main_cf_path = inst.main_cf_path %}
+{% set spool_path = inst.spool_path %}
+{% set opendkim_path = inst.get('opendkim_path', '') %}
+{% set fullchain_path = inst.fullchain_path %}
+{% set privkey_path = inst.privkey_path %}
+{% set users_path = inst.users_path %}
+{% set smtp_port = inst.get('smtp_port', '') %}
+{% set submission_port = inst.get('submission_port', '') %}
+{% set smtp_bind_address = inst.get('smtp_bind_address', '') %}
+{% include '_templates/services/postfix/base.yml.j2' %}
+{% endfor %}
+{% include "services/edge-prober.yml.j2" %}

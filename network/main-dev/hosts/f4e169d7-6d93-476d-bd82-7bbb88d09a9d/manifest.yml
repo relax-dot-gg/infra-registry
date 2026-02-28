@@ -1,0 +1,44 @@
+hosts:
+  f4e169d7-6d93-476d-bd82-7bbb88d09a9d:
+    canonical_name: infralink3
+    status: active
+    group: infralink-dev
+    cloud: hetzner-cloud
+    tailscale_name: infralink3
+    tailscale_ip: 100.77.73.34
+    public_ip: 178.156.165.183
+    use_exit_node: false
+    services:
+    - node-exporter
+    - cadvisor
+    - cloudflared
+    - nginx
+    - apache
+    - php-fpm
+    - wordpress
+    - certbot
+    - deploy-marker
+    - disk-space
+    - golem
+    wordpress_email_check:
+      enabled: true
+    observability:
+      ready: true
+      managed_services:
+      - node-exporter
+      - cadvisor
+      port_overrides:
+        mariadb: 9104
+      unmanaged_services: []
+      notes: "exporters present."
+    roles:
+      storagebox0: {}
+    docker_version: '28'
+    dns_hostnames:
+    - n8n.i4chan.org
+    - infralink-wordpress.relax.gg
+    legacy_instances:
+    - ax162
+    bws_project: infralink-dev
+    bws_machine_account: infralink3
+    notes: "dev template from relaxgg_ax162; update tailscale_ip and BWS settings"

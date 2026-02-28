@@ -1,0 +1,42 @@
+services:
+  mariadb:
+    image: ghcr.io/relax-dot-gg/mariadb:latest
+    container_name: mariadb
+    restart: always
+    network_mode: host
+    environment:
+      MARIADB_ROOT_PASSWORD: {{ _a4fc70a4_mariadb_root_password }}
+    volumes:
+      - /srv/docker/mariadb/data:/var/lib/mysql
+      - /opt/services/config/mariadb/custom.cnf:/etc/mysql/conf.d/custom.cnf:ro
+
+{% set mysqld_exporter_dsn = _a4fc70a4_mariadb_exporter_dsn %}
+{% set mysqld_exporter_port = '9104' %}
+{% include "services/mysqld-exporter.yml.j2" %}
+
+{% set elasticsearch_password = _a4fc70a4_elasticsearch_password %}
+{% set elasticsearch_data_dir = '/srv/relax-analytics/elasticsearch/data' %}
+{% set elasticsearch_security_enabled = false %}
+{% set elasticsearch_discovery_type = '' %}
+{% set elasticsearch_env = {
+  'cluster.name': 'docker-cluster',
+  'node.name': 'relaxgg-analytics',
+  'node.master': 'true',
+  'node.data': 'true',
+  'node.ingest': 'false',
+  'ES_JAVA_OPTS': '-Xms24g -Xmx24g',
+  'network.host': '0.0.0.0',
+  'discovery.seed_hosts': '100.99.100.7,100.93.157.126',
+  'cluster.routing.allocation.disk.watermark.low': '92%',
+  'cluster.routing.allocation.disk.watermark.high': '96%',
+  'cluster.routing.allocation.disk.watermark.flood_stage': '98%',
+  'cluster.info.update.interval': '1m'
+} %}
+{% include "services/elasticsearch.yml.j2" %}
+{% set elasticsearch_host = '127.0.0.1' %}
+{% set elasticsearch_port = '9200' %}
+{% include "services/elasticsearch-exporter.yml.j2" %}
+
+{% include "services/cadvisor.yml.j2" %}
+{% include "services/node-exporter.yml.j2" %}
+{% include "services/edge-prober.yml.j2" %}

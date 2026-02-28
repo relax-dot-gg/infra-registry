@@ -1,0 +1,147 @@
+# relaxgg-airflow (56b51896-03ec-4fbb-81bf-723ffb4a92c1)
+# Services: Airflow (webserver, scheduler, worker, flower) + exporters
+
+x-airflow-common: &airflow-common
+  image: apache/airflow:2.10.4
+  environment: &airflow-common-env
+    AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://rw_airflow:{{ postgresql_rw_password_airflow }}@100.78.109.111:5432/airflow
+    AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://rw_airflow:{{ postgresql_rw_password_airflow }}@100.78.109.111:5432/airflow
+    AIRFLOW__CELERY__BROKER_URL: redis://:{{ redis_password }}@100.78.109.111:6379/0
+    AIRFLOW__CORE__FERNET_KEY: '{{ airflow_fernet_key }}'
+    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
+    AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+    AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session'
+    AIRFLOW__WEBSERVER__EXPOSE_CONFIG: 'true'
+    AIRFLOW__WEBSERVER__SECRET_KEY: '{{ _56b51896_airflow_webserver_secret }}'
+    AIRFLOW__METRICS__STATSD_ON: 'true'
+    AIRFLOW__METRICS__STATSD_HOST: 'statsd-exporter'
+    AIRFLOW__METRICS__STATSD_PORT: '9125'
+    AIRFLOW__METRICS__STATSD_PREFIX: 'airflow'
+  volumes:
+    - /mnt/storagebox0/airflow/dags:/opt/airflow/dags
+    - /mnt/storagebox0/airflow/plugins:/opt/airflow/plugins
+    - /mnt/storagebox0/airflow/data:/opt/airflow/data
+    - ./logs:/opt/airflow/logs
+    - ./config:/opt/airflow/config
+  user: "${AIRFLOW_UID:-50000}:0"
+
+services:
+  # === AIRFLOW ===
+  airflow-permissions:
+    image: alpine:latest
+    user: "0:0"
+    volumes:
+      - ./logs:/opt/airflow/logs
+    command: >
+      sh -c "mkdir -p /opt/airflow/logs/scheduler /opt/airflow/logs/dag_processor_manager &&
+             chown -R 50000:0 /opt/airflow/logs &&
+             echo 'Permissions fixed'"
+    restart: "no"
+
+  airflow-init:
+    <<: *airflow-common
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        airflow db migrate
+        airflow users create --username admin --firstname Admin --lastname User --role Admin --email admin@relax.gg --password {{ _56b51896_airflow_admin_password }} || true
+    environment:
+      <<: *airflow-common-env
+    restart: "no"
+    depends_on:
+      airflow-permissions:
+        condition: service_completed_successfully
+
+  airflow-webserver:
+    <<: *airflow-common
+    container_name: airflow-webserver
+    command: webserver
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: always
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+
+  airflow-scheduler:
+    <<: *airflow-common
+    container_name: airflow-scheduler
+    command: scheduler
+    restart: always
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+
+  airflow-worker:
+    <<: *airflow-common
+    container_name: airflow-worker
+    command: celery worker
+    restart: always
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+
+  flower:
+    <<: *airflow-common
+    container_name: airflow-flower
+    command: celery flower
+    ports:
+      - "5555:5555"
+    restart: always
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+
+  # === EXPORTERS ===
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    restart: always
+    command:
+      - '--path.rootfs=/host'
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+      - '--web.config.file=/etc/node_exporter/web.config.yml'
+    volumes:
+      - /:/host:ro,rslave
+      - ./config/node_exporter/web.config.yml:/etc/node_exporter/web.config.yml:ro
+    ports:
+      - "9100:9100"
+    network_mode: host
+    pid: host
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    restart: always
+    privileged: true
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    ports:
+      - "8081:8080"
+
+  statsd-exporter:
+    image: prom/statsd-exporter:v0.26.0
+    container_name: statsd-exporter
+    restart: always
+    ports:
+      - "9102:9102"
+      - "9125:9125/udp"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:9102/metrics"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+{% include "services/edge-prober.yml.j2" %}

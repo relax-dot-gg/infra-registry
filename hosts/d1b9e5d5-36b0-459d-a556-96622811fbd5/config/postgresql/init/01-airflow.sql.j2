@@ -1,0 +1,3 @@
+CREATE USER airflow WITH PASSWORD '{{ _d1b9e5d5_postgresql_airflow_password }}';
+CREATE DATABASE airflow OWNER airflow;
+GRANT ALL PRIVILEGES ON DATABASE airflow TO airflow;

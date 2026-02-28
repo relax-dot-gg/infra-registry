@@ -1,0 +1,72 @@
+{% set _redis_port = redis_port|default('6379') %}
+{% set _redis_password = redis_password|default('') %}
+{% set _redis_host = redis_host|default('redis') %}
+{% set _redis_config_path = redis_config_path|default('') %}
+{% set _redis_config_container_path = redis_config_container_path|default('/etc/redis/redis.conf') %}
+{% set _redis_service_enabled = redis_service_enabled|default(true) %}
+{% set _redis_exporter_enabled = redis_exporter_enabled|default(true) %}
+{% set _redis_exporter_network_mode = redis_exporter_network_mode|default('') %}
+{% set _redis_exporter_networks = redis_exporter_networks|default([]) %}
+{% set _redis_port_bindings = redis_port_bindings|default([]) %}
+{% if _redis_service_enabled %}
+  redis:
+    image: redis:7-alpine
+    container_name: {{ redis_container_name|default("redis") }}
+    restart: always
+    command:
+      - redis-server
+{% if _redis_config_path %}      - "{{ _redis_config_container_path }}"
+{% else %}      - "--port"
+      - "{{ _redis_port }}"
+      - "--appendonly"
+      - "yes"
+{% if _redis_password %}      - "--requirepass"
+      - "{{ _redis_password }}"
+{% endif %}{% endif %}
+    ports:
+{% if _redis_port_bindings %}
+{% for binding in _redis_port_bindings %}
+      - "{{ binding }}"
+{% endfor %}
+{% else %}      - "{{ _redis_port }}:{{ _redis_port }}"
+{% endif %}
+    volumes:
+      - {{ redis_data_dir|default('/opt/services/redis/data') }}:/data
+{% if _redis_config_path %}      - {{ _redis_config_path }}:{{ _redis_config_container_path }}:ro
+{% endif %}{% if redis_extra_volumes|default([]) %}
+{% for vol in redis_extra_volumes %}
+      - {{ vol }}
+{% endfor %}
+{% endif %}
+    healthcheck:
+      test: ["CMD", "redis-cli"{% if _redis_password %}, "-a", "{{ _redis_password }}"{% endif %}, "PING"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+{% endif %}
+{% if _redis_exporter_enabled %}
+  redis-exporter:
+    image: oliver006/redis_exporter:latest
+    container_name: {{ redis_exporter_container_name|default("redis-exporter") }}
+    restart: always
+    environment:
+      REDIS_ADDR: "redis://{{ _redis_host }}:{{ _redis_port }}"
+{% if _redis_password %}      REDIS_PASSWORD: "{{ _redis_password }}"
+{% endif %}
+{% if not _redis_exporter_network_mode %}
+    ports:
+      - "{{ redis_exporter_port|default('9121') }}:9121"
+{% endif %}
+{% if _redis_exporter_network_mode %}
+    network_mode: {{ _redis_exporter_network_mode }}
+{% elif _redis_exporter_networks %}
+    networks:
+{% for net in _redis_exporter_networks %}
+      - {{ net }}
+{% endfor %}
+{% endif %}
+{% if _redis_service_enabled %}
+    depends_on:
+      - redis
+{% endif %}
+{% endif %}

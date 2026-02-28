@@ -1,0 +1,31 @@
+hosts:
+  2f1ed7ad-083d-4475-a713-a96f302d663a:
+    tailscale_name: relaxgg-db4
+    tailscale_ip: 100.115.253.26
+    canonical_name: relaxgg-db4
+    group: relaxgg
+    cloud: hetzner-cloud
+    status: active
+    use_exit_node: false
+    services:
+      - golem
+      - mariadb
+      - postgres
+      - redis
+      - node-exporter
+      - cadvisor
+    observability:
+      ready: false
+      managed_services:
+        - node-exporter
+        - cadvisor
+        - mysqld-exporter
+        - postgres-exporter
+        - redis-exporter
+      unmanaged_services: []
+      notes: "Reprovisioned on new IP; golem + DB stack."
+    docker_version: '28'
+    dns_hostnames: []
+    legacy_instances: []
+    bws_project: relaxgg-infra
+    bws_machine_account: relaxgg-db4

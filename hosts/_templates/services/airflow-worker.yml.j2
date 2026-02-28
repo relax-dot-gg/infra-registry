@@ -1,0 +1,38 @@
+  {{ airflow_worker_service_name|default("airflow-worker") }}:
+    image: apache/airflow:2.10.4
+    container_name: {{ airflow_worker_container_name|default("airflow-worker") }}
+    restart: always
+{% if airflow_worker_network_mode|default(false) %}    network_mode: {{ airflow_worker_network_mode }}
+{% endif %}{% if airflow_worker_command|default(false) %}    command: {{ airflow_worker_command }}
+{% else %}    command: celery worker
+{% endif %}    environment:
+      AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://rw_airflow:{{ postgresql_rw_password_airflow }}@infralink2.shrimp-crested.ts.net:5432/airflow
+      AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://rw_airflow:{{ postgresql_rw_password_airflow }}@infralink2.shrimp-crested.ts.net:5432/airflow
+      AIRFLOW__CELERY__BROKER_URL: redis://:{{ redis_password }}@infralink2.shrimp-crested.ts.net:6379/0
+      AIRFLOW__CORE__FERNET_KEY: '{{ airflow_fernet_key }}'
+{% if airflow_worker_hostname|default(false) %}      AIRFLOW__CELERY__WORKER_HOSTNAME: '{{ airflow_worker_hostname }}'
+{% endif %}{% if airflow_worker_metrics|default(true) %}
+      AIRFLOW__METRICS__STATSD_ON: 'true'
+      AIRFLOW__METRICS__STATSD_HOST: '{{ airflow_worker_statsd_host|default("statsd-exporter") }}'
+      AIRFLOW__METRICS__STATSD_PORT: '9125'
+      AIRFLOW__METRICS__STATSD_PREFIX: 'airflow'
+{% endif %}    volumes:
+{% for vol in airflow_worker_volumes|default(['/mnt/storagebox0/airflow/dags:/opt/airflow/dags:ro','/mnt/storagebox0/airflow/plugins:/opt/airflow/plugins:ro']) %}
+      - {{ vol }}
+{% endfor %}{% if airflow_worker_user|default(false) %}    user: "{{ airflow_worker_user }}"
+{% endif %}{% if airflow_worker_deploy_gpu|default(false) %}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+{% endif %}{% if airflow_worker_healthcheck|default(false) %}
+    healthcheck:
+      test: {{ airflow_worker_healthcheck }}
+      interval: 30s
+      timeout: 10s
+      retries: 3
+{% endif %}

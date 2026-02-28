@@ -1,0 +1,4 @@
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+5 * * * * root /bin/bash /opt/services/config/metrics/rollup_metrics_hourly.sh >> /var/log/metrics-rollup.log 2>&1

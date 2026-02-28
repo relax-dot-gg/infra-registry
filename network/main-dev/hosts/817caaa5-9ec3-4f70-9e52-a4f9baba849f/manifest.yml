@@ -1,0 +1,29 @@
+hosts:
+  817caaa5-9ec3-4f70-9e52-a4f9baba849f:
+    canonical_name: infralink0
+    status: active
+    group: infralink-dev
+    cloud: hetzner-cloud
+    tailscale_name: infralink0
+    tailscale_ip: 100.82.194.85
+    public_ip: 178.156.183.219
+    use_exit_node: false
+    services:
+    - prometheus
+    - grafana
+    - blackbox
+    - woodpecker
+    - email-prober
+    - node-exporter
+    - cadvisor
+    - deploy-marker
+    - disk-space
+    - golem
+    roles:
+    - storagebox0
+    docker_version: '28'
+    dns_hostnames: []
+    legacy_instances: []
+    bws_project: infralink-dev
+    bws_machine_account: infralink0
+    notes: "dev template from relaxgg_bastion; update tailscale_ip and BWS settings"

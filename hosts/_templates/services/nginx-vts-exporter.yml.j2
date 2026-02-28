@@ -1,0 +1,15 @@
+{% set _nginx_vts_exporter_image = nginx_vts_exporter_image|default('sophos/nginx-vts-exporter:latest') %}
+{% set _nginx_vts_scrape_uri = nginx_vts_scrape_uri|default('http://127.0.0.1:8081/status') %}
+{% set _nginx_vts_listen = nginx_vts_listen|default(':9113') %}
+{% set _nginx_vts_metrics_path = nginx_vts_metrics_path|default('/metrics') %}
+{% set _nginx_vts_metrics_ns = nginx_vts_metrics_namespace|default('nginx') %}
+  nginx-vts-exporter:
+    image: {{ _nginx_vts_exporter_image }}
+    container_name: {{ nginx_vts_exporter_container_name|default('nginx-vts-exporter') }}
+    restart: always
+    network_mode: host
+    environment:
+      NGINX_STATUS: {{ _nginx_vts_scrape_uri }}
+      METRICS_ADDR: {{ _nginx_vts_listen }}
+      METRICS_ENDPOINT: {{ _nginx_vts_metrics_path }}
+      METRICS_NS: {{ _nginx_vts_metrics_ns }}

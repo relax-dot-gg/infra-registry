@@ -1,0 +1,23 @@
+worker_processes auto;
+events { worker_connections 1024; }
+
+http {
+  log_format basic '$remote_addr - $host "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent"';
+  access_log /var/log/nginx/access.log basic;
+  error_log /var/log/nginx/error.log warn;
+
+  server {
+    listen 8189;
+    listen [::]:8189;
+    server_name gh-hooks.relax.gg;
+
+    location / {
+      proxy_pass http://100.90.92.77:18789;
+      proxy_set_header X-OpenClaw-Token "{{ _97da6b29_gh_hooks_token }}";
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto $scheme;
+    }
+  }
+}

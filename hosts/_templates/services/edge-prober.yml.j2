@@ -1,0 +1,11 @@
+  edge-prober:
+    image: ghcr.io/relax-dot-gg/edge-prober:latest
+    container_name: edge-prober
+    restart: always
+    environment:
+      EDGE_PROBER_CONFIG: /config/edges.json
+    volumes:
+      - /opt/infra/edge-prober/edges.json:/config/edges.json:ro
+      - /opt/infra/edge-prober/ssh:/config/ssh:ro
+      - /mnt/storagebox0:/mnt/storagebox0:rw
+    network_mode: host

@@ -1,0 +1,61 @@
+{% if postfix_instances is defined %}
+  # Log aggregator - tails Docker logs from all postfix containers to files
+  postfix-log-aggregator:
+    image: docker:cli
+    container_name: postfix-log-aggregator
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./postfix-logs:/var/log/postfix
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        mkdir -p /var/log/postfix
+        # Start log tailers for each postfix container in background
+{% for inst in postfix_instances %}
+        (while true; do docker logs -f services-{{ inst.service_name }}-1 2>&1 >> /var/log/postfix/{{ inst.primary_domain }}.log; sleep 5; done) &
+{% endfor %}
+        # Keep container running and rotate logs daily
+        while true; do
+          sleep 86400
+          for f in /var/log/postfix/*.log; do
+            [ -f "$$f" ] && tail -n 100000 "$$f" > "$$f.tmp" && mv "$$f.tmp" "$$f"
+          done
+        done
+
+{% for inst in postfix_instances %}
+  postfix-exporter-{{ inst.primary_domain | replace('.', '-') }}:
+    image: docker.io/unikum/postfix_exporter:latest
+    container_name: postfix-exporter-{{ inst.primary_domain | replace('.', '-') }}
+    restart: always
+    depends_on:
+      - postfix-log-aggregator
+    command:
+      - --postfix.logfile_path=/var/log/postfix/{{ inst.primary_domain }}.log
+      - --postfix.showq_path=/var/spool/postfix/public/showq
+      - --web.listen-address=:9154
+    volumes:
+      - ./postfix-logs:/var/log/postfix:ro
+      - {{ inst.spool_path }}/postfix:/var/spool/postfix:ro
+    labels:
+      - "prometheus.scrape=true"
+      - "prometheus.port=9154"
+      - "prometheus.domain={{ inst.primary_domain }}"
+    ports:
+      - "{{ 9154 + loop.index0 }}:9154"
+
+{% endfor %}
+{% else %}
+  # Single instance fallback (legacy)
+  postfix-exporter:
+    image: docker.io/unikum/postfix_exporter:latest
+    container_name: postfix-exporter
+    restart: always
+    environment:
+      - POSTFIX_EXPORTER_WEB_LISTEN_ADDRESS=:{{ postfix_exporter_port|default("9154") }}
+      - POSTFIX_EXPORTER_POSTFIX_VAR_DIR=/var/spool/postfix
+    volumes:
+      - /var/spool/postfix:/var/spool/postfix:ro
+    ports:
+      - "{{ postfix_exporter_port|default('9154') }}:{{ postfix_exporter_port|default('9154') }}"
+{% endif %}

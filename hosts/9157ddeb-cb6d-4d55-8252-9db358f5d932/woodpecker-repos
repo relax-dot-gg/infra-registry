@@ -1,0 +1,294 @@
+#!/bin/bash
+set -e
+
+# Fetch secrets from BWS if not already set
+fetch_bws_secret() {
+    local key="$1"
+    if command -v bws &>/dev/null && [[ -n "${BWS_ACCESS_TOKEN:-}" ]] && [[ -n "${BWS_PROJECT_ID:-}" ]]; then
+        bws secret list "$BWS_PROJECT_ID" 2>/dev/null | \
+            python3 -c "import sys,json; secrets={s['key']:s['value'] for s in json.load(sys.stdin)}; print(secrets.get('$key',''))"
+    fi
+}
+
+# PostgreSQL connection from BWS or environment
+if [[ -z "${PGPASSWORD:-}" ]]; then
+    DATASOURCE=$(fetch_bws_secret "9157ddeb_database_datasource")
+    if [[ -n "$DATASOURCE" ]]; then
+        # Parse postgres://user:pass@host:port/db
+        PGUSER=$(echo "$DATASOURCE" | sed -E 's|postgres://([^:]+):.*|\1|')
+        PGPASSWORD=$(echo "$DATASOURCE" | sed -E 's|postgres://[^:]+:([^@]+)@.*|\1|')
+        PGHOST=$(echo "$DATASOURCE" | sed -E 's|.*@([^:]+):.*|\1|')
+        PGPORT=$(echo "$DATASOURCE" | sed -E 's|.*:([0-9]+)/.*|\1|')
+        PGDATABASE=$(echo "$DATASOURCE" | sed -E 's|.*/([^?]+).*|\1|')
+    fi
+fi
+
+: "${PGHOST:=100.78.109.111}"
+: "${PGPORT:=5432}"
+: "${PGDATABASE:=woodpecker}"
+: "${PGUSER:=woodpecker}"
+if [[ -z "${PGPASSWORD:-}" ]]; then
+    echo "ERROR: PGPASSWORD must be set or available via BWS" >&2
+    exit 1
+fi
+export PGHOST PGPORT PGDATABASE PGUSER PGPASSWORD
+
+# Woodpecker API config
+WOODPECKER_SERVER="${WOODPECKER_SERVER:-https://woodpecker.relax.gg}"
+if [[ -z "${WOODPECKER_TOKEN:-}" ]]; then
+    WOODPECKER_TOKEN=$(fetch_bws_secret "9157ddeb_api_token")
+fi
+if [[ -z "${WOODPECKER_TOKEN:-}" ]]; then
+    echo "ERROR: WOODPECKER_TOKEN must be set or available via BWS" >&2
+    exit 1
+fi
+export WOODPECKER_TOKEN
+
+ORGS="cyberstorm-dev fwh-ltd relax-dot-gg relayos"
+
+psql_query() {
+    psql -t -A -c "$1" 2>/dev/null
+}
+
+get_token() {
+    psql_query "SELECT access_token FROM users LIMIT 1;"
+}
+
+get_org_id() {
+    local org="$1"
+    psql_query "SELECT id FROM orgs WHERE name='$org';"
+}
+
+ensure_org() {
+    local org="$1"
+    local exists=$(psql_query "SELECT COUNT(*) FROM orgs WHERE name='$org';")
+    if [ "$exists" -eq 0 ]; then
+        psql_query "INSERT INTO orgs (forge_id, name, is_user, private) VALUES (1, '$org', false, false);"
+        echo "Created org: $org"
+    fi
+}
+
+list_repos() {
+    echo "=== Repos in Woodpecker DB ==="
+    psql -c "SELECT r.id, r.full_name, r.active, o.name as org FROM repos r LEFT JOIN orgs o ON r.org_id = o.id ORDER BY r.full_name;"
+}
+
+list_github_repos() {
+    local org="$1"
+    local token=$(get_token)
+
+    if [ -z "$org" ]; then
+        echo "=== GitHub Org Repos (not in Woodpecker) ==="
+        for page in 1 2 3 4 5 6; do
+            curl -s -H "Authorization: token $token" "https://api.github.com/user/repos?per_page=100&page=$page" | \
+                jq -r ".[] | select(.owner.login == \"cyberstorm-dev\" or .owner.login == \"fwh-ltd\" or .owner.login == \"relax-dot-gg\" or .owner.login == \"relayos\") | .full_name"
+        done | while read repo; do
+            exists=$(psql_query "SELECT COUNT(*) FROM repos WHERE full_name='$repo';")
+            if [ "$exists" -eq 0 ]; then
+                echo "$repo"
+            fi
+        done
+    else
+        echo "=== GitHub Repos for $org ==="
+        for page in 1 2 3 4 5 6; do
+            curl -s -H "Authorization: token $token" "https://api.github.com/user/repos?per_page=100&page=$page" | \
+                jq -r ".[] | select(.owner.login == \"$org\") | .full_name"
+        done
+    fi
+}
+
+check_woodpecker_config() {
+    local full_name="$1"
+    local token=$(get_token)
+
+    local has_yml=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: token $token" "https://api.github.com/repos/$full_name/contents/.woodpecker.yml")
+    local has_dir=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: token $token" "https://api.github.com/repos/$full_name/contents/.woodpecker")
+
+    if [ "$has_yml" = "200" ] || [ "$has_dir" = "200" ]; then
+        return 0
+    fi
+    return 1
+}
+
+add_repo() {
+    local full_name="$1"
+    local force="${2:-}"
+    local token=$(get_token)
+
+    local exists=$(psql_query "SELECT COUNT(*) FROM repos WHERE full_name='$full_name';")
+    if [ "$exists" -gt 0 ]; then
+        echo "Repo already exists: $full_name"
+        return 0
+    fi
+
+    if [ "$force" != "--force" ]; then
+        if ! check_woodpecker_config "$full_name"; then
+            echo "Skipping $full_name: no .woodpecker.yml or .woodpecker/ found (use --force to add anyway)"
+            return 1
+        fi
+    fi
+
+    local repo_json=$(curl -s -H "Authorization: token $token" "https://api.github.com/repos/$full_name")
+
+    local repo_id=$(echo "$repo_json" | jq -r ".id")
+    if [ "$repo_id" == "null" ] || [ -z "$repo_id" ]; then
+        echo "Error: Could not fetch repo $full_name from GitHub"
+        return 1
+    fi
+
+    local owner=$(echo "$repo_json" | jq -r ".owner.login")
+    local name=$(echo "$repo_json" | jq -r ".name")
+    local private=$(echo "$repo_json" | jq -r ".private")
+    local clone_url=$(echo "$repo_json" | jq -r ".clone_url")
+    local ssh_url=$(echo "$repo_json" | jq -r ".ssh_url")
+    local branch=$(echo "$repo_json" | jq -r ".default_branch")
+    local html_url=$(echo "$repo_json" | jq -r ".html_url")
+    local avatar=$(echo "$repo_json" | jq -r ".owner.avatar_url")
+
+    local private_bool="false"
+    [ "$private" == "true" ] && private_bool="true"
+
+    local visibility="public"
+    [ "$private" == "true" ] && visibility="private"
+
+    ensure_org "$owner"
+    local org_id=$(get_org_id "$owner")
+
+    local hash=$(openssl rand -base64 32 | tr -d "/+=" | head -c 52)
+    hash="${hash}===="
+
+    local user_id=$(psql_query "SELECT id FROM users LIMIT 1;")
+
+    psql_query "INSERT INTO repos (user_id, forge_id, forge_remote_id, org_id, owner, name, full_name, avatar, forge_url, clone, clone_ssh, branch, pr_enabled, timeout, visibility, private, trusted, require_approval, active, allow_pr, allow_deploy, config_path, hash, cancel_previous_pipeline_events) VALUES ($user_id, 1, '$repo_id', $org_id, '$owner', '$name', '$full_name', '$avatar', '$html_url', '$clone_url', '$ssh_url', '$branch', true, 60, '$visibility', $private_bool, '{\"network\":true,\"volumes\":true,\"security\":true}', 'forks', true, true, false, ''::text, '$hash', '[\"push\",\"pull_request\"]'::jsonb);"
+
+    local new_repo_id=$(psql_query "SELECT id FROM repos WHERE full_name='$full_name';")
+
+    local now=$(date +%s)
+    psql_query "INSERT INTO perms (user_id, repo_id, pull, push, admin, synced, created, updated) VALUES ($user_id, $new_repo_id, true, true, true, $now, $now, $now);"
+
+    echo "Added: $full_name"
+
+    repair_repo "$full_name"
+}
+
+repair_repo() {
+    local full_name="$1"
+    local repo_id=$(psql_query "SELECT id FROM repos WHERE full_name='$full_name';")
+
+    if [ -z "$repo_id" ]; then
+        echo "  Warning: Repo not found in DB for repair"
+        return 1
+    fi
+
+    local result=$(curl -s -X POST \
+        -H "Authorization: Bearer $WOODPECKER_TOKEN" \
+        "$WOODPECKER_SERVER/api/repos/$repo_id/repair" \
+        -w "%{http_code}" -o /dev/null)
+
+    if [ "$result" = "204" ] || [ "$result" = "200" ]; then
+        echo "  Webhook created via repair"
+    else
+        echo "  Warning: Repair returned HTTP $result"
+    fi
+}
+
+add_org() {
+    local org="$1"
+    local token=$(get_token)
+
+    echo "Adding all repos for org: $org"
+
+    for page in 1 2 3 4 5 6; do
+        curl -s -H "Authorization: token $token" "https://api.github.com/user/repos?per_page=100&page=$page" | \
+            jq -r ".[] | select(.owner.login == \"$org\") | .full_name"
+    done | while read repo; do
+        add_repo "$repo"
+    done
+}
+
+sync_all() {
+    echo "Syncing all org repos..."
+    for org in $ORGS; do
+        add_org "$org"
+    done
+}
+
+remove_repo() {
+    local full_name="$1"
+    local repo_id=$(psql_query "SELECT id FROM repos WHERE full_name='$full_name';")
+
+    if [ -z "$repo_id" ]; then
+        echo "Repo not found: $full_name"
+        return 1
+    fi
+
+    local result=$(curl -s -X DELETE \
+        -H "Authorization: Bearer $WOODPECKER_TOKEN" \
+        "$WOODPECKER_SERVER/api/repos/$repo_id" \
+        -w "%{http_code}" -o /dev/null)
+
+    if [ "$result" = "204" ] || [ "$result" = "200" ]; then
+        echo "Removed: $full_name"
+    else
+        echo "Warning: Delete returned HTTP $result, cleaning up DB manually"
+        psql_query "DELETE FROM perms WHERE repo_id=$repo_id;"
+        psql_query "DELETE FROM repos WHERE id=$repo_id;"
+        echo "Removed: $full_name (DB only)"
+    fi
+}
+
+usage() {
+    cat <<EOF
+Woodpecker Repo Manager (PostgreSQL + BWS)
+
+Usage: $0 <command> [args]
+
+Commands:
+  list                      List repos in Woodpecker DB
+  list-github [org]         List GitHub org repos (optionally filter by org)
+  list-missing              List GitHub org repos not in Woodpecker
+  add <owner/repo> [--force]  Add a single repo (requires .woodpecker.yml unless --force)
+  add-org <org>             Add all repos from an org that have .woodpecker.yml
+  sync                      Sync all org repos ($ORGS) that have .woodpecker.yml
+  remove <owner/repo>       Remove a repo
+
+Environment:
+  Secrets are fetched from BWS using BWS_ACCESS_TOKEN and BWS_PROJECT_ID
+  (typically set in /etc/environment by gitops_bootstrap)
+
+Examples:
+  $0 list
+  $0 add relax-dot-gg/infra-images
+  $0 sync
+EOF
+}
+
+case "${1:-}" in
+    list)
+        list_repos
+        ;;
+    list-github)
+        list_github_repos "${2:-}"
+        ;;
+    list-missing)
+        list_github_repos
+        ;;
+    add)
+        [ -z "${2:-}" ] && { echo "Error: repo name required"; usage; exit 1; }
+        add_repo "$2" "${3:-}"
+        ;;
+    add-org)
+        [ -z "${2:-}" ] && { echo "Error: org name required"; usage; exit 1; }
+        add_org "$2"
+        ;;
+    sync)
+        sync_all
+        ;;
+    remove)
+        [ -z "${2:-}" ] && { echo "Error: repo name required"; usage; exit 1; }
+        remove_repo "$2"
+        ;;
+    *)
+        usage
+        ;;
+esac

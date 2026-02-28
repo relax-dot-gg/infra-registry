@@ -1,0 +1,93 @@
+# relaxgg-ax162 (fa2b9872-d94c-4b20-a73a-57a205560769)
+# Airflow Celery worker for central airflow cluster
+#
+# NOTE: This host also runs a LOCAL airflow instance (separate compose).
+# This worker connects to the CENTRAL airflow on relaxgg-databases.
+
+services:
+  # === CENTRAL AIRFLOW WORKER ===
+{% set airflow_worker_container_name = "airflow-worker-central" %}
+{% set airflow_worker_network_mode = "host" %}
+{% set airflow_worker_command = "celery worker --concurrency 90" %}
+{% set airflow_worker_statsd_host = "127.0.0.1" %}
+{% set airflow_worker_volumes = [
+  '/mnt/storagebox0/airflow/dags:/opt/airflow/dags:ro',
+  '/mnt/storagebox0/airflow/plugins:/opt/airflow/plugins:ro'
+] %}
+{% set airflow_worker_user = "50000:0" %}
+{% set airflow_worker_healthcheck = ["CMD-SHELL", "celery --app airflow.providers.celery.executors.celery_executor.app inspect ping -d celery@$$HOSTNAME"] %}
+{% include "services/airflow-worker.yml.j2" %}
+
+  # === LOCAL REDIS (for ancillary workloads) ===
+{% set redis_password = _fa2b9872_redis_password %}
+{% set redis_data_dir = './redis-data' %}
+{% set redis_port = '6379' %}
+{% set redis_exporter_port = '9121' %}
+{% set redis_service_enabled = false %}
+{% set redis_exporter_enabled = false %}
+{% include "services/redis.yml.j2" %}
+
+  # === NGINX ===
+  nginx:
+    image: ghcr.io/relax-dot-gg/nginx:latest
+    container_name: nginx
+    restart: always
+    network_mode: host
+    volumes:
+      - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./config/nginx/conf.d:/etc/nginx/conf.d:ro
+      - /opt/services/nginx/certs:/etc/nginx/certs:ro
+
+  # === N8N ===
+  n8n:
+    image: docker.n8n.io/n8nio/n8n
+    container_name: n8n
+    restart: always
+    ports:
+      - "127.0.0.1:5678:5678"
+    environment:
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: "100.78.109.111"
+      DB_POSTGRESDB_PORT: "5432"
+      DB_POSTGRESDB_DATABASE: {{ _fa2b9872_n8n_postgres_db }}
+      DB_POSTGRESDB_USER: {{ _fa2b9872_n8n_postgres_user }}
+      DB_POSTGRESDB_PASSWORD: {{ _fa2b9872_n8n_postgres_password }}
+      EXECUTIONS_MODE: queue
+      QUEUE_BULL_REDIS_HOST: "100.78.109.111"
+      QUEUE_BULL_REDIS_PORT: "6379"
+      QUEUE_BULL_REDIS_PASSWORD: {{ _fa2b9872_n8n_redis_password }}
+      QUEUE_BULL_REDIS_DB: "0"
+      QUEUE_HEALTH_CHECK_ACTIVE: "true"
+      N8N_ENCRYPTION_KEY: {{ _fa2b9872_n8n_encryption_key }}
+    volumes:
+      - /opt/services/n8n:/home/node/.n8n
+
+  n8n-worker:
+    image: docker.n8n.io/n8nio/n8n
+    container_name: n8n-worker
+    restart: always
+    command: worker
+    environment:
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: "100.78.109.111"
+      DB_POSTGRESDB_PORT: "5432"
+      DB_POSTGRESDB_DATABASE: {{ _fa2b9872_n8n_postgres_db }}
+      DB_POSTGRESDB_USER: {{ _fa2b9872_n8n_postgres_user }}
+      DB_POSTGRESDB_PASSWORD: {{ _fa2b9872_n8n_postgres_password }}
+      EXECUTIONS_MODE: queue
+      QUEUE_BULL_REDIS_HOST: "100.78.109.111"
+      QUEUE_BULL_REDIS_PORT: "6379"
+      QUEUE_BULL_REDIS_PASSWORD: {{ _fa2b9872_n8n_redis_password }}
+      QUEUE_BULL_REDIS_DB: "0"
+      QUEUE_HEALTH_CHECK_ACTIVE: "true"
+      N8N_ENCRYPTION_KEY: {{ _fa2b9872_n8n_encryption_key }}
+    volumes:
+      - /opt/services/n8n:/home/node/.n8n
+    depends_on:
+      - n8n
+
+  # === EXPORTERS ===
+{% include "services/statsd-exporter.yml.j2" %}
+{% include "services/node-exporter.yml.j2" %}
+{% include "services/cadvisor.yml.j2" %}
+{% include "services/edge-prober.yml.j2" %}
