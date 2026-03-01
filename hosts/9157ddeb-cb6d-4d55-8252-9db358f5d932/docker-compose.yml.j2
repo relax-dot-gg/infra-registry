@@ -111,6 +111,12 @@ services:
       - GITEA_ADMIN_EMAIL=devops-sa@relax.gg
       - GITEA_ADMIN_FULL_NAME=RelaxGG Admin
       - GITEA__log__MODE=console
+      - GITEA__repository.signing__SIGNING_FORMAT=ssh
+      - GITEA__repository.signing__INITIAL_COMMIT=always
+      - GITEA__repository.signing__MERGES=pubkey, basesigned, commitssigned
+      - GITEA__metrics__ENABLED=true
+      - GITEA__metrics__ENABLED_ISSUE_BY_LABEL=true
+      - GITEA__metrics__ENABLED_ISSUE_BY_REPOSITORY=true
     volumes:
       - ./gitea:/data
     ports:
