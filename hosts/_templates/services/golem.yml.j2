@@ -10,17 +10,11 @@
         mkdir -p /run/secrets
         echo "$${GOLEM_DEPLOY_KEY_B64}" | base64 -d > /run/secrets/deploy_key
         chmod 600 /run/secrets/deploy_key
-        # Build HTTP repo URL from token (avoid embedding secrets in compose)
-        TOKEN=$$(cat /run/secrets/deploy_key)
-        if [ -z "$${LEDGER_REPO:-}" ]; then
-          LEDGER_REPO="http://$${TOKEN}@100.73.228.90:3000/relaxgg/golem-ledger.git"
-        fi
-        export LEDGER_REPO
         git config --global --add safe.directory /ledger
         exec /opt/golem/entrypoint.sh
     environment:
       LEDGER_DIR: /ledger
-      # LEDGER_REPO will be derived from GOLEM_DEPLOY_KEY_B64 if not provided
+      LEDGER_REPO: "ssh://git@100.73.228.90:2222/relaxgg/golem-ledger.git"
       POLL_INTERVAL: "3"
       GIT_REMOTE: origin
       GIT_USER_NAME: "relaxgg-devops"
