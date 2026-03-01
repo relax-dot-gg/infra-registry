@@ -7,9 +7,11 @@
       - -c
       - |
         set -euo pipefail
-        mkdir -p /run/secrets /etc/golem
+        mkdir -p /run/secrets
         echo "$${GOLEM_DEPLOY_KEY_B64}" | base64 -d > /run/secrets/deploy_key
         chmod 600 /run/secrets/deploy_key
+        rm -rf /etc/golem/allowed_signers
+        mkdir -p /etc/golem
         echo "$${GOLEM_ALLOWED_SIGNERS_B64}" | base64 -d > /etc/golem/allowed_signers
         git config --global --add safe.directory /ledger
         exec /opt/golem/entrypoint.sh
