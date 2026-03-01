@@ -35,9 +35,9 @@ projects:
     description: Infrastructure host secrets (UUID-prefixed)
     aliases: []
     canonical_hosts:
-      d1b9e5d5: relaxgg-databases  # Owns mariadb, postgresql, redis passwords
-      56b51896: relaxgg-airflow    # Owns airflow secrets
-      9157ddeb: relaxgg-woodpecker # Owns woodpecker/CI secrets
+      d1b9e5d5: relaxgg-databases    # Owns mariadb, postgresql, redis passwords
+      56b51896: relaxgg-airflow      # Owns airflow secrets
+      9157ddeb: cyberstorm-citadel   # Legacy mapping; host now lives in cyberstorm-infra project
 
   # === Admin (bastion only) ===
   relaxgg-admin:
