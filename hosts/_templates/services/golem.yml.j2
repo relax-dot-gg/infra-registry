@@ -25,6 +25,7 @@
       GOLEM_ALLOWED_SIGNERS_B64: "{{ golem_allowed_signers_b64 }}"
     volumes:
       - /opt/services/golem/ledger:/ledger
+      - /opt/services/config/golem/allowed_signers:/etc/golem/allowed_signers:ro
       - /etc/machine-uuid:/etc/machine-uuid:ro
       - /var/run/docker.sock:/var/run/docker.sock
       - /:/host:rw
