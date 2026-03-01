@@ -26,5 +26,6 @@
       - /etc/machine-uuid:/etc/machine-uuid:ro
       - /var/run/docker.sock:/var/run/docker.sock
       - /:/host:rw
+      - /opt/services/config/golem/allowed_signers:/etc/golem/allowed_signers:ro
     network_mode: host
     pid: host
