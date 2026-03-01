@@ -1,0 +1,21 @@
+hosts:
+  ea964c81-4284-4c56-aee6-4ecbbd8a2299:
+    tailscale_name: cyberstorm-citadel
+    tailscale_ip: 100.120.95.89
+    canonical_name: cyberstorm-citadel
+    group: cyberstorm
+    cloud: hetzner-robot
+    status: active
+    use_exit_node: false
+    services:
+      - golem
+    observability:
+      ready: false
+      managed_services: []
+      unmanaged_services: []
+      notes: "Initial golem-only deployment."
+    docker_version: '28'
+    dns_hostnames: []
+    legacy_instances: []
+    bws_project: cyberstorm-infra
+    bws_machine_account: cyberstorm-citadel
