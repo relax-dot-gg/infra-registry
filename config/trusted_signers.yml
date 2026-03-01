@@ -1,7 +1,0 @@
-# Trusted SSH signing keys for golem command verification
-# These keys are allowed to issue golem commands across all hosts
-# Add new signers here; self-deploy generates allowed_signers from this file
-signers:
-  - identity: cloudops@cyberstorm.dev
-    pubkey: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG8PToL9hUcNreWk4dKfiCMupSuuivGh+6GXMh/HEgQw"
-  # Add Allen's key and any other trusted operator keys below

@@ -7,9 +7,10 @@
       - -c
       - |
         set -euo pipefail
-        mkdir -p /run/secrets
+        mkdir -p /run/secrets /etc/golem
         echo "$${GOLEM_DEPLOY_KEY_B64}" | base64 -d > /run/secrets/deploy_key
         chmod 600 /run/secrets/deploy_key
+        echo "$${GOLEM_ALLOWED_SIGNERS}" > /etc/golem/allowed_signers
         git config --global --add safe.directory /ledger
         exec /opt/golem/entrypoint.sh
     environment:
@@ -21,11 +22,11 @@
       GIT_USER_EMAIL: "devops@relax.gg"
       GIT_SSH_COMMAND: "ssh -i /run/secrets/deploy_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
       GOLEM_DEPLOY_KEY_B64: "{{ golem_ledger_deploy_key_b64 }}"
+      GOLEM_ALLOWED_SIGNERS: "cloudops@cyberstorm.dev {{ gitea_cloudops_pubkey }}"
     volumes:
       - /opt/services/golem/ledger:/ledger
       - /etc/machine-uuid:/etc/machine-uuid:ro
       - /var/run/docker.sock:/var/run/docker.sock
       - /:/host:rw
-      - /opt/services/config/golem/allowed_signers:/etc/golem/allowed_signers:ro
     network_mode: host
     pid: host
