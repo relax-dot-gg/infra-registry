@@ -12,6 +12,8 @@
         chmod 600 /run/secrets/deploy_key
         mkdir -p /etc/golem
         echo "$${GOLEM_ALLOWED_SIGNERS_B64}" | base64 -d > /etc/golem/allowed_signers
+        git config --global gpg.format ssh
+        git config --global gpg.ssh.allowedSignersFile /etc/golem/allowed_signers
         git config --global --add safe.directory /ledger
         exec /opt/golem/entrypoint.sh
     environment:
