@@ -1,28 +1,25 @@
 hosts:
   9157ddeb-cb6d-4d55-8252-9db358f5d932:
-    tailscale_name: relaxgg-woodpecker
+    tailscale_name: cyberstorm-citadel
     tailscale_ip: 100.73.228.90
-    canonical_name: relaxgg-woodpecker
-    group: relaxgg
+    canonical_name: cyberstorm-citadel
+    group: cyberstorm
     cloud: hetzner-cloud
     status: active
     use_exit_node: true
     services:
       - woodpecker
-      - airflow-worker
     observability:
       ready: false
       managed_services:
         - node-exporter
         - woodpecker
-        - airflow-worker
+        - edge-prober
       unmanaged_services: []
       notes: "woodpecker + airflow worker"
     docker_version: "28"
     dns_hostnames: []
     legacy_instances: []
-    storagebox0_mount: true
-    bws_project: relaxgg-infra
-    bws_extra_projects:
-      - relaxgg-data
-    bws_machine_account: relaxgg-woodpecker
+    storagebox0_mount: false
+    bws_project: cyberstorm-infra
+    bws_machine_account: cyberstorm-citadel
