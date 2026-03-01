@@ -15,7 +15,7 @@
         git config --global gpg.format ssh
         git config --global gpg.ssh.allowedSignersFile /etc/golem/allowed_signers
         git config --global --add safe.directory /ledger
-        exec /opt/golem/entrypoint.sh
+        exec /opt/golem/entrypoint.sh "$${LEDGER_REPO}"
     environment:
       LEDGER_DIR: /ledger
       LEDGER_REPO: "ssh://git@100.73.228.90:2222/relaxgg/golem-ledger.git"
