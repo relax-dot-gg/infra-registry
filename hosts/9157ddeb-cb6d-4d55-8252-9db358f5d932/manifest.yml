@@ -22,4 +22,6 @@ hosts:
     legacy_instances: []
     storagebox0_mount: false
     bws_project: cyberstorm-infra
+    bws_extra_projects:
+      - relaxgg-infra  # for shared GitHub OAuth secrets
     bws_machine_account: cyberstorm-citadel
