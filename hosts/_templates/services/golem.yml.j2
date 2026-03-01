@@ -10,7 +10,6 @@
         mkdir -p /run/secrets
         echo "$${GOLEM_DEPLOY_KEY_B64}" | base64 -d > /run/secrets/deploy_key
         chmod 600 /run/secrets/deploy_key
-        rm -rf /etc/golem/allowed_signers
         mkdir -p /etc/golem
         echo "$${GOLEM_ALLOWED_SIGNERS_B64}" | base64 -d > /etc/golem/allowed_signers
         git config --global --add safe.directory /ledger
@@ -27,7 +26,6 @@
       GOLEM_ALLOWED_SIGNERS_B64: "{{ golem_allowed_signers_b64 }}"
     volumes:
       - /opt/services/golem/ledger:/ledger
-      - /opt/services/config/golem/allowed_signers:/etc/golem/allowed_signers:ro
       - /etc/machine-uuid:/etc/machine-uuid:ro
       - /var/run/docker.sock:/var/run/docker.sock
       - /:/host:rw
