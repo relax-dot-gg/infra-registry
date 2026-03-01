@@ -9,5 +9,6 @@
     volumes:
       - /opt/infra/monitoring/data/grafana:/var/lib/grafana
       - /opt/infra/monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - /opt/infra/monitoring/grafana/dashboards:/etc/grafana/dashboards:ro
     ports:
       - "3001:3001"
