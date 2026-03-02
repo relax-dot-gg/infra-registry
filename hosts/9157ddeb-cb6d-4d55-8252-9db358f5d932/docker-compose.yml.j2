@@ -6,7 +6,7 @@
 {% set redis_port = '6379' %}
 {% set redis_exporter_port = '9121' %}
 {% set redis_password = _9157ddeb_redis_password %}
-{% set golem_ledger_repo_url = 'ssh://git@100.73.228.90:2222/relaxgg/golem-ledger.git' %}
+{% set golem_ledger_repo_url = 'http://' ~ _9157ddeb_gitea_token ~ '@100.73.228.90:3000/relaxgg/golem-ledger.git' %}
 
 services:
   cloudflared:
