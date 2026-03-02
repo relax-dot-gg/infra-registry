@@ -20,8 +20,8 @@
         if [ -n "${LEDGER_REPO:-}" ]; then
           REPO_URL="$${LEDGER_REPO}"
         else
-          TOKEN=$$(cat /run/secrets/deploy_key)
-          REPO_URL="http://$${TOKEN}@100.73.228.90:3000/relaxgg/golem-ledger.git"
+          # fall back to SSH using deploy key
+          REPO_URL="ssh://git@100.73.228.90:2222/relaxgg/golem-ledger.git"
         fi
 
         exec /opt/golem/entrypoint.sh "$${REPO_URL}"
