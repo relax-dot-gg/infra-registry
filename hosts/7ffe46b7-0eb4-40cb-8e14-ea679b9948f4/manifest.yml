@@ -9,11 +9,16 @@ hosts:
     use_exit_node: false
     services:
       - golem
+      - prometheus
+      - grafana
+      - gatus
+      - pushgateway
+      - node-exporter
     observability:
       ready: false
       managed_services: []
       unmanaged_services: []
-      notes: "Initial golem-only deployment."
+      notes: "Monitoring stack (Prom/Grafana/Gatus/Pushgateway) + golem"
     docker_version: '28'
     dns_hostnames: []
     legacy_instances: []

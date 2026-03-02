@@ -1,0 +1,66 @@
+-- Core roles
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'ops') THEN
+    CREATE ROLE ops LOGIN PASSWORD '{{ _9157ddeb_postgresql_ops_password }}';
+  ELSE
+    ALTER ROLE ops WITH PASSWORD '{{ _9157ddeb_postgresql_ops_password }}';
+  END IF;
+END $$;
+
+-- Woodpecker
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'woodpecker') THEN
+    CREATE ROLE woodpecker LOGIN PASSWORD '{{ _9157ddeb_postgresql_rw_password_woodpecker }}';
+  ELSE
+    ALTER ROLE woodpecker WITH PASSWORD '{{ _9157ddeb_postgresql_rw_password_woodpecker }}';
+  END IF;
+END $$;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'woodpecker') THEN
+    CREATE DATABASE woodpecker OWNER woodpecker;
+  END IF;
+END $$;
+
+GRANT CONNECT ON DATABASE woodpecker TO ops;
+
+-- Gitea
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'gitea') THEN
+    CREATE ROLE gitea LOGIN PASSWORD '{{ _9157ddeb_postgresql_rw_password_gitea }}';
+  ELSE
+    ALTER ROLE gitea WITH PASSWORD '{{ _9157ddeb_postgresql_rw_password_gitea }}';
+  END IF;
+END $$;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'gitea') THEN
+    CREATE DATABASE gitea OWNER gitea;
+  END IF;
+END $$;
+
+GRANT CONNECT ON DATABASE gitea TO ops;
+
+-- Grafana
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'grafana') THEN
+    CREATE ROLE grafana LOGIN PASSWORD '{{ _9157ddeb_postgresql_rw_password_grafana }}';
+  ELSE
+    ALTER ROLE grafana WITH PASSWORD '{{ _9157ddeb_postgresql_rw_password_grafana }}';
+  END IF;
+END $$;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'grafana') THEN
+    CREATE DATABASE grafana OWNER grafana;
+  END IF;
+END $$;
+
+GRANT CONNECT ON DATABASE grafana TO ops;

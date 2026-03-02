@@ -1,5 +1,11 @@
 # cyberstorm-woodpecker (9157ddeb-cb6d-4d55-8252-9db358f5d932)
-# Woodpecker CI server + agent + Cloudflare tunnel
+# Woodpecker CI server + agent + Cloudflare tunnel + Postgres/Redis data layer
+
+{% set postgres_data_dir = '/opt/services/postgresql/data' %}
+{% set redis_data_dir = '/opt/services/redis/data' %}
+{% set redis_port = '6379' %}
+{% set redis_exporter_port = '9121' %}
+{% set redis_password = _9157ddeb_redis_password %}
 
 services:
   cloudflared:
@@ -10,6 +16,36 @@ services:
     environment:
       - TUNNEL_TOKEN={{ _9157ddeb_cloudflare_tunnel }}
 
+  # === DATA LAYER ===
+  postgresql:
+    image: postgres:16
+    container_name: postgresql
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: {{ _9157ddeb_postgresql_admin_password }}
+    volumes:
+      - {{ postgres_data_dir }}:/var/lib/postgresql/data
+      - /opt/services/config/postgres/init.sql:/docker-entrypoint-initdb.d/10-init.sql:ro
+    ports:
+      - "5432:5432"
+
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: postgres-exporter
+    restart: always
+    environment:
+      DATA_SOURCE_NAME: "postgresql://postgres:{{ _9157ddeb_postgresql_admin_password }}@127.0.0.1:5432/postgres?sslmode=disable"
+    ports:
+      - "9187:9187"
+    network_mode: host
+    depends_on:
+      - postgresql
+
+{% set redis_port_bindings = ['6379:6379'] %}
+{% include "services/redis.yml.j2" %}
+
+  # === CI ===
   woodpecker-server:
     image: woodpeckerci/woodpecker-server:v3.12.0
     user: root
@@ -32,7 +68,7 @@ services:
       - WOODPECKER_PLUGINS_PRIVILEGED=woodpeckerci/plugin-docker-buildx
       - WOODPECKER_DEFAULT_PIPELINE_TIMEOUT=120
       - WOODPECKER_DATABASE_DRIVER=postgres
-      - WOODPECKER_DATABASE_DATASOURCE={{ _9157ddeb_database_datasource }}
+      - WOODPECKER_DATABASE_DATASOURCE={{ _9157ddeb_woodpecker_database_url }}
       - GITEA_URL=http://100.73.228.90:3000/
       - WOODPECKER_ENVIRONMENT=GITEA_TOKEN:{{ _9157ddeb_gitea_token }}
     # No healthcheck - distroless image has no shell
@@ -55,35 +91,6 @@ services:
     depends_on:
       - woodpecker-server
 
-  # === AIRFLOW WORKER ===
-  # Celery worker connecting to central Airflow on relaxgg-databases
-  airflow-worker:
-    image: apache/airflow:2.10.4
-    container_name: airflow-worker
-    restart: always
-    network_mode: host
-    command: celery worker --concurrency 2
-    environment:
-      AIRFLOW__CORE__EXECUTOR: CeleryExecutor
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:{{ _d1b9e5d5_postgresql_airflow_password }}@100.78.109.111:5432/airflow
-      AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:{{ _d1b9e5d5_postgresql_airflow_password }}@100.78.109.111:5432/airflow
-      AIRFLOW__CELERY__BROKER_URL: redis://:{{ _d1b9e5d5_redis_password }}@100.78.109.111:6379/0
-      AIRFLOW__METRICS__STATSD_ON: 'true'
-      AIRFLOW__METRICS__STATSD_HOST: 'statsd-exporter'
-      AIRFLOW__METRICS__STATSD_PORT: '9125'
-      AIRFLOW__METRICS__STATSD_PREFIX: 'airflow'
-      AIRFLOW__CORE__FERNET_KEY: '{{ airflow_fernet_key }}'
-      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
-    volumes:
-      - /mnt/storagebox0/airflow/dags:/opt/airflow/dags:ro
-      - /mnt/storagebox0/airflow/plugins:/opt/airflow/plugins:ro
-    user: "50000:0"
-    healthcheck:
-      test: ["CMD-SHELL", "celery --app airflow.providers.celery.executors.celery_executor.app inspect ping -d celery@$$HOSTNAME"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
   # === GITEA (self-hosted git) ===
   gitea:
     image: gitea/gitea:1.25.4
@@ -92,8 +99,11 @@ services:
     environment:
       - USER_UID=1000
       - USER_GID=1000
-      - GITEA__database__DB_TYPE=sqlite3
-      - GITEA__database__PATH=/data/gitea.db
+      - GITEA__database__DB_TYPE=postgres
+      - GITEA__database__HOST=127.0.0.1:5432
+      - GITEA__database__NAME=gitea
+      - GITEA__database__USER=gitea
+      - GITEA__database__PASSWD={{ _9157ddeb_postgresql_rw_password_gitea }}
       - GITEA__server__DOMAIN=100.73.228.90
       - GITEA__server__ROOT_URL=http://100.73.228.90:3000/
       - GITEA__server__HTTP_ADDR=0.0.0.0
@@ -123,7 +133,7 @@ services:
       - "100.73.228.90:3000:3000"
       - "100.73.228.90:2222:22"
 
-  # === EXPORTERS ===
+  # === OBSERVABILITY ===
   node-exporter:
     image: prom/node-exporter:latest
     container_name: node-exporter

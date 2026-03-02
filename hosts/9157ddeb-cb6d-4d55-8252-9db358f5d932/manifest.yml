@@ -9,14 +9,22 @@ hosts:
     use_exit_node: true
     services:
       - woodpecker
+      - gitea
+      - postgresql
+      - redis
+      - golem
+      - node-exporter
+      - statsd-exporter
     observability:
       ready: false
       managed_services:
         - node-exporter
         - woodpecker
         - edge-prober
+        - postgres-exporter
+        - redis-exporter
       unmanaged_services: []
-      notes: "woodpecker + airflow worker"
+      notes: "woodpecker + gitea + postgres/redis"
     docker_version: "28"
     dns_hostnames: []
     legacy_instances: []
