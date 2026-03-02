@@ -15,13 +15,18 @@
         git config --global gpg.format ssh
         git config --global gpg.ssh.allowedSignersFile /etc/golem/allowed_signers
         git config --global --add safe.directory /ledger
-        
-        # Build HTTP repo URL from token (avoid embedding secrets in compose)
-        TOKEN=$$(cat /run/secrets/deploy_key)
-        LEDGER_REPO="http://$${TOKEN}@100.73.228.90:3000/relaxgg/golem-ledger.git"
-        
-        exec /opt/golem/entrypoint.sh "$${LEDGER_REPO}"
+
+        # Prefer explicit LEDGER_REPO if provided; otherwise fall back to deploy key HTTP URL
+        if [ -n "${LEDGER_REPO:-}" ]; then
+          REPO_URL="$${LEDGER_REPO}"
+        else
+          TOKEN=$$(cat /run/secrets/deploy_key)
+          REPO_URL="http://$${TOKEN}@100.73.228.90:3000/relaxgg/golem-ledger.git"
+        fi
+
+        exec /opt/golem/entrypoint.sh "$${REPO_URL}"
     environment:
+      LEDGER_REPO: "{{ golem_ledger_repo_url | default('') }}"
       LEDGER_DIR: /ledger
       POLL_INTERVAL: "3"
       GIT_REMOTE: origin

@@ -6,6 +6,7 @@
 {% set redis_port = '6379' %}
 {% set redis_exporter_port = '9121' %}
 {% set redis_password = _9157ddeb_redis_password %}
+{% set golem_ledger_repo_url = 'http://' ~ _9157ddeb_gitea_token ~ '@100.73.228.90:3000/relaxgg/golem-ledger.git' %}
 
 services:
   cloudflared:
@@ -99,11 +100,8 @@ services:
     environment:
       - USER_UID=1000
       - USER_GID=1000
-      - GITEA__database__DB_TYPE=postgres
-      - GITEA__database__HOST=127.0.0.1:5432
-      - GITEA__database__NAME=gitea
-      - GITEA__database__USER=gitea
-      - GITEA__database__PASSWD={{ _9157ddeb_postgresql_rw_password_gitea }}
+      - GITEA__database__DB_TYPE=sqlite3
+      - GITEA__database__PATH=/data/gitea.db
       - GITEA__server__DOMAIN=100.73.228.90
       - GITEA__server__ROOT_URL=http://100.73.228.90:3000/
       - GITEA__server__HTTP_ADDR=0.0.0.0
