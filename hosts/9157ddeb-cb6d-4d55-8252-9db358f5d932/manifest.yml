@@ -8,6 +8,7 @@ hosts:
     status: active
     use_exit_node: true
     services:
+      - nginx
       - woodpecker
       - gitea
       - postgresql

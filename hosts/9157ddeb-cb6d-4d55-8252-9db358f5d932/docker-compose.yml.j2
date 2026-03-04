@@ -9,6 +9,16 @@
 {% set golem_ledger_repo_url = 'http://' ~ _9157ddeb_gitea_token ~ '@100.73.228.90:3000/relaxgg/golem-ledger.git' %}
 
 services:
+  nginx:
+    image: nginx:1.27
+    restart: always
+    network_mode: host
+    volumes:
+      - ./config/nginx/conf.d:/etc/nginx/conf.d:ro
+    depends_on:
+      - gitea
+      - woodpecker-server
+
   cloudflared:
     image: cloudflare/cloudflared:latest
     restart: always
