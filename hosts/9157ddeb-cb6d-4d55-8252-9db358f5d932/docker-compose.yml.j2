@@ -48,7 +48,7 @@ services:
 
   # === CI ===
   woodpecker-server:
-    image: woodpeckerci/woodpecker-server:v3.12.0
+    image: woodpeckerci/woodpecker-server:v3.13.0
     user: root
     restart: always
     network_mode: host
@@ -75,7 +75,7 @@ services:
     # No healthcheck - distroless image has no shell
 
   woodpecker-agent:
-    image: woodpeckerci/woodpecker-agent:v3.12.0
+    image: woodpeckerci/woodpecker-agent:v3.13.0
     restart: always
     network_mode: host
     volumes:

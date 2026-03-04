@@ -1224,8 +1224,8 @@ hosts:
     display_name: bbchat-mspokes-db
     group: bbchat
     cloud: hetzner-cloud
-    status: active
-    use_exit_node: true
+    status: inactive
+    use_exit_node: false
     public_ip: 162.55.163.93
     public_ipv6: null
     public_ip_secondary: null
@@ -1241,6 +1241,51 @@ hosts:
     - mysqld-exporter
     - cadvisor
     - node-exporter
+  bbchat_irc_bots:
+    uuid: 15b91ca9-1d21-4346-9611-9ebdd40f79e6
+    tailscale_name: bbchat-irc-bots
+    tailscale_ip: 100.122.185.68
+    canonical_name: bbchat-irc-bots
+    display_name: bbchat-irc-bots
+    group: bbchat
+    cloud: hetzner-cloud
+    status: active
+    use_exit_node: false
+    public_ip: null
+    public_ipv6: null
+    public_ip_secondary: null
+    private_ip: null
+    hcloud_project: bb-chat
+    gcp_project: null
+    gcp_zone: null
+    robot_id: null
+    robot_product: null
+    robot_dc: null
+    services:
+    - mariadb
+    - mysqld-exporter
+    - redis
+    - redis-exporter
+    - cadvisor
+    - node-exporter
+    notes: "Replacement for bbchat-mspokes-db; MariaDB + Redis stack."
+    observability:
+      managed_services:
+      - node-exporter
+      - cadvisor
+      - mariadb
+      - mysqld-exporter
+      - redis
+      - redis-exporter
+      unmanaged_services: []
+      notes: null
+    docker_version: '28'
+    dns_hostnames: []
+    legacy_instances: []
+    created: '2026-03-04'
+    updated: '2026-03-04'
+    bws_project: bbchat
+    bws_machine_account: bbchat-irc-bots
     observability:
       managed_services:
       - node-exporter
