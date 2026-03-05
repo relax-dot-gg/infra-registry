@@ -13,6 +13,8 @@ services:
     image: ghcr.io/relax-dot-gg/nginx:latest
     restart: always
     network_mode: host
+    environment:
+      - NGINX_ALLOW_LEGACY_CONF=1
     command: >
       /bin/sh -c '
       if [ ! -f /etc/nginx/certs/cert.pem ] || [ ! -f /etc/nginx/certs/key.pem ]; then
