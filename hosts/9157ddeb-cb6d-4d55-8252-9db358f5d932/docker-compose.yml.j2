@@ -13,8 +13,20 @@ services:
     image: nginx:1.27
     restart: always
     network_mode: host
+    command: >
+      /bin/sh -c '
+      if [ ! -f /etc/nginx/certs/cert.pem ] || [ ! -f /etc/nginx/certs/key.pem ]; then
+        mkdir -p /etc/nginx/certs &&
+        openssl req -x509 -nodes -newkey rsa:2048 -days 365
+          -keyout /etc/nginx/certs/key.pem
+          -out /etc/nginx/certs/cert.pem
+          -subj "/CN=gitea.i.cyberstorm.dev";
+      fi;
+      nginx -g "daemon off;";
+      '
     volumes:
       - ./config/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./config/nginx/certs:/etc/nginx/certs
     depends_on:
       - gitea
       - woodpecker-server
