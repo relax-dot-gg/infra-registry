@@ -17,11 +17,11 @@ services:
       - NGINX_ALLOW_LEGACY_CONF=1
       - CERT_B64={{ cyberstorm_origin_cert | default('', true) }}
       - KEY_B64={{ cyberstorm_origin_key | default('', true) }}
-    command: >
-      /bin/sh -c 'if [ ! -s /etc/nginx/certs/cert.pem ] || [ ! -s /etc/nginx/certs/key.pem ]; then mkdir -p /etc/nginx/certs && echo "$CERT_B64" | base64 -d > /etc/nginx/certs/cert.pem && echo "$KEY_B64" | base64 -d > /etc/nginx/certs/key.pem; fi; chown -R nginx:nginx /etc/nginx/certs && chmod 640 /etc/nginx/certs/key.pem; nginx -g "daemon off.";'
+    command: ["/bin/sh", "/usr/local/bin/init-certs.sh"]
     volumes:
       - ./config/nginx/conf.d:/etc/nginx/conf.d:ro
       - ./config/nginx/certs:/etc/nginx/certs
+      - ./config/nginx/init-certs.sh:/usr/local/bin/init-certs.sh:ro
     depends_on:
       - gitea
       - woodpecker-server
