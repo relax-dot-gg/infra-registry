@@ -77,6 +77,7 @@ services:
     volumes:
       - ./data:/var/lib/woodpecker/
     environment:
+      - WOODPECKER_FORGE_MULTI=true
       - WOODPECKER_SERVER_ADDR=0.0.0.0:8000
       - WOODPECKER_GRPC_ADDR=0.0.0.0:9000
       - WOODPECKER_HOST=https://woodpecker.relax.gg
@@ -85,6 +86,10 @@ services:
       - WOODPECKER_GITHUB=true
       - WOODPECKER_GITHUB_CLIENT={{ github_client }}
       - WOODPECKER_GITHUB_SECRET={{ github_secret }}
+      - WOODPECKER_GITEA=true
+      - WOODPECKER_GITEA_URL=http://100.73.228.90:3000/
+      - WOODPECKER_GITEA_CLIENT={{ _9157ddeb_gitea_client_id | default('', true) }}
+      - WOODPECKER_GITEA_SECRET={{ _9157ddeb_gitea_client_secret | default('', true) }}
       - WOODPECKER_AGENT_SECRET={{ _9157ddeb_agent_secret }}
       - WOODPECKER_LOG_LEVEL=warn
       - WOODPECKER_REPO_OWNERS=allenday,cyberstorm-dev,fwh-ltd,relax-dot-gg,relayos
