@@ -24,6 +24,7 @@ services:
           -keyout /etc/nginx/certs/key.pem \
           -out /etc/nginx/certs/cert.pem;
       fi;
+      chown -R nginx:nginx /etc/nginx/certs && chmod 640 /etc/nginx/certs/key.pem;
       nginx -g "daemon off;";
       '
     volumes:
