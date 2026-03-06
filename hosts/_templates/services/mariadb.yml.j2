@@ -1,0 +1,38 @@
+{% set mariadb_image = mariadb_image | default('ghcr.io/relax-dot-gg/mariadb:latest') %}
+{% set mariadb_container_name = mariadb_container_name | default('mariadb') %}
+{% set mariadb_data_dir = mariadb_data_dir | default('/var/lib/mysql') %}
+{% set mariadb_ports = mariadb_ports | default(['3306:3306']) %}
+{% set mariadb_extra_volumes = mariadb_extra_volumes | default([]) %}
+{% set mariadb_network_mode = mariadb_network_mode | default('') %}
+{% set mariadb_networks = mariadb_networks | default([]) %}
+{% set mariadb_env_extra = mariadb_env_extra | default({}) %}
+
+  mariadb:
+    image: {{ mariadb_image }}
+    container_name: {{ mariadb_container_name }}
+    restart: always
+{% if mariadb_network_mode %}
+    network_mode: {{ mariadb_network_mode }}
+{% endif %}
+    environment:
+      MARIADB_ROOT_PASSWORD: {{ mariadb_root_password }}
+{% for k, v in mariadb_env_extra.items() %}
+      {{ k }}: {{ v }}
+{% endfor %}
+    volumes:
+      - {{ mariadb_data_dir }}:/var/lib/mysql
+{% for vol in mariadb_extra_volumes %}
+      - {{ vol }}
+{% endfor %}
+{% if mariadb_ports %}
+    ports:
+{% for p in mariadb_ports %}
+      - "{{ p }}"
+{% endfor %}
+{% endif %}
+{% if mariadb_networks %}
+    networks:
+{% for n in mariadb_networks %}
+      - {{ n }}
+{% endfor %}
+{% endif %}
