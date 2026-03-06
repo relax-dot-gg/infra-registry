@@ -12,3 +12,11 @@ applications:
       - host: "002d015e-cd70-44e7-87d8-909c60ace2b3"
         services: ["mariadb", "redis", "elasticsearch"]
     edges: "auto"
+  cyberstorm-core:
+    description: "Cyberstorm Core Stack"
+    members:
+      - host: "9157ddeb-cb6d-4d55-8252-9db358f5d932"
+        services: ["nginx", "woodpecker-server", "woodpecker-agent", "gitea", "postgresql", "postgres-exporter", "redis", "redis-exporter", "node-exporter", "statsd-exporter"]
+      - host: "7ffe46b7-0eb4-40cb-8e14-ea679b9948f4"
+        services: ["gatus", "grafana", "prometheus", "pushgateway", "node-exporter"]
+    edges: "auto"
