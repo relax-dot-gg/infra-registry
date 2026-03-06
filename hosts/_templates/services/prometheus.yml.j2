@@ -4,7 +4,6 @@
     restart: unless-stopped
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
-      - "--config.expand-env"
       - "--storage.tsdb.path=/prometheus"
       - "--storage.tsdb.retention.time=90d"
       - "--storage.tsdb.retention.size=30GB"
