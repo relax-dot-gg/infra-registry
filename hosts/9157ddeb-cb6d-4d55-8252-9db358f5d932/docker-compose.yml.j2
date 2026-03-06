@@ -6,6 +6,11 @@
 {% set redis_port = '6379' %}
 {% set redis_exporter_port = '9121' %}
 {% set redis_password = _9157ddeb_redis_password %}
+{% set acme_domains = [gitea.i.cyberstorm.dev,woodpecker.i.cyberstorm.dev] %}
+{% set acme_dns_token = cloudflare_edit_dns_cyberstorm %}
+{% set acme_email = ops@fwd.ltd %}
+{% set acme_cert_dir = ./config/nginx/certs %}
+
 {% set golem_ledger_repo_url = 'http://' ~ _9157ddeb_gitea_token ~ '@100.73.228.90:3000/relaxgg/golem-ledger.git' %}
 
 services:
@@ -23,6 +28,7 @@ services:
       - ./config/nginx/certs:/etc/nginx/certs
       - ./config/nginx/init-certs.sh:/usr/local/bin/init-certs.sh:ro
     depends_on:
+      - lego
       - gitea
       - woodpecker-server
 
@@ -33,6 +39,8 @@ services:
     command: tunnel --protocol http2 run
     environment:
       - TUNNEL_TOKEN={{ _9157ddeb_cloudflare_tunnel }}
+
+{% include "services/lego-dns.yml.j2" %}
 
   # === DATA LAYER ===
   postgresql:
