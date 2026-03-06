@@ -17,9 +17,10 @@ services:
     network_mode: host
     environment:
       - NGINX_ALLOW_LEGACY_CONF=1
+      - NGINX_EXTRA_SNIPPETS=/etc/nginx/conf.d/snippets
     volumes:
       - ./config/nginx/conf.d:/etc/nginx/conf.d:ro
-      - ./config/nginx/snippets:/etc/nginx/snippets:ro
+      - ./config/nginx/snippets:/etc/nginx/conf.d/snippets:ro
       - ./config/nginx/certs:/etc/nginx/certs
     depends_on:
       - lego
