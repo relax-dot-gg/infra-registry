@@ -422,3 +422,11 @@ services:
       metric: DCGM_FI_DEV_GPU_UTIL
       probe_metric: DCGM_FI_DEV_GPU_UTIL
       port: 9400
+
+  queue-manager:
+    description: "Carapace Redis-backed ready queue manager"
+    group: pipeline
+    compose_service: queue-manager
+    requires_secrets:
+      - gitea_read_token
+      - _9157ddeb_redis_password
