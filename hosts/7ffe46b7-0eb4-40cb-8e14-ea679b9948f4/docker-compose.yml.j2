@@ -1,4 +1,32 @@
+# cyberstorm-watchtower (7ffe46b7-0eb4-40cb-8e14-ea679b9948f4)
+# Observability stack (grafana, gatus, prometheus) fronted by nginx with
+# lego DNS-01 issuing TLS for grafana.i.cyberstorm.dev and gatus.i.cyberstorm.dev.
+
+{% set grafana_port = '3001' %}
+{% set gatus_port = '3003' %}
+{% set acme_domains = ['grafana.i.cyberstorm.dev', 'gatus.i.cyberstorm.dev'] %}
+{% set acme_dns_provider = 'cloudflare' %}
+{% set acme_dns_token = cloudflare_edit_dns_cyberstorm %}
+{% set acme_email = 'ops@fwd.ltd' %}
+{% set acme_cert_dir = './config/nginx/certs' %}
+
 services:
+  nginx:
+    image: ghcr.io/relax-dot-gg/nginx:latest
+    restart: always
+    network_mode: host
+    environment:
+      - NGINX_ALLOW_LEGACY_CONF=1
+    volumes:
+      - ./config/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./config/nginx/certs:/etc/nginx/certs
+    depends_on:
+      - lego
+      - grafana
+      - gatus
+
+{% include "services/lego-dns.yml.j2" %}
+
 {% include "services/golem.yml.j2" %}
 {% include "services/prometheus.yml.j2" %}
 {% include "services/grafana.yml.j2" %}
