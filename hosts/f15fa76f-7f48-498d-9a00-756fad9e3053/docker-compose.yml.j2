@@ -10,6 +10,12 @@ services:
       - /var/lib/mysql:/var/lib/mysql
       - /opt/services/config/mariadb/custom.cnf:/etc/mysql/conf.d/custom.cnf:ro
 
+{% set mariadb_root_password = _f15fa76f_mariadb_root_password %}
+{% set mariadb_network_mode = 'host' %}
+{% set mariadb_ports = [] %}
+{% set mariadb_extra_volumes = ['/opt/services/config/mariadb/custom.cnf:/etc/mysql/conf.d/custom.cnf:ro'] %}
+{% include "services/mariadb.yml.j2" %}
+
 {% set redis_password = _f15fa76f_redis_password %}
 {% set redis_data_dir = '/opt/services/redis/data' %}
 {% set redis_exporter_port = '9121' %}

@@ -9,6 +9,14 @@ services:
     volumes:
       - /srv/docker/db/data:/var/lib/mysql
       - ./config/mariadb/my.cnf:/etc/mysql/my.cnf:ro
+{% set mariadb_root_password = _002d015e_mariadb_root_password %}
+{% set mariadb_container_name = 'database' %}
+{% set mariadb_network_mode = 'host' %}
+{% set mariadb_data_dir = '/srv/docker/db/data' %}
+{% set mariadb_ports = [] %}
+{% set mariadb_extra_volumes = ['./config/mariadb/my.cnf:/etc/mysql/my.cnf:ro'] %}
+{% include "services/mariadb.yml.j2" %}
+
 {% set redis_password = _002d015e_redis_password %}
 {% set redis_data_dir = '/mnt/nosql/redis/data' %}
 {% set redis_exporter_port = '9121' %}
