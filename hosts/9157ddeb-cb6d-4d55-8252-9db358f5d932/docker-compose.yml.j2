@@ -44,7 +44,7 @@ services:
     volumes:
       - ./config/nginx/certs:/etc/nginx/certs
     entrypoint: ["/bin/sh","-c"]
-    command: "lego --dns cloudflare --accept-tos --email ops@fwd.ltd --path /etc/nginx/certs --domains gitea.i.cyberstorm.dev --domains woodpecker.i.cyberstorm.dev run && while true; do lego --dns cloudflare --accept-tos --email ops@fwd.ltd --path /etc/nginx/certs --domains gitea.i.cyberstorm.dev --domains woodpecker.i.cyberstorm.dev renew --days 30; sleep 43200; done"
+    command: "/usr/bin/lego --dns cloudflare --accept-tos --email ops@fwd.ltd --path /etc/nginx/certs --domains gitea.i.cyberstorm.dev --domains woodpecker.i.cyberstorm.dev run && while true; do /usr/bin/lego --dns cloudflare --accept-tos --email ops@fwd.ltd --path /etc/nginx/certs --domains gitea.i.cyberstorm.dev --domains woodpecker.i.cyberstorm.dev renew --days 30; sleep 43200; done"
 
   # === DATA LAYER ===
   postgresql:
