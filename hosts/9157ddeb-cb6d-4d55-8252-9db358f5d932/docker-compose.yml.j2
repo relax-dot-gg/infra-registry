@@ -23,7 +23,6 @@ services:
       - ./config/nginx/certs:/etc/nginx/certs
       - ./config/nginx/init-certs.sh:/usr/local/bin/init-certs.sh:ro
     depends_on:
-      - lego
       - gitea
       - woodpecker-server
 
@@ -34,17 +33,6 @@ services:
     command: tunnel --protocol http2 run
     environment:
       - TUNNEL_TOKEN={{ _9157ddeb_cloudflare_tunnel }}
-
-  lego:
-    image: crazymax/lego:latest
-    restart: unless-stopped
-    network_mode: host
-    environment:
-      - CLOUDFLARE_DNS_API_TOKEN={{ cloudflare_edit_dns_cyberstorm }}
-    volumes:
-      - ./config/nginx/certs:/etc/nginx/certs
-    entrypoint: ["/bin/sh","-c"]
-    command: "/usr/bin/lego --dns cloudflare --accept-tos --email ops@fwd.ltd --path /etc/nginx/certs --domains gitea.i.cyberstorm.dev --domains woodpecker.i.cyberstorm.dev run && while true; do /usr/bin/lego --dns cloudflare --accept-tos --email ops@fwd.ltd --path /etc/nginx/certs --domains gitea.i.cyberstorm.dev --domains woodpecker.i.cyberstorm.dev renew --days 30; sleep 43200; done"
 
   # === DATA LAYER ===
   postgresql:
