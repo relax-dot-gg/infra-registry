@@ -13,8 +13,5 @@
       - {{ acme_dns_provider | upper }}_DNS_API_TOKEN={{ acme_dns_token }}
     volumes:
       - {{ acme_cert_dir }}:/etc/nginx/certs
-    entrypoint: [/bin/sh,-c]
-    command: >
-      /lego --dns {{ acme_dns_provider }} --accept-tos --email {{ acme_email }} --path {{ acme_path }}
-      {% for d in acme_domains %} --domains {{ d }}{% endfor %} run &&       while true; do         /lego --dns {{ acme_dns_provider }} --accept-tos --email {{ acme_email }} --path {{ acme_path }}
-        {% for d in acme_domains %} --domains {{ d }}{% endfor %} renew --days 30;         sleep 43200;       done
+    entrypoint: ["/bin/sh","-c"]
+    command: "/lego --dns {{ acme_dns_provider }} --accept-tos --email {{ acme_email }} --path {{ acme_path }}{% for d in acme_domains %} --domains {{ d }}{% endfor %} run && while true; do /lego --dns {{ acme_dns_provider }} --accept-tos --email {{ acme_email }} --path {{ acme_path }}{% for d in acme_domains %} --domains {{ d }}{% endfor %} renew --days 30; sleep 43200; done"
