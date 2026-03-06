@@ -1,9 +1,9 @@
-{% set acme_email = acme_email | default(ops@fwd.ltd) %}
-{% set acme_dns_provider = acme_dns_provider | default(cloudflare) %}
-{% set acme_cert_dir = acme_cert_dir | default(./config/nginx/certs) %}
-{% set acme_path = acme_path | default(/etc/nginx/certs) %}
+{% set acme_email = acme_email | default('ops@fwd.ltd') %}
+{% set acme_dns_provider = acme_dns_provider | default('cloudflare') %}
+{% set acme_cert_dir = acme_cert_dir | default('./config/nginx/certs') %}
+{% set acme_path = acme_path | default('/etc/nginx/certs') %}
 {% set acme_domains = acme_domains | default([]) %}
-{% set acme_dns_token = acme_dns_token | default() %}
+{% set acme_dns_token = acme_dns_token | default('') %}
 
   lego:
     image: goacme/lego:latest
@@ -13,12 +13,8 @@
       - {{ acme_dns_provider | upper }}_DNS_API_TOKEN={{ acme_dns_token }}
     volumes:
       - {{ acme_cert_dir }}:/etc/nginx/certs
-    entrypoint: ["/bin/sh","-c"]
+    entrypoint: [/bin/sh,-c]
     command: >
       lego --dns {{ acme_dns_provider }} --accept-tos --email {{ acme_email }} --path {{ acme_path }}
-      {% for d in acme_domains %} --domains {{ d }}{% endfor %} run && \
-      while true; do \
-        lego --dns {{ acme_dns_provider }} --accept-tos --email {{ acme_email }} --path {{ acme_path }}
-        {% for d in acme_domains %} --domains {{ d }}{% endfor %} renew --days 30; \
-        sleep 43200; \
-      done
+      {% for d in acme_domains %} --domains {{ d }}{% endfor %} run &&       while true; do         lego --dns {{ acme_dns_provider }} --accept-tos --email {{ acme_email }} --path {{ acme_path }}
+        {% for d in acme_domains %} --domains {{ d }}{% endfor %} renew --days 30;         sleep 43200;       done
