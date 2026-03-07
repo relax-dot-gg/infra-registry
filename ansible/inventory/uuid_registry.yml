@@ -1435,45 +1435,6 @@ hosts:
     bws_extra_projects:
     - relaxgg-common
     bws_machine_account: chainlink-primary
-  chainlink_secondary:
-    uuid: 81e811ce-21fb-4e32-b01e-d702cb7c165d
-    tailscale_name: chainlink-secondary
-    tailscale_ip: 100.80.26.6
-    canonical_name: chainlink-secondary
-    display_name: chainlink-secondary
-    group: chainlink
-    cloud: gcp
-    status: active
-    use_exit_node: false
-    public_ip: 34.136.31.91
-    public_ipv6: null
-    public_ip_secondary: null
-    private_ip: null
-    hcloud_project: null
-    gcp_project: cryptonode-ops-dev
-    gcp_zone: null
-    robot_id: null
-    robot_product: null
-    robot_dc: null
-    services:
-    - chainlink
-    observability:
-      managed_services:
-      - node-exporter
-      - cadvisor
-      unmanaged_services:
-      - chainlink
-      notes: chainlink app unmanaged; self-deploy enabled.
-    docker_version: '20.10'
-    dns_hostnames: []
-    legacy_instances:
-    - mainnet-chainlink-gcp-secondary
-    created: '2025-12-09'
-    updated: '2025-12-14'
-    bws_project: chainlink
-    bws_extra_projects:
-    - relaxgg-common
-    bws_machine_account: chainlink-secondary
   chainlink_adapters_weather:
     uuid: bfc70ead-5594-4e95-8796-b06d245d11fd
     tailscale_name: chainlink-adapters-weather
