@@ -82,7 +82,8 @@ services:
     description: "Grafana server"
     group: observability
     compose_service: grafana
-    requires_secrets: []
+    requires_secrets:
+      - grafana_admin_password
 
   blackbox:
     description: "Prometheus blackbox exporter"
