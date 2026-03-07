@@ -3,6 +3,7 @@ hosts:
     tailscale_name: cyberstorm-citadel
     tailscale_ip: 100.73.228.90
     canonical_name: cyberstorm-citadel
+    magicdns_name: cyberstorm-citadel.shrimp-crested.ts.net
     group: cyberstorm
     cloud: hetzner-cloud
     status: active

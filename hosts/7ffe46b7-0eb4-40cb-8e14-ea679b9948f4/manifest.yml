@@ -3,6 +3,7 @@ hosts:
     tailscale_name: cyberstorm-watchtower
     tailscale_ip: 100.123.0.63
     canonical_name: cyberstorm-watchtower
+    magicdns_name: cyberstorm-watchtower.shrimp-crested.ts.net
     group: cyberstorm
     cloud: hetzner-robot
     status: active

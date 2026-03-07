@@ -928,3 +928,84 @@ edges:
     metadata:
       purpose: Blackbox HTTP probe (Woodpecker UI)
       criticality: medium
+
+  - id: 62452b47-498c-4a35-b673-825d010f5411
+    type: monitoring
+    from:
+      hosts: ["7ffe46b7-0eb4-40cb-8e14-ea679b9948f4"]
+      service: prometheus
+    to:
+      host: 9157ddeb-cb6d-4d55-8252-9db358f5d932
+      service: node-exporter
+      port: 9100
+    protocol: http/prometheus
+    metadata:
+      purpose: Prometheus scrape (citadel node-exporter)
+      criticality: high
+
+  - id: 825d010f-5411-4b8c-b673-62452b47498c
+    type: monitoring
+    from:
+      hosts: ["7ffe46b7-0eb4-40cb-8e14-ea679b9948f4"]
+      service: prometheus
+    to:
+      host: 9157ddeb-cb6d-4d55-8252-9db358f5d932
+      service: postgres-exporter
+      port: 9187
+    protocol: http/prometheus
+    metadata:
+      purpose: Prometheus scrape (citadel postgres)
+      criticality: high
+
+  - id: b673-825d-010f-5411-62452b47498c
+    type: monitoring
+    from:
+      hosts: ["7ffe46b7-0eb4-40cb-8e14-ea679b9948f4"]
+      service: prometheus
+    to:
+      host: 9157ddeb-cb6d-4d55-8252-9db358f5d932
+      service: redis-exporter
+      port: 9121
+    protocol: http/prometheus
+    metadata:
+      purpose: Prometheus scrape (citadel redis)
+      criticality: high
+
+  - id: 5411-6245-2b47-498c-825d010f5411
+    type: database
+    from:
+      hosts: ["9157ddeb-cb6d-4d55-8252-9db358f5d932"]
+      service: gitea
+    to:
+      host: 9157ddeb-cb6d-4d55-8252-9db358f5d932
+      service: postgresql
+      port: 5432
+    protocol: postgres
+    metadata:
+      purpose: Gitea database connection
+
+  - id: 498c-825d-010f-5411-62452b47498c
+    type: database
+    from:
+      hosts: ["9157ddeb-cb6d-4d55-8252-9db358f5d932"]
+      service: woodpecker-server
+    to:
+      host: 9157ddeb-cb6d-4d55-8252-9db358f5d932
+      service: postgresql
+      port: 5432
+    protocol: postgres
+    metadata:
+      purpose: Woodpecker database connection
+
+  - id: 825d-010f-5411-6245-2b47498c498c
+    type: queue
+    from:
+      hosts: ["9157ddeb-cb6d-4d55-8252-9db358f5d932"]
+      service: woodpecker-server
+    to:
+      host: 9157ddeb-cb6d-4d55-8252-9db358f5d932
+      service: redis
+      port: 6379
+    protocol: redis
+    metadata:
+      purpose: Woodpecker queue connection
