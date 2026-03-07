@@ -2,3 +2,26 @@ services:
 {% include "services/node-exporter.yml.j2" %}
 {% include "services/cadvisor.yml.j2" %}
 {% include "services/edge-prober.yml.j2" %}
+
+  mainnet-primary:
+    image: smartcontract/chainlink:2.36.0
+    container_name: mainnet-primary
+    restart: unless-stopped
+    user: "1500:1500"
+    ports:
+      - "6688:6688"
+    volumes:
+      - /opt/services/chainlink-data:/.chainlink
+    environment:
+      - CL_DATABASE_URL=postgresql://chainlink:k0tHiaJtkMHeorxm@172.31.48.4:5432/mainnet_tmp
+      - CL_CHAIN_ADAPTERS_ETH_URL=wss://eth-mainnet.g.alchemy.com/v2/P-sft3UGJe01tTVOg7aUKebvEexwumpl
+      - CL_ADMIN_CREDENTIALS_FILE=/.chainlink/.api
+      - CL_PASSWORD_FILE=/.chainlink/.password
+      - CL_DATABASE_LOCKING_MODE=dual
+      - CL_ALLOW_ORIGINS=*
+      - CL_LOG_LEVEL=info
+      - CL_MINIMUM_CONTRACT_PAYMENT_LINK_JUELS=1000000000000000000
+    command: >
+      node start
+      --password /.chainlink/.password
+      --api /.chainlink/.api
