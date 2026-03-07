@@ -971,19 +971,6 @@ edges:
       purpose: Prometheus scrape (citadel redis)
       criticality: high
 
-  - id: 5411-6245-2b47-498c-825d010f5411
-    type: database
-    from:
-      hosts: ["9157ddeb-cb6d-4d55-8252-9db358f5d932"]
-      service: gitea
-    to:
-      host: 9157ddeb-cb6d-4d55-8252-9db358f5d932
-      service: postgresql
-      port: 5432
-    protocol: postgres
-    metadata:
-      purpose: Gitea database connection
-
   - id: 498c-825d-010f-5411-62452b47498c
     type: database
     from:
@@ -994,6 +981,11 @@ edges:
       service: postgresql
       port: 5432
     protocol: postgres
+    auth:
+      username: rw_woodpecker
+      database: woodpecker
+      secret_ref: postgresql_rw_password_woodpecker
+      role: rw
     metadata:
       purpose: Woodpecker database connection
 
