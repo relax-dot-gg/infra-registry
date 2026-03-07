@@ -76,7 +76,8 @@ services:
     description: "Prometheus server"
     group: observability
     compose_service: prometheus
-    requires_secrets: []
+    requires_secrets:
+      - node_exporter_password
 
   grafana:
     description: "Grafana server"

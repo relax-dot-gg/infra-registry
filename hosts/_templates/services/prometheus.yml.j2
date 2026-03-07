@@ -2,6 +2,8 @@
     image: prom/prometheus:latest
     container_name: prometheus
     restart: unless-stopped
+    environment:
+      - NODE_EXPORTER_PASSWORD={{ node_exporter_password }}
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus"
