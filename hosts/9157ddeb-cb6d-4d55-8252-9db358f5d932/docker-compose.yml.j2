@@ -177,6 +177,7 @@ services:
     volumes:
       - /:/host:ro,rslave
       - /var/lib/node_exporter/textfile_collector:/var/lib/node_exporter/textfile_collector:ro
+      - ./config/node_exporter/web.config.yml:/etc/node_exporter/web.config.yml:ro
     network_mode: host
     pid: host
 
