@@ -102,7 +102,7 @@ services:
       - WOODPECKER_DATABASE_DRIVER=postgres
       - WOODPECKER_DATABASE_DATASOURCE={{ _9157ddeb_woodpecker_database_url }}
       - GITEA_URL=http://100.73.228.90:3000/
-      - WOODPECKER_ENVIRONMENT=GITEA_TOKEN:{{ _9157ddeb_gitea_token }}
+      - WOODPECKER_ENVIRONMENT=GITEA_TOKEN:{{ _9157ddeb_gitea_token }},CI_PROM_PUSHGATEWAY_HOST:100.123.0.63,PIPELINE_METRICS_PUSHGATEWAY_HOST:100.123.0.63
     # No healthcheck - distroless image has no shell
 
   woodpecker-agent:
@@ -118,7 +118,7 @@ services:
       - WOODPECKER_PLUGINS_PRIVILEGED=woodpeckerci/plugin-docker-buildx
       - WOODPECKER_HEALTHCHECK_ADDR=:3001
       - GITEA_URL=http://100.73.228.90:3000/
-      - WOODPECKER_ENVIRONMENT=GITEA_TOKEN:{{ _9157ddeb_gitea_token }}
+      - WOODPECKER_ENVIRONMENT=GITEA_TOKEN:{{ _9157ddeb_gitea_token }},CI_PROM_PUSHGATEWAY_HOST:100.123.0.63,PIPELINE_METRICS_PUSHGATEWAY_HOST:100.123.0.63
     # No healthcheck - distroless image has no shell
     depends_on:
       - woodpecker-server
