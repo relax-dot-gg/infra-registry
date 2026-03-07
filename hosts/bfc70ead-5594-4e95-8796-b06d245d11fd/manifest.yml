@@ -1,0 +1,23 @@
+hosts:
+  bfc70ead-5594-4e95-8796-b06d245d11fd:
+    tailscale_name: chainlink-adapters-weather
+    tailscale_ip: 100.100.182.81
+    canonical_name: chainlink-adapters-weather
+    group: chainlink
+    cloud: gcp
+    status: active
+    use_exit_node: false
+    services:
+      - google-weather
+      - cadvisor
+      - node-exporter
+    observability:
+      ready: false
+      managed_services: []
+      unmanaged_services: []
+      notes: "Chainlink google-weather adapter host"
+    docker_version: '28'
+    dns_hostnames: []
+    legacy_instances: []
+    bws_project: chainlink
+    bws_machine_account: chainlink-adapters-weather
