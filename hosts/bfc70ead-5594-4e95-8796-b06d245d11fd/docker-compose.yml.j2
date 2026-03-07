@@ -15,7 +15,6 @@ services:
         echo "Writing service account"
         echo "$SA_B64" | base64 -d > /app/sa.json
         export GOOGLE_APPLICATION_CREDENTIALS=/app/sa.json
-        if [ ! -d /app ]; then git clone https://github.com/chainlink/external-adapters-js /app; fi
         cd /app/packages/composites/google-weather
         yarn install --immutable || yarn install
         exec yarn start
@@ -23,6 +22,7 @@ services:
     ports:
       - "8082:8082"
     volumes:
+      - /home/chainlink/external-adapters-js-private:/app
       - /var/lib/ea-cache:/tmp
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
