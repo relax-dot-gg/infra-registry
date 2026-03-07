@@ -12,5 +12,5 @@ applications:
       - host: "9157ddeb-cb6d-4d55-8252-9db358f5d932"
         services: ["nginx", "woodpecker-server", "woodpecker-agent", "gitea", "postgresql", "postgres-exporter", "redis", "redis-exporter", "node-exporter", "statsd-exporter"]
       - host: "7ffe46b7-0eb4-40cb-8e14-ea679b9948f4"
-        services: ["gatus", "grafana", "prometheus", "pushgateway", "node-exporter", "nginx"]
+        services: ["gatus", "grafana", "prometheus", "pushgateway", "node-exporter", "nginx", "blackbox"]
     edges: "auto"
