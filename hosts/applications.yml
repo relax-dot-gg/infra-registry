@@ -6,12 +6,6 @@ applications:
       - host: "7ffe46b7-0eb4-40cb-8e14-ea679b9948f4"
         services: ["prometheus", "grafana", "gatus"]
     edges: "auto"
-  bdsmlr-database:
-    description: "BDSMLR Core Database Layer"
-    members:
-      - host: "002d015e-cd70-44e7-87d8-909c60ace2b3"
-        services: ["mariadb", "redis", "elasticsearch"]
-    edges: "auto"
   cyberstorm-core:
     description: "Cyberstorm Core Stack"
     members:
