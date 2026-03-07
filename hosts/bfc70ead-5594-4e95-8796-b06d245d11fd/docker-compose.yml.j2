@@ -1,4 +1,29 @@
 services:
+  google-weather:
+    image: node:18-bullseye
+    container_name: google-weather
+    restart: always
+    working_dir: /app/packages/composites/google-weather
+    environment:
+      PORT: 8082
+      EA_PORT: 8082
+      PROJECT_ID: cryptonode-ops-dev
+    entrypoint: ["/bin/bash","-lc"]
+    command: >-
+      set -euo pipefail &&
+      echo "Writing service account" &&
+      echo "${_bfc70ead_gcp_weather_sa_b64}" | base64 -d > /app/sa.json &&
+      export GOOGLE_APPLICATION_CREDENTIALS=/app/sa.json &&
+      if [ ! -d /app ]; then git clone https://github.com/chainlink/external-adapters-js /app; fi &&
+      cd /app/packages/composites/google-weather &&
+      yarn install --immutable || yarn install &&
+      yarn start
+    ports:
+      - "8082:8082"
+    volumes:
+      - /var/lib/ea-cache:/tmp
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
 {% include "services/node-exporter.yml.j2" %}
 {% include "services/cadvisor.yml.j2" %}
-{% include "services/edge-prober.yml.j2" %}
