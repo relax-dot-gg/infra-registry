@@ -14,7 +14,8 @@ hosts:
     services:
     - node-exporter
     observability:
-      notes: "self-deploy cron re-enabled; gitops active. Verified chat.freechat.zone via Host header."
+      notes: self-deploy cron re-enabled; gitops active. Verified chat.freechat.zone
+        via Host header.
   bdsmlr_wordpress:
     uuid: a2911f1a-84bf-47dc-af93-3b1c9066649a
     tailscale_name: bdsmlr-wordpress
@@ -36,7 +37,8 @@ hosts:
     - wordpress
     - node-exporter
     - cadvisor
-    notes: "warnings: nginx-exporter/wordpress not defined in services.yml; nginx restarting after deploy"
+    notes: 'warnings: nginx-exporter/wordpress not defined in services.yml; nginx
+      restarting after deploy'
     service_dependencies:
       wordpress:
       - service: mariadb
@@ -69,7 +71,8 @@ hosts:
     - node-exporter
     - solr
     - zookeeper
-    notes: "warnings: redis/solr service names differ from compose (solr1/solr2/solr-init); redis-exporter not defined in services.yml"
+    notes: 'warnings: redis/solr service names differ from compose (solr1/solr2/solr-init);
+      redis-exporter not defined in services.yml'
     observability:
       managed_services:
       - node-exporter
@@ -292,26 +295,14 @@ hosts:
       - n8n
       - stash
       notes: gpu node; heavy migration needed (n8n/redis/qdrant/solr).
-    docker_version: '29.1'
-    dns_hostnames:
-    - app.aiplaymates.ai
-    - aiplaymates-rc.i4chan.org
-    - n8n-rc.i4chan.org
-    - revive-mcp.i4chan.org
-    legacy_instances:
-    - gex44
-    created: '2025-12-08'
-    updated: '2025-12-14'
-    bws_project: relaxgg-data
-    bws_extra_projects:
-    - relaxgg-infra
-    bws_machine_account: relaxgg-gex44
     docker_version: null
     dns_hostnames: []
     legacy_instances: []
     created: '2025-12-08'
     updated: '2025-12-14'
     bws_project: relaxgg-infra
+    bws_extra_projects:
+    - relaxgg-infra
     bws_machine_account: relaxgg-woodpecker
     roles:
       storagebox0: {}
@@ -387,7 +378,8 @@ hosts:
     services:
     - node-exporter
     - cadvisor
-    notes: "bootstrap_host failed: nginx amplify repo invalid signature; local deletions in hosts/14855947.../config/postfix/*"
+    notes: 'bootstrap_host failed: nginx amplify repo invalid signature; local deletions
+      in hosts/14855947.../config/postfix/*'
     observability:
       managed_services:
       - node-exporter
@@ -691,7 +683,8 @@ hosts:
     - mail
     - redis
     - php-fpm
-    notes: "warnings: mail/php-fpm not defined in services.yml; redis compose check expects redis service name"
+    notes: 'warnings: mail/php-fpm not defined in services.yml; redis compose check
+      expects redis service name'
     observability:
       ready: true
       managed_services:
@@ -771,7 +764,8 @@ hosts:
       - redis
       - redis-exporter
       - elasticsearch-exporter
-      notes: fully managed under gitops; redis present in gitops compose (warning likely stale).
+      notes: fully managed under gitops; redis present in gitops compose (warning
+        likely stale).
     docker_version: '20.10'
     legacy_instances:
     - db
@@ -991,7 +985,8 @@ hosts:
       - caddy
       missing_exporters:
       - cadvisor
-      notes: "gitops bootstrapped; nginx+wordpress now managed. WARN: wordpress service not defined in services.yml (validation warning)."
+      notes: 'gitops bootstrapped; nginx+wordpress now managed. WARN: wordpress service
+        not defined in services.yml (validation warning).'
     docker_version: null
     dns_hostnames:
     - shop.bdsmlr.com
@@ -1024,7 +1019,9 @@ hosts:
     - wordpress
     - nginx
     observability:
-      notes: "gitops bootstrapped; nginx+wordpress managed (caddy retired). Set LANG=C.UTF-8 to fix ansible locale. WARN: wordpress service not defined in services.yml (validation warning)."
+      notes: 'gitops bootstrapped; nginx+wordpress managed (caddy retired). Set LANG=C.UTF-8
+        to fix ansible locale. WARN: wordpress service not defined in services.yml
+        (validation warning).'
     docker_version: null
     dns_hostnames:
     - account.bdsmlr.com
@@ -1200,7 +1197,7 @@ hosts:
     robot_dc: null
     services:
     - mariadb
-    notes: "mariadb runs baremetal (systemd), not in docker"
+    notes: mariadb runs baremetal (systemd), not in docker
     observability:
       ready: true
       managed_services:
@@ -1268,24 +1265,7 @@ hosts:
     - redis-exporter
     - cadvisor
     - node-exporter
-    notes: "Replacement for bbchat-mspokes-db; MariaDB + Redis stack."
-    observability:
-      managed_services:
-      - node-exporter
-      - cadvisor
-      - mariadb
-      - mysqld-exporter
-      - redis
-      - redis-exporter
-      unmanaged_services: []
-      notes: null
-    docker_version: '28'
-    dns_hostnames: []
-    legacy_instances: []
-    created: '2026-03-04'
-    updated: '2026-03-04'
-    bws_project: bbchat
-    bws_machine_account: bbchat-irc-bots
+    notes: Replacement for bbchat-mspokes-db; MariaDB + Redis stack.
     observability:
       managed_services:
       - node-exporter
@@ -1381,7 +1361,8 @@ hosts:
       - kiwibnc
       - mysql-to-pubsub
       - webircgateway
-      notes: "large unmanaged stack; self-deploy enabled. Docker downgrade to 28 failed (needs --allow-downgrades). certbot needed for IRC."
+      notes: large unmanaged stack; self-deploy enabled. Docker downgrade to 28 failed
+        (needs --allow-downgrades). certbot needed for IRC.
     docker_version: '29.0'
     dns_hostnames:
     - bb.chat
@@ -1435,43 +1416,6 @@ hosts:
     bws_extra_projects:
     - relaxgg-common
     bws_machine_account: chainlink-primary
-  chainlink_adapters_weather:
-    uuid: bfc70ead-5594-4e95-8796-b06d245d11fd
-    tailscale_name: chainlink-adapters-weather
-    tailscale_ip: 100.100.182.81
-    canonical_name: chainlink-adapters-weather
-    display_name: chainlink-adapters-weather
-    group: chainlink
-    cloud: gcp
-    status: active
-    use_exit_node: false
-    public_ip: 34.122.93.131
-    public_ipv6: null
-    public_ip_secondary: null
-    private_ip: null
-    hcloud_project: null
-    gcp_project: cryptonode-ops-dev
-    gcp_zone: null
-    robot_id: null
-    robot_product: null
-    robot_dc: null
-    services:
-    - chainlink
-    observability:
-      managed_services:
-      - node-exporter
-      - cadvisor
-      unmanaged_services:
-      - chainlink
-      notes: chainlink adapters unmanaged; host running baremetal apache2 serving default /var/www/html (000-default.conf).
-    docker_version: '20.10'
-    dns_hostnames: []
-    legacy_instances:
-    - mainnet-chainlink-lb
-    created: '2025-12-09'
-    updated: '2025-12-14'
-    bws_project: chainlink
-    bws_machine_account: chainlink-adapters-weather
   relayos_staging:
     uuid: 954f9f7b-1738-4b20-9f62-06cb709e655a
     tailscale_name: relayos-staging
@@ -1536,7 +1480,7 @@ hosts:
     services:
     - mariadb
     - redis
-    notes: "warnings: redis service name mismatch in compose validation"
+    notes: 'warnings: redis service name mismatch in compose validation'
     observability:
       ready: true
       managed_services:
@@ -1761,7 +1705,7 @@ hosts:
     - queue-worker
     - nginx
     - cadvisor
-    notes: "warnings: queue-worker not defined in services.yml"
+    notes: 'warnings: queue-worker not defined in services.yml'
     observability:
       ready: true
       managed_services:
