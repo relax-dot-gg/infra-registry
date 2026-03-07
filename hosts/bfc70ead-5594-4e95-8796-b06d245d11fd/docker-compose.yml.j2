@@ -8,11 +8,12 @@ services:
       PORT: 8082
       EA_PORT: 8082
       PROJECT_ID: cryptonode-ops-dev
+      SA_B64: "{{ _bfc70ead_gcp_weather_sa_b64 }}"
     entrypoint: ["/bin/bash","-lc"]
     command: >-
       set -euo pipefail &&
       echo "Writing service account" &&
-      echo "${_bfc70ead_gcp_weather_sa_b64}" | base64 -d > /app/sa.json &&
+      echo "$SA_B64" | base64 -d > /app/sa.json &&
       export GOOGLE_APPLICATION_CREDENTIALS=/app/sa.json &&
       if [ ! -d /app ]; then git clone https://github.com/chainlink/external-adapters-js /app; fi &&
       cd /app/packages/composites/google-weather &&
