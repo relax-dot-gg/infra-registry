@@ -22,7 +22,7 @@ services:
       - imageproxy
 
 {% include "services/lego-dns.yml.j2" %}
-{% set imageproxy_allowed_hosts = '142.132.153.252,reblogme.com' %}
+{% set imageproxy_allowed_hosts = '142.132.153.252,reblogme.com,127.0.0.1' %}
 {% include "services/imageproxy.yml.j2" %}
 {% include "services/cadvisor.yml.j2" %}
 {% include "services/node-exporter.yml.j2" %}
