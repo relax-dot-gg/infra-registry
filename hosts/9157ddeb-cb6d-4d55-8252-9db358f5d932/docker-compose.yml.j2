@@ -92,8 +92,8 @@ services:
       - WOODPECKER_GITHUB_SECRET={{ github_secret }}
       - WOODPECKER_GITEA=true
       - WOODPECKER_GITEA_URL=http://100.73.228.90:3000/
-      - WOODPECKER_GITEA_CLIENT={{ _9157ddeb_gitea_client_id | default('', true) }}
-      - WOODPECKER_GITEA_SECRET={{ _9157ddeb_gitea_client_secret | default('', true) }}
+      - WOODPECKER_GITEA_CLIENT={{ gitea_client | default('', true) }}
+      - WOODPECKER_GITEA_SECRET={{ gitea_secret | default('', true) }}
       - WOODPECKER_AGENT_SECRET={{ _9157ddeb_agent_secret }}
       - WOODPECKER_LOG_LEVEL=warn
       - WOODPECKER_REPO_OWNERS=allenday,cyberstorm-dev,fwh-ltd,relax-dot-gg,relayos,relaxgg
