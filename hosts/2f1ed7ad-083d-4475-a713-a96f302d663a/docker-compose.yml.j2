@@ -64,7 +64,6 @@ services:
 {% set redis_port_bindings = ["6379:6379"] %}
 {% include "services/redis.yml.j2" %}
 
-  elasticsearch:
 {% include "services/elasticsearch.yml.j2" %}
 
 {% set elasticsearch_host = "127.0.0.1" %}
