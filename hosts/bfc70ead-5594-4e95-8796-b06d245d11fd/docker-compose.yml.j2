@@ -10,19 +10,23 @@ services:
       PROJECT_ID: cryptonode-ops-dev
       SA_B64: "{{ _bfc70ead_gcp_weather_sa_b64 }}"
     command: >-
-      /bin/bash /entrypoint.sh
+      /bin/bash -lc "
+        set -euo pipefail
+        echo 'Writing service account'
+        echo \"$SA_B64\" | base64 -d > /app/sa.json
+        export GOOGLE_APPLICATION_CREDENTIALS=/app/sa.json
+        cd /app/packages/composites/google-weather
+        yarn install --immutable || yarn install
+        exec yarn start
+      "
     ports:
       - "8082:8082"
     volumes:
       - /home/chainlink/external-adapters-js-private:/app
+      - /opt/services/config/google-weather-entrypoint.sh:/entrypoint.sh:ro
       - /var/lib/ea-cache:/tmp
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
-    configs:
-      - source: google_weather_entrypoint
-        target: /entrypoint.sh
-        mode: 0755
-
 
 {% include "services/node-exporter.yml.j2" %}
 {% include "services/cadvisor.yml.j2" %}
