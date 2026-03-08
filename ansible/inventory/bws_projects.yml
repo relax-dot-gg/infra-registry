@@ -1,125 +1,90 @@
-# BWS Project Registry
-# Maps project names to their UUIDs for validation and reference
-#
-# Secret naming convention:
-#   - Universal (relaxgg-common): no prefix (ghcr_token, storagebox0_password)
-#   - Host-specific: {host_uuid_prefix}_{secret_name} (d1b9e5d5_mariadb_root_password)
-#
-# Host UUID lookup: see uuid_registry.yml
-# Host's bws_project field maps to project alias below
-#
-# Machine account access pattern:
-#   Each machine account gets access to:
-#   1. relaxgg-common (universal)
-#   2. Their group's project (mapped via bws_project field)
-
 projects:
-  # === Universal (all machines) ===
   relaxgg-common:
     uuid: f54d9645-c80d-41c1-b1c4-b3b500f035a3
     description: Universal secrets shared by all machines
     aliases: []
     secrets:
-      - ghcr_username
-      - ghcr_token
-      - storagebox0_username
-      - storagebox0_password
-      - devops_sa_github_pat
-      - devops_sa_github_password
-      - node_exporter_password  # shared prometheus scraping auth
-      - node_exporter_hash      # bcrypt hash for web.config.file
-
-  # === Infrastructure (relaxgg group) ===
+    - ghcr_username
+    - ghcr_token
+    - storagebox0_username
+    - storagebox0_password
+    - devops_sa_github_pat
+    - devops_sa_github_password
+    - node_exporter_password
+    - node_exporter_hash
   relaxgg-infra:
     uuid: 0697b703-9b1d-4a1a-b626-b3b30117f906
     description: Infrastructure host secrets (UUID-prefixed)
     aliases: []
     canonical_hosts:
-      d1b9e5d5: relaxgg-databases    # Owns mariadb, postgresql, redis passwords
-      56b51896: relaxgg-airflow      # Owns airflow secrets
-      9157ddeb: cyberstorm-citadel   # Legacy mapping; host now lives in cyberstorm-infra project
-
-  # === Admin (bastion only) ===
+      d1b9e5d5: relaxgg-databases
+      56b51896: relaxgg-airflow
+      9157ddeb: cyberstorm-citadel
   relaxgg-admin:
     uuid: 89323dbc-1e7d-493a-91cb-b3b5010334af
     description: Sensitive admin secrets (bastion/CI only)
     aliases: []
     access:
-      - relaxgg-bastion
+    - relaxgg-bastion
     secrets:
-      - google_password      # devops-sa@relax.gg email
-      - google_totp          # devops-sa@relax.gg TOTP seed
-      - bitwarden_password   # vault master password
-      - bws_access_token     # admin BWS token (all projects)
-      - gcp_sa_json          # fwd-it-ops service account
-      - github_client        # GitHub OAuth client ID (CI login)
-      - github_secret        # GitHub OAuth client secret
-      - deploy_ssh_key_b64   # SSH key for CI deployments
-
-  # === Worker tier (airflow workers, lower privilege) ===
+    - google_password
+    - google_totp
+    - bitwarden_password
+    - bws_access_token
+    - gcp_sa_json
+    - github_client
+    - github_secret
+    - deploy_ssh_key_b64
   relaxgg-data:
     uuid: 24e56153-c7f5-495f-a304-b2fe01027d65
     description: Worker-level secrets (airflow workers need this, not full infra access)
     aliases: []
     access:
-      - airflow-workers
+    - airflow-workers
     secrets:
-      - airflow_fernet_key          # encryption key for Variables/Connections
-      - postgresql_rw_password_airflow # shared postgres password for airflow workers
-      - redis_password              # shared redis/celery broker password
-
-  # === Email (multi-tenant MTAs) ===
+    - airflow_fernet_key
+    - postgresql_rw_password_airflow
+    - redis_password
   relaxgg-email:
     uuid: caec567d-dcd2-4083-bd74-b3b600856135
     description: SMTP credentials for hosted MTAs (freechat/bb.chat/aiplaymates/i4chan/relax.gg)
     aliases: []
     access:
-      - relaxgg-bastion   # RW for ops
-      - freechatzone-mta  # RO for runtime
-
-  # === DevNet (infralink) ===
+    - relaxgg-bastion
+    - freechatzone-mta
   infralink-dev:
     uuid: b0cea6bf-f932-4cae-9498-b3e80044f3e3
     description: DevNet shared secrets for infralink hosts
     aliases: []
-
-  # === Service Projects ===
   bbchat:
     uuid: 0ed3f407-fd2d-4c3f-b572-b3b30125a88b
     description: BBChat service secrets
     aliases: []
-
   bdsmlr:
     uuid: 9de99856-d738-40da-9c84-b3b30126972f
     description: BDSMLR service secrets
     aliases: []
-
   chainlink:
     uuid: 8e69cb02-17ec-419a-977a-b3b30126b74b
     description: Chainlink service secrets
     aliases: []
-
   freechatzone:
     uuid: ab946f1f-7756-4a2c-bcf6-b3b3012618b8
     description: FreeChatZone service secrets
     aliases:
-      - freechat
-
+    - freechat
   reblogme:
     uuid: abdaee9d-f1c3-4037-b890-b3b30126d884
     description: ReblogMe service secrets
     aliases: []
-
   cyberstorm:
     uuid: ad31095d-ec32-49c2-a346-b3e3008b0256
     description: Cyberstorm project secrets (nisto/openclaw)
     aliases: []
-
   cyberstorm-infra:
     uuid: 478c9a35-c875-4f0c-899d-b3fb0150cd05
     description: Cyberstorm infra hosts (watchtower/golem)
     aliases: []
-
   relayos:
     uuid: 34149040-551f-4903-bed7-b3b30125e4d0
     description: RelayOS service secrets
