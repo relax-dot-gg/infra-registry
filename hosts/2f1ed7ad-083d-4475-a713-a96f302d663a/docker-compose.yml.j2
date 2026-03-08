@@ -11,6 +11,9 @@
 {% set redis_port = "6379" %}
 {% set redis_exporter_port = "9121" %}
 {% set redis_password = _2f1ed7ad_redis_password %}
+{% set elasticsearch_data_dir = "/data/elasticsearch" %}
+{% set elasticsearch_password = _2f1ed7ad_elasticsearch_password %}
+{% set elasticsearch_env = {"ES_JAVA_OPTS": "-Xms24g -Xmx24g", "cluster.name": "relaxgg-db4"} %}
 
 services:
   # === DATABASES ===
@@ -46,6 +49,13 @@ services:
 
 {% set redis_port_bindings = ["6379:6379"] %}
 {% include "services/redis.yml.j2" %}
+
+  elasticsearch:
+{% include "services/elasticsearch.yml.j2" %}
+
+{% set elasticsearch_host = "127.0.0.1" %}
+{% set elasticsearch_port = "9200" %}
+{% include "services/elasticsearch-exporter.yml.j2" %}
 
   # === INFRA ===
 {% include "services/cadvisor.yml.j2" %}
