@@ -42,13 +42,18 @@ def validate_edge_healthchecks(edges: List[Dict[str, Any]]) -> List[str]:
         healthcheck_type_value = healthcheck.get("type")
         if not healthcheck_type_value:
             errors.append(f"{edge_id}: healthcheck missing type")
-            continue
 
         if not healthcheck.get("interval"):
             errors.append(f"{edge_id}: healthcheck missing interval")
+
+        if not healthcheck_type_value:
+            continue
+
         healthcheck_type = str(healthcheck_type_value).lower()
         if healthcheck_type not in allowed_healthcheck_types:
-            errors.append(f"{edge_id}: healthcheck.type must be one of {sorted(allowed_healthcheck_types)}")
+            errors.append(
+                f"{edge_id}: healthcheck.type must be one of {sorted(allowed_healthcheck_types)}"
+            )
 
         if healthcheck_type in {"http", "https"}:
             conditions = _as_text_list(healthcheck.get("conditions"))
