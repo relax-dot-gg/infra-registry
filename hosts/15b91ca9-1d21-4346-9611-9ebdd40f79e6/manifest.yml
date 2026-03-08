@@ -3,24 +3,25 @@ hosts:
     tailscale_name: bbchat-irc-bots
     tailscale_ip: 100.122.185.68
     canonical_name: bbchat-irc-bots
-    group: bbchat
     cloud: hetzner-cloud
     status: active
     use_exit_node: false
     services:
-      - mariadb
-      - mysqld-exporter
-      - redis
-      - redis-exporter
-      - cadvisor
-      - node-exporter
+    - mariadb
+    - mysqld-exporter
+    - redis
+    - redis-exporter
+    - cadvisor
+    - node-exporter
     observability:
       ready: false
       managed_services: []
       unmanaged_services: []
-      notes: "MariaDB + Redis host replacing bbchat-mspokes-db"
+      notes: MariaDB + Redis host replacing bbchat-mspokes-db
     docker_version: '28'
     dns_hostnames: []
     legacy_instances: []
     bws_project: bbchat
     bws_machine_account: bbchat-irc-bots
+    projects:
+    - bbchat

@@ -2,7 +2,6 @@ hosts:
   b87a38b5-dc5f-460a-aa55-0e3c1e6bab59:
     canonical_name: infralink4
     status: active
-    group: infralink-dev
     cloud: hetzner-cloud
     tailscale_name: infralink4
     tailscale_ip: 100.95.255.126
@@ -27,7 +26,7 @@ hosts:
       port_overrides:
         cadvisor: 8082
       unmanaged_services: []
-      notes: "cdn profile; needs certbot + gitops nginx."
+      notes: cdn profile; needs certbot + gitops nginx.
     docker_version: '28'
     probe_path: /health
     dns_hostnames:
@@ -35,20 +34,22 @@ hosts:
     - cdn013.bdsmlr.com
     - cdn101.bdsmlr.com
     tls_certs:
-      - name: cdn012
-        host: cdn012.bdsmlr.com
-        port: 443
-        issuer: unknown
-      - name: cdn013
-        host: cdn013.bdsmlr.com
-        port: 443
-        issuer: unknown
-      - name: cdn101
-        host: cdn101.bdsmlr.com
-        port: 443
-        issuer: unknown
+    - name: cdn012
+      host: cdn012.bdsmlr.com
+      port: 443
+      issuer: unknown
+    - name: cdn013
+      host: cdn013.bdsmlr.com
+      port: 443
+      issuer: unknown
+    - name: cdn101
+      host: cdn101.bdsmlr.com
+      port: 443
+      issuer: unknown
     legacy_instances:
     - cdn034
     bws_project: infralink-dev
     bws_machine_account: infralink4
-    notes: "dev template from bdsmlr_cdn_034; update tailscale_ip and BWS settings"
+    notes: dev template from bdsmlr_cdn_034; update tailscale_ip and BWS settings
+    projects:
+    - infralink

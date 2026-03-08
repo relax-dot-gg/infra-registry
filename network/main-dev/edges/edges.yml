@@ -1,1003 +1,1070 @@
-schema_version: "1.0"
-
+schema_version: '1.0'
 edges:
-  - id: d8f3ccf1-a579-4dfe-b65b-cabab61bfb50
-    type: monitoring
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: prometheus
-    to:
-      host: 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: node-exporter
-      port: 9100
-    protocol: http/prometheus
-    metadata:
-      purpose: Prometheus scrape (bastion)
-      criticality: high
-
-  - id: 1f01a0f8-67fd-4235-b673-010f54113dbc
-    type: monitoring
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: prometheus
-    to:
-      host: d4bf50fc-48eb-41d1-9921-0f5ac4348774
-      service: node-exporter
-      port: 9100
-    protocol: http/prometheus
-    metadata:
-      purpose: Prometheus scrape (woodpecker)
-      criticality: high
-
-  - id: abddf2a0-8b5a-43fe-a182-9ace87ad2a9a
-    type: monitoring
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: prometheus
-    to:
-      host: 7c55d433-41de-4b77-8e36-2c1cfd771b77
-      service: node-exporter
-      port: 9100
-    protocol: http/prometheus
-    metadata:
-      purpose: Prometheus scrape (databases)
-      criticality: high
-
-  - id: c92f8585-ea68-4d15-9b3c-c799718071f7
-    type: monitoring
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: prometheus
-    to:
-      host: f4e169d7-6d93-476d-bd82-7bbb88d09a9d
-      service: node-exporter
-      port: 9100
-    protocol: http/prometheus
-    metadata:
-      purpose: Prometheus scrape (app/services)
-      criticality: high
-
-  - id: 1049797e-908a-4703-8001-877de3503b09
-    type: monitoring
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: prometheus
-    to:
-      host: f4e169d7-6d93-476d-bd82-7bbb88d09a9d
-      service: nginx
-      port: 9113
-    protocol: http/prometheus
-    metadata:
-      purpose: Prometheus scrape (nginx vts metrics, app/services)
-      criticality: high
-
-  - id: 748c34ad-6024-4e07-9235-564cd84d1ead
-    type: monitoring
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: prometheus
-    to:
-      host: b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
-      service: node-exporter
-      port: 9100
-    protocol: http/prometheus
-    metadata:
-      purpose: Prometheus scrape (edge/cdn)
-      criticality: high
-
-  - id: 1e75563f-0f4b-404c-aa8c-dd46f0f8bbb9
-    type: monitoring
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: prometheus
-    to:
-      host: b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
-      service: nginx
-      port: 9113
-    protocol: http/prometheus
-    metadata:
-      purpose: Prometheus scrape (nginx vts metrics, edge/cdn)
-      criticality: high
-
-  - id: b07177f9-0a4b-4064-9b3e-35e8ad9c23ae
-    type: monitoring
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: prometheus
-    to:
-      host: 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: blackbox
-      port: 9115
-    protocol: http/prometheus
-    metadata:
-      purpose: Prometheus scrape (blackbox exporter)
-      criticality: high
-
-  - id: f6af7a2f-698f-44ba-82ec-bffc63f2a448
-    type: monitoring
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: prometheus
-    to:
-      host: b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
-      service: otel-collector
-      port: 9464
-    protocol: http/prometheus
-    metadata:
-      purpose: Prometheus scrape (otel-collector)
-      criticality: high
-
-  - id: 004a9d3a-c1d1-4e6f-b73e-f3f83825c9ca
-    type: api
-    from:
-      hosts:
-        - d4bf50fc-48eb-41d1-9921-0f5ac4348774
-      service: woodpecker-agent
-    to:
-      host: 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: woodpecker
-      port: 9000
-    protocol: tcp
-    metadata:
-      purpose: Woodpecker agent to controller (gRPC)
-      criticality: high
-
-  - id: 8ff25203-33fa-4b89-a52f-cef071757d01
-    type: database
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: woodpecker
-    to:
-      host: 7c55d433-41de-4b77-8e36-2c1cfd771b77
-      service: postgresql
-      port: 5432
-    protocol: postgresql
-    auth:
-      username: rw_woodpecker
-      database: woodpecker
-      secret_ref: postgresql_rw_password_woodpecker
-      role: rw
-    metadata:
-      purpose: Woodpecker controller access to postgres
-      criticality: high
-
-  - id: 0f0a5f01-5d1f-43fd-8d40-4cbf3f7b9df0
-    type: database
-    from:
-      hosts:
-        - f4e169d7-6d93-476d-bd82-7bbb88d09a9d
-      service: "*"
-    to:
-      host: 7c55d433-41de-4b77-8e36-2c1cfd771b77
-      service: postgresql
-      port: 5432
-    protocol: postgresql
-    auth:
-      username: rw_app
-      database: app
-      secret_ref: postgresql_rw_password_app
-      role: rw
-    metadata:
-      purpose: App access to postgres
-      criticality: high
-
-  - id: 5a2d2f2a-9ab8-4d88-8c7e-2b29a3f56b45
-    type: database
-    from:
-      hosts:
-        - f4e169d7-6d93-476d-bd82-7bbb88d09a9d
-      service: "*"
-    to:
-      host: 7c55d433-41de-4b77-8e36-2c1cfd771b77
-      service: mariadb
-      port: 3306
-    protocol: mysql
-    auth:
-      username: rw_app
-      database: app
-      secret_ref: mariadb_rw_password_app
-      role: rw
-    metadata:
-      purpose: App access to mariadb
-      criticality: high
-
-  - id: ffc7f343-6869-4235-bd2f-6623c4029c96
-    type: database
-    from:
-      hosts:
-        - f4e169d7-6d93-476d-bd82-7bbb88d09a9d
-      service: wordpress
-    to:
-      host: 7c55d433-41de-4b77-8e36-2c1cfd771b77
-      service: mariadb
-      port: 3306
-    protocol: mysql
-    auth:
-      username: rw_wordpress
-      database: wordpress
-      secret_ref: mariadb_rw_password_wordpress
-      role: rw
-    metadata:
-      purpose: WordPress access to mariadb
-      criticality: high
-
-  - id: 393b66f1-e3f4-420c-ae69-aed52568c603
-    type: api
-    from:
-      hosts:
-        - f4e169d7-6d93-476d-bd82-7bbb88d09a9d
-      service: wordpress
-    to:
-      host: f4e169d7-6d93-476d-bd82-7bbb88d09a9d
-      service: nginx
-      port: 80
-    protocol: http
-    metadata:
-      purpose: WordPress served via local nginx
-      criticality: high
-
-  - id: 08bc8b02-674d-4c0e-9225-bee04a77ae6f
-    type: api
-    from:
-      hosts:
-        - f4e169d7-6d93-476d-bd82-7bbb88d09a9d
-      service: cloudflared
-    to:
-      host: f4e169d7-6d93-476d-bd82-7bbb88d09a9d
-      service: nginx
-      port: 80
-    protocol: http
-    metadata:
-      purpose: Cloudflared tunnel to nginx (WordPress)
-      criticality: high
-
-  - id: 6c51a06e-3e7b-43ed-896a-00800e6dc956
-    type: security
-    from:
-      hosts:
-        - f4e169d7-6d93-476d-bd82-7bbb88d09a9d
-      service: nginx
-    to:
-      host: f4e169d7-6d93-476d-bd82-7bbb88d09a9d
-      service: tls-certs
-    protocol: internal
-    metadata:
-      purpose: nginx depends on local TLS certificate material
-      criticality: medium
-
-  - id: 7150ca75-8288-437b-a937-7625d4b7ce25
-    type: database
-    from:
-      hosts:
-        - d4bf50fc-48eb-41d1-9921-0f5ac4348774
-      service: airflow-worker
-    to:
-      host: 7c55d433-41de-4b77-8e36-2c1cfd771b77
-      service: postgresql
-      port: 5432
-    protocol: postgresql
-    auth:
-      username: rw_airflow
-      database: airflow
-      secret_ref: postgresql_rw_password_airflow
-      role: rw
-    metadata:
-      purpose: Airflow worker access to postgres (remote)
-      criticality: high
-
-  - id: 43ec07f9-3dd8-4a3d-99c0-d4b359d74969
-    type: queue
-    from:
-      hosts:
-        - d4bf50fc-48eb-41d1-9921-0f5ac4348774
-      service: airflow-worker
-    to:
-      host: 7c55d433-41de-4b77-8e36-2c1cfd771b77
-      service: redis
-      port: 6379
-    protocol: redis
-    auth:
-      username: rw_user
-      secret_ref: redis_password
-      role: rw
-    metadata:
-      purpose: Airflow worker access to redis (remote)
-      criticality: high
-
-  - id: 29ef679b-65c5-4206-9025-e6d1d7025013
-    type: storage
-    from:
-      hosts:
-        - d4bf50fc-48eb-41d1-9921-0f5ac4348774
-      service: airflow-worker
-    to:
-      host: ef0ee03f-ca36-4ada-ae0e-ddc1cb3e29a7
-      service: sshfs
-      port: 0
-    protocol: mount
-    auth:
-      mount_path: /mnt/storagebox0
-    metadata:
-      purpose: Airflow worker storagebox0 mount (remote)
-      criticality: high
-
-  - id: 77f7c7b8-6c18-4c4b-8b65-8c6f2a5bdb7f
-    type: queue
-    from:
-      hosts:
-        - f4e169d7-6d93-476d-bd82-7bbb88d09a9d
-      service: "*"
-    to:
-      host: 7c55d433-41de-4b77-8e36-2c1cfd771b77
-      service: redis
-      port: 6379
-    protocol: redis
-    auth:
-      username: rw_user
-      secret_ref: redis_password
-      role: rw
-    metadata:
-      purpose: App access to redis
-      criticality: high
-
-  - id: 8c5b0c9a-6b8a-4b0b-9c43-5f2c9c8b6f5d
-    type: storage
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: storagebox0
-    to:
-      host: ef0ee03f-ca36-4ada-ae0e-ddc1cb3e29a7
-      service: sshfs
-      port: 0
-    protocol: mount
-    auth:
-      mount_path: /mnt/storagebox0
-    metadata:
-      purpose: storagebox0 mount (bastion)
-      criticality: high
-
-  - id: 2b9e3e64-8d9f-4a1b-9f0b-4c2d7e6c1a3e
-    type: storage
-    from:
-      hosts:
-        - d4bf50fc-48eb-41d1-9921-0f5ac4348774
-      service: storagebox0
-    to:
-      host: ef0ee03f-ca36-4ada-ae0e-ddc1cb3e29a7
-      service: sshfs
-      port: 0
-    protocol: mount
-    auth:
-      mount_path: /mnt/storagebox0
-    metadata:
-      purpose: storagebox0 mount (woodpecker)
-      criticality: high
-
-  - id: 4c7c2f5a-3b6d-4a1c-9f27-8d5f4b3a2c1d
-    type: storage
-    from:
-      hosts:
-        - f4e169d7-6d93-476d-bd82-7bbb88d09a9d
-      service: storagebox0
-    to:
-      host: ef0ee03f-ca36-4ada-ae0e-ddc1cb3e29a7
-      service: sshfs
-      port: 0
-    protocol: mount
-    auth:
-      mount_path: /mnt/storagebox0
-    metadata:
-      purpose: storagebox0 mount (app/services)
-      criticality: high
-
-  - id: 605176be-a5ba-46b3-9fd0-56af83055625
-    type: ssh
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: "*"
-    to:
-      host: d4bf50fc-48eb-41d1-9921-0f5ac4348774
-      service: ssh
-      port: 22
-    protocol: ssh
-    auth:
-      username: devops
-    metadata:
-      purpose: bastion ssh (devops) to infralink1
-      criticality: high
-
-  - id: 32888af2-f576-4f0b-972d-fde992b714b7
-    type: ssh
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: "*"
-    to:
-      host: d4bf50fc-48eb-41d1-9921-0f5ac4348774
-      service: ssh
-      port: 22
-    protocol: ssh
-    auth:
-      username: root
-    metadata:
-      purpose: bastion ssh (root) to infralink1
-      criticality: high
-
-  - id: 78c36dc3-aeec-41ff-a1fd-eebdeab7afca
-    type: ssh
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: "*"
-    to:
-      host: 7c55d433-41de-4b77-8e36-2c1cfd771b77
-      service: ssh
-      port: 22
-    protocol: ssh
-    auth:
-      username: devops
-    metadata:
-      purpose: bastion ssh (devops) to infralink2
-      criticality: high
-
-  - id: faa96650-3846-4dc2-94b5-b778c0bc1b4b
-    type: ssh
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: "*"
-    to:
-      host: 7c55d433-41de-4b77-8e36-2c1cfd771b77
-      service: ssh
-      port: 22
-    protocol: ssh
-    auth:
-      username: root
-    metadata:
-      purpose: bastion ssh (root) to infralink2
-      criticality: high
-
-  - id: f4292712-a803-4a9c-a66b-cb30e96284ee
-    type: ssh
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: "*"
-    to:
-      host: f4e169d7-6d93-476d-bd82-7bbb88d09a9d
-      service: ssh
-      port: 22
-    protocol: ssh
-    auth:
-      username: devops
-    metadata:
-      purpose: bastion ssh (devops) to infralink3
-      criticality: high
-
-  - id: ee0ea921-c27f-454c-b754-e8fac76f8c23
-    type: ssh
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: "*"
-    to:
-      host: f4e169d7-6d93-476d-bd82-7bbb88d09a9d
-      service: ssh
-      port: 22
-    protocol: ssh
-    auth:
-      username: root
-    metadata:
-      purpose: bastion ssh (root) to infralink3
-      criticality: high
-
-  - id: 0124883b-cd36-48ba-afbc-0cc9e6544721
-    type: ssh
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: "*"
-    to:
-      host: b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
-      service: ssh
-      port: 22
-    protocol: ssh
-    auth:
-      username: devops
-    metadata:
-      purpose: bastion ssh (devops) to infralink4
-      criticality: high
-
-  - id: e0a58930-8342-45c3-82b1-802d7d6797bf
-    type: ssh
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: "*"
-    to:
-      host: b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
-      service: ssh
-      port: 22
-    protocol: ssh
-    auth:
-      username: root
-    metadata:
-      purpose: bastion ssh (root) to infralink4
-      criticality: high
-
-  - id: 7665088f-df25-4247-9bb0-7c58bb84e08a
-    type: monitoring
-    from:
-      hosts:
-        - b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
-      service: elasticsearch-exporter
-    to:
-      host: b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
-      service: elasticsearch
-      port: 9200
-    protocol: http
-    metadata:
-      purpose: elasticsearch exporter access to elasticsearch
-      criticality: high
-
-  - id: ad04df9e-647c-4ac0-b8da-f8bdccd4f7b8
-    type: monitoring
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: prometheus
-    to:
-      host: 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: cadvisor
-      port: 8080
-    protocol: http/prometheus
-    metadata:
-      purpose: Prometheus scrape (cadvisor, bastion)
-      criticality: high
-
-  - id: 5c84dcee-c2d8-466f-9cf0-df349ef4d899
-    type: monitoring
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: prometheus
-    to:
-      host: d4bf50fc-48eb-41d1-9921-0f5ac4348774
-      service: cadvisor
-      port: 8080
-    protocol: http/prometheus
-    metadata:
-      purpose: Prometheus scrape (cadvisor, infralink1)
-      criticality: high
-
-  - id: 8a5fc684-1d64-429b-93aa-4ab2477e0b13
-    type: monitoring
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: prometheus
-    to:
-      host: 7c55d433-41de-4b77-8e36-2c1cfd771b77
-      service: cadvisor
-      port: 8080
-    protocol: http/prometheus
-    metadata:
-      purpose: Prometheus scrape (cadvisor, infralink2)
-      criticality: high
-
-  - id: 7f8d6281-b97e-4d07-b0e2-00537a359b9c
-    type: monitoring
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: prometheus
-    to:
-      host: f4e169d7-6d93-476d-bd82-7bbb88d09a9d
-      service: cadvisor
-      port: 8080
-    protocol: http/prometheus
-    metadata:
-      purpose: Prometheus scrape (cadvisor, infralink3)
-      criticality: high
-
-  - id: 0754587a-1bf0-4eb6-843e-9af57469f33a
-    type: monitoring
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: prometheus
-    to:
-      host: b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
-      service: cadvisor
-      port: 8080
-    protocol: http/prometheus
-    metadata:
-      purpose: Prometheus scrape (cadvisor, infralink4)
-      criticality: high
-
-  - id: cbf20775-3d6a-4b57-acb9-2903321d8050
-    type: monitoring
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: prometheus
-    to:
-      host: 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: grafana
-      port: 3000
-    protocol: http/prometheus
-    metadata:
-      purpose: Prometheus scrape (grafana)
-      criticality: medium
-
-  - id: ce0a6171-4902-497b-8398-5425c4e6ca88
-    type: monitoring
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: prometheus
-    to:
-      host: 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: woodpecker
-      port: 8000
-    protocol: http/prometheus
-    metadata:
-      purpose: Prometheus scrape (woodpecker)
-      criticality: medium
-
-  - id: 2142eef8-7486-4ac7-b1a5-7f768f8206af
-    type: monitoring
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: prometheus
-    to:
-      host: 7c55d433-41de-4b77-8e36-2c1cfd771b77
-      service: redis-exporter
-      port: 9121
-    protocol: http/prometheus
-    metadata:
-      purpose: Prometheus scrape (redis-exporter, infralink2)
-      criticality: high
-
-  - id: 83b36053-0b78-4123-8c5d-465cbccef88c
-    type: monitoring
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: prometheus
-    to:
-      host: b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
-      service: postfix-exporter
-      port: 9154
-    protocol: http/prometheus
-    metadata:
-      purpose: Prometheus scrape (postfix-exporter, infralink4 if running)
-      criticality: medium
-
-  - id: d06d05a7-c34d-46c1-8e81-d84519bb2122
-    type: monitoring
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: prometheus
-    to:
-      host: 7c55d433-41de-4b77-8e36-2c1cfd771b77
-      service: mysqld-exporter
-      port: 9104
-    protocol: http/prometheus
-    metadata:
-      purpose: Prometheus scrape (mysqld-exporter, infralink2)
-      criticality: high
-
-  - id: baa42917-7e8a-412e-aa3e-ee853cbaf199
-    type: monitoring
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: prometheus
-    to:
-      host: b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
-      service: mysqld-exporter
-      port: 9104
-    protocol: http/prometheus
-    metadata:
-      purpose: Prometheus scrape (mysqld-exporter, infralink4 if running)
-      criticality: medium
-
-  - id: b8c93b84-d009-4a55-b22b-12c7f8bb67a5
-    type: api
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: grafana
-    to:
-      host: 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: prometheus
-      port: 9090
-    protocol: http/prometheus
-    metadata:
-      purpose: Grafana queries Prometheus API
-      criticality: high
-
-  - id: bf541684-e3d1-455d-a6d4-9d841ba61b03
-    type: monitoring
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: blackbox
-    to:
-      host: f4e169d7-6d93-476d-bd82-7bbb88d09a9d
-      service: nginx
-      port: 80
-    protocol: http
-    metadata:
-      purpose: Blackbox HTTP probe (wordpress frontdoor)
-      criticality: medium
-
-  - id: f0d7292f-1aaa-47ca-96a2-bedfc569958a
-    type: monitoring
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: blackbox
-    to:
-      host: b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
-      service: cdn
-      port: 443
-    protocol: https
-    metadata:
-      purpose: Blackbox HTTPS probe (cdn edge)
-      criticality: medium
-
-  - id: 3bb49dc2-5125-4398-b5de-aabaf2a12af3
-    type: api
-    from:
-      hosts:
-        - f4e169d7-6d93-476d-bd82-7bbb88d09a9d
-      service: nginx
-    to:
-      host: f4e169d7-6d93-476d-bd82-7bbb88d09a9d
-      service: php-fpm
-      port: 9000
-    protocol: fastcgi
-    metadata:
-      purpose: Nginx upstream to PHP-FPM (wordpress)
-      criticality: high
-
-  - id: 1f2fac9e-4eeb-4c24-8d21-ae8fff279098
-    type: api
-    from:
-      hosts:
-        - b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
-      service: nginx
-    to:
-      host: f4e169d7-6d93-476d-bd82-7bbb88d09a9d
-      service: wordpress
-      port: 80
-    protocol: http
-    metadata:
-      purpose: CDN edge fetches origin (wordpress)
-      criticality: high
-
-  - id: 2f9d3a2f-27c8-4c1f-b44a-7f7f9c7c9c0e
-    type: storage
-    from:
-      hosts:
-        - 7c55d433-41de-4b77-8e36-2c1cfd771b77
-      service: storagebox0
-    to:
-      host: ef0ee03f-ca36-4ada-ae0e-ddc1cb3e29a7
-      service: sshfs
-      port: 0
-    protocol: mount
-    auth:
-      mount_path: /mnt/storagebox0
-    metadata:
-      purpose: storagebox0 mount (databases)
-      criticality: high
-
-  - id: 4b0c8d1a-5a1b-4f3d-9c7c-2e0a9d1f3c2b
-    type: storage
-    from:
-      hosts:
-        - b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
-      service: storagebox0
-    to:
-      host: ef0ee03f-ca36-4ada-ae0e-ddc1cb3e29a7
-      service: sshfs
-      port: 0
-    protocol: mount
-    auth:
-      mount_path: /mnt/storagebox0
-    metadata:
-      purpose: storagebox0 mount (cdn)
-      criticality: high
-
-  - id: 073e058b-fa43-4d17-9561-16a98f7d0247
-    type: email
-    from:
-      hosts:
-        - f4e169d7-6d93-476d-bd82-7bbb88d09a9d
-      service: wordpress
-    to:
-      host: b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
-      service: postfix
-      port: 2586
-    protocol: smtp
-    auth:
-      username: smtp_gateway_username
-      secret_ref: smtp_gateway_password
-      role: relay
-    metadata:
-      purpose: WordPress transactional email via postfix relay
-      criticality: high
-
-  - id: 261a2189-5801-47b4-8447-5548d78aaa37
-    type: telemetry
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-        - d4bf50fc-48eb-41d1-9921-0f5ac4348774
-        - 7c55d433-41de-4b77-8e36-2c1cfd771b77
-        - f4e169d7-6d93-476d-bd82-7bbb88d09a9d
-        - b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
-      service: "*"
-    to:
-      host: b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
-      service: otel-collector
-      port: 4317
-    protocol: otlp/grpc
-    metadata:
-      purpose: OTLP gRPC ingest to otel collector
-      criticality: medium
-
-  - id: f9fd4c51-6c05-4dd5-a197-796b02f1014f
-    type: telemetry
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-        - d4bf50fc-48eb-41d1-9921-0f5ac4348774
-        - 7c55d433-41de-4b77-8e36-2c1cfd771b77
-        - f4e169d7-6d93-476d-bd82-7bbb88d09a9d
-        - b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
-      service: "*"
-    to:
-      host: b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
-      service: otel-collector
-      port: 4318
-    protocol: otlp/http
-    metadata:
-      purpose: OTLP HTTP ingest to otel collector
-      criticality: medium
-
-  - id: a20a499b-154d-4f40-b325-d0c91958c6dc
-    type: monitoring
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: blackbox
-    to:
-      host: f4e169d7-6d93-476d-bd82-7bbb88d09a9d
-      service: nginx
-      port: 443
-    protocol: https
-    metadata:
-      purpose: Blackbox HTTPS probe (n8n public endpoint)
-      criticality: medium
-      dns_name: n8n.i4chan.org
-
-  - id: 6981a7f9-0e3a-4f14-8efb-68b44e7ffac8
-    type: monitoring
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: blackbox
-    to:
-      host: 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: grafana
-      port: 3000
-    protocol: http
-    metadata:
-      purpose: Blackbox HTTP probe (Grafana UI)
-      criticality: medium
-
-  - id: 3dc4902f-456f-47ed-8c0a-4209dc118d49
-    type: monitoring
-    from:
-      hosts:
-        - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: blackbox
-    to:
-      host: 817caaa5-9ec3-4f70-9e52-a4f9baba849f
-      service: woodpecker
-      port: 8000
-    protocol: http
-    metadata:
-      purpose: Blackbox HTTP probe (Woodpecker UI)
-      criticality: medium
-
-  - id: 62452b47-498c-4a35-b673-825d010f5411
-    type: monitoring
-    from:
-      hosts: ["7ffe46b7-0eb4-40cb-8e14-ea679b9948f4"]
-      service: prometheus
-    to:
-      host: 9157ddeb-cb6d-4d55-8252-9db358f5d932
-      service: node-exporter
-      port: 9100
-    protocol: http/prometheus
-    metadata:
-      purpose: Prometheus scrape (citadel node-exporter)
-      criticality: high
-
-  - id: 825d010f-5411-4b8c-b673-62452b47498c
-    type: monitoring
-    from:
-      hosts: ["7ffe46b7-0eb4-40cb-8e14-ea679b9948f4"]
-      service: prometheus
-    to:
-      host: 9157ddeb-cb6d-4d55-8252-9db358f5d932
-      service: postgres-exporter
-      port: 9187
-    protocol: http/prometheus
-    metadata:
-      purpose: Prometheus scrape (citadel postgres)
-      criticality: high
-
-  - id: b673-825d-010f-5411-62452b47498c
-    type: monitoring
-    from:
-      hosts: ["7ffe46b7-0eb4-40cb-8e14-ea679b9948f4"]
-      service: prometheus
-    to:
-      host: 9157ddeb-cb6d-4d55-8252-9db358f5d932
-      service: redis-exporter
-      port: 9121
-    protocol: http/prometheus
-    metadata:
-      purpose: Prometheus scrape (citadel redis)
-      criticality: high
-
-  - id: 498c-825d-010f-5411-62452b47498c
-    type: database
-    from:
-      hosts: ["9157ddeb-cb6d-4d55-8252-9db358f5d932"]
-      service: woodpecker-server
-    to:
-      host: 9157ddeb-cb6d-4d55-8252-9db358f5d932
-      service: postgresql
-      port: 5432
-    protocol: postgres
-    auth:
-      username: rw_woodpecker
-      database: woodpecker
-      secret_ref: postgresql_rw_password_woodpecker
-      role: rw
-    metadata:
-      purpose: Woodpecker database connection
-
-  - id: 825d-010f-5411-6245-2b47498c498c
-    type: queue
-    from:
-      hosts: ["9157ddeb-cb6d-4d55-8252-9db358f5d932"]
-      service: woodpecker-server
-    to:
-      host: 9157ddeb-cb6d-4d55-8252-9db358f5d932
-      service: redis
-      port: 6379
-    protocol: redis
-    metadata:
-      purpose: Woodpecker queue connection
+- id: d8f3ccf1-a579-4dfe-b65b-cabab61bfb50
+  type: monitoring
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: prometheus
+  to:
+    host: 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: node-exporter
+    port: 9100
+  protocol: http/prometheus
+  metadata:
+    purpose: Prometheus scrape (bastion)
+    criticality: high
+  projects:
+  - infralink
+- id: 1f01a0f8-67fd-4235-b673-010f54113dbc
+  type: monitoring
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: prometheus
+  to:
+    host: d4bf50fc-48eb-41d1-9921-0f5ac4348774
+    service: node-exporter
+    port: 9100
+  protocol: http/prometheus
+  metadata:
+    purpose: Prometheus scrape (woodpecker)
+    criticality: high
+  projects:
+  - infralink
+- id: abddf2a0-8b5a-43fe-a182-9ace87ad2a9a
+  type: monitoring
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: prometheus
+  to:
+    host: 7c55d433-41de-4b77-8e36-2c1cfd771b77
+    service: node-exporter
+    port: 9100
+  protocol: http/prometheus
+  metadata:
+    purpose: Prometheus scrape (databases)
+    criticality: high
+  projects:
+  - infralink
+- id: c92f8585-ea68-4d15-9b3c-c799718071f7
+  type: monitoring
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: prometheus
+  to:
+    host: f4e169d7-6d93-476d-bd82-7bbb88d09a9d
+    service: node-exporter
+    port: 9100
+  protocol: http/prometheus
+  metadata:
+    purpose: Prometheus scrape (app/services)
+    criticality: high
+  projects:
+  - infralink
+- id: 1049797e-908a-4703-8001-877de3503b09
+  type: monitoring
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: prometheus
+  to:
+    host: f4e169d7-6d93-476d-bd82-7bbb88d09a9d
+    service: nginx
+    port: 9113
+  protocol: http/prometheus
+  metadata:
+    purpose: Prometheus scrape (nginx vts metrics, app/services)
+    criticality: high
+  projects:
+  - infralink
+- id: 748c34ad-6024-4e07-9235-564cd84d1ead
+  type: monitoring
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: prometheus
+  to:
+    host: b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
+    service: node-exporter
+    port: 9100
+  protocol: http/prometheus
+  metadata:
+    purpose: Prometheus scrape (edge/cdn)
+    criticality: high
+  projects:
+  - infralink
+- id: 1e75563f-0f4b-404c-aa8c-dd46f0f8bbb9
+  type: monitoring
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: prometheus
+  to:
+    host: b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
+    service: nginx
+    port: 9113
+  protocol: http/prometheus
+  metadata:
+    purpose: Prometheus scrape (nginx vts metrics, edge/cdn)
+    criticality: high
+  projects:
+  - infralink
+- id: b07177f9-0a4b-4064-9b3e-35e8ad9c23ae
+  type: monitoring
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: prometheus
+  to:
+    host: 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: blackbox
+    port: 9115
+  protocol: http/prometheus
+  metadata:
+    purpose: Prometheus scrape (blackbox exporter)
+    criticality: high
+  projects:
+  - infralink
+- id: f6af7a2f-698f-44ba-82ec-bffc63f2a448
+  type: monitoring
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: prometheus
+  to:
+    host: b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
+    service: otel-collector
+    port: 9464
+  protocol: http/prometheus
+  metadata:
+    purpose: Prometheus scrape (otel-collector)
+    criticality: high
+  projects:
+  - infralink
+- id: 004a9d3a-c1d1-4e6f-b73e-f3f83825c9ca
+  type: api
+  from:
+    hosts:
+    - d4bf50fc-48eb-41d1-9921-0f5ac4348774
+    service: woodpecker-agent
+  to:
+    host: 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: woodpecker
+    port: 9000
+  protocol: tcp
+  metadata:
+    purpose: Woodpecker agent to controller (gRPC)
+    criticality: high
+  projects:
+  - infralink
+- id: 8ff25203-33fa-4b89-a52f-cef071757d01
+  type: database
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: woodpecker
+  to:
+    host: 7c55d433-41de-4b77-8e36-2c1cfd771b77
+    service: postgresql
+    port: 5432
+  protocol: postgresql
+  auth:
+    username: rw_woodpecker
+    database: woodpecker
+    secret_ref: postgresql_rw_password_woodpecker
+    role: rw
+  metadata:
+    purpose: Woodpecker controller access to postgres
+    criticality: high
+  projects:
+  - infralink
+- id: 0f0a5f01-5d1f-43fd-8d40-4cbf3f7b9df0
+  type: database
+  from:
+    hosts:
+    - f4e169d7-6d93-476d-bd82-7bbb88d09a9d
+    service: '*'
+  to:
+    host: 7c55d433-41de-4b77-8e36-2c1cfd771b77
+    service: postgresql
+    port: 5432
+  protocol: postgresql
+  auth:
+    username: rw_app
+    database: app
+    secret_ref: postgresql_rw_password_app
+    role: rw
+  metadata:
+    purpose: App access to postgres
+    criticality: high
+  projects:
+  - infralink
+- id: 5a2d2f2a-9ab8-4d88-8c7e-2b29a3f56b45
+  type: database
+  from:
+    hosts:
+    - f4e169d7-6d93-476d-bd82-7bbb88d09a9d
+    service: '*'
+  to:
+    host: 7c55d433-41de-4b77-8e36-2c1cfd771b77
+    service: mariadb
+    port: 3306
+  protocol: mysql
+  auth:
+    username: rw_app
+    database: app
+    secret_ref: mariadb_rw_password_app
+    role: rw
+  metadata:
+    purpose: App access to mariadb
+    criticality: high
+  projects:
+  - infralink
+- id: ffc7f343-6869-4235-bd2f-6623c4029c96
+  type: database
+  from:
+    hosts:
+    - f4e169d7-6d93-476d-bd82-7bbb88d09a9d
+    service: wordpress
+  to:
+    host: 7c55d433-41de-4b77-8e36-2c1cfd771b77
+    service: mariadb
+    port: 3306
+  protocol: mysql
+  auth:
+    username: rw_wordpress
+    database: wordpress
+    secret_ref: mariadb_rw_password_wordpress
+    role: rw
+  metadata:
+    purpose: WordPress access to mariadb
+    criticality: high
+  projects:
+  - infralink
+- id: 393b66f1-e3f4-420c-ae69-aed52568c603
+  type: api
+  from:
+    hosts:
+    - f4e169d7-6d93-476d-bd82-7bbb88d09a9d
+    service: wordpress
+  to:
+    host: f4e169d7-6d93-476d-bd82-7bbb88d09a9d
+    service: nginx
+    port: 80
+  protocol: http
+  metadata:
+    purpose: WordPress served via local nginx
+    criticality: high
+  projects:
+  - infralink
+- id: 08bc8b02-674d-4c0e-9225-bee04a77ae6f
+  type: api
+  from:
+    hosts:
+    - f4e169d7-6d93-476d-bd82-7bbb88d09a9d
+    service: cloudflared
+  to:
+    host: f4e169d7-6d93-476d-bd82-7bbb88d09a9d
+    service: nginx
+    port: 80
+  protocol: http
+  metadata:
+    purpose: Cloudflared tunnel to nginx (WordPress)
+    criticality: high
+  projects:
+  - infralink
+- id: 6c51a06e-3e7b-43ed-896a-00800e6dc956
+  type: security
+  from:
+    hosts:
+    - f4e169d7-6d93-476d-bd82-7bbb88d09a9d
+    service: nginx
+  to:
+    host: f4e169d7-6d93-476d-bd82-7bbb88d09a9d
+    service: tls-certs
+  protocol: internal
+  metadata:
+    purpose: nginx depends on local TLS certificate material
+    criticality: medium
+  projects:
+  - infralink
+- id: 7150ca75-8288-437b-a937-7625d4b7ce25
+  type: database
+  from:
+    hosts:
+    - d4bf50fc-48eb-41d1-9921-0f5ac4348774
+    service: airflow-worker
+  to:
+    host: 7c55d433-41de-4b77-8e36-2c1cfd771b77
+    service: postgresql
+    port: 5432
+  protocol: postgresql
+  auth:
+    username: rw_airflow
+    database: airflow
+    secret_ref: postgresql_rw_password_airflow
+    role: rw
+  metadata:
+    purpose: Airflow worker access to postgres (remote)
+    criticality: high
+  projects:
+  - infralink
+- id: 43ec07f9-3dd8-4a3d-99c0-d4b359d74969
+  type: queue
+  from:
+    hosts:
+    - d4bf50fc-48eb-41d1-9921-0f5ac4348774
+    service: airflow-worker
+  to:
+    host: 7c55d433-41de-4b77-8e36-2c1cfd771b77
+    service: redis
+    port: 6379
+  protocol: redis
+  auth:
+    username: rw_user
+    secret_ref: redis_password
+    role: rw
+  metadata:
+    purpose: Airflow worker access to redis (remote)
+    criticality: high
+  projects:
+  - infralink
+- id: 29ef679b-65c5-4206-9025-e6d1d7025013
+  type: storage
+  from:
+    hosts:
+    - d4bf50fc-48eb-41d1-9921-0f5ac4348774
+    service: airflow-worker
+  to:
+    host: ef0ee03f-ca36-4ada-ae0e-ddc1cb3e29a7
+    service: sshfs
+    port: 0
+  protocol: mount
+  auth:
+    mount_path: /mnt/storagebox0
+  metadata:
+    purpose: Airflow worker storagebox0 mount (remote)
+    criticality: high
+  projects:
+  - infralink
+- id: 77f7c7b8-6c18-4c4b-8b65-8c6f2a5bdb7f
+  type: queue
+  from:
+    hosts:
+    - f4e169d7-6d93-476d-bd82-7bbb88d09a9d
+    service: '*'
+  to:
+    host: 7c55d433-41de-4b77-8e36-2c1cfd771b77
+    service: redis
+    port: 6379
+  protocol: redis
+  auth:
+    username: rw_user
+    secret_ref: redis_password
+    role: rw
+  metadata:
+    purpose: App access to redis
+    criticality: high
+  projects:
+  - infralink
+- id: 8c5b0c9a-6b8a-4b0b-9c43-5f2c9c8b6f5d
+  type: storage
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: storagebox0
+  to:
+    host: ef0ee03f-ca36-4ada-ae0e-ddc1cb3e29a7
+    service: sshfs
+    port: 0
+  protocol: mount
+  auth:
+    mount_path: /mnt/storagebox0
+  metadata:
+    purpose: storagebox0 mount (bastion)
+    criticality: high
+  projects:
+  - infralink
+- id: 2b9e3e64-8d9f-4a1b-9f0b-4c2d7e6c1a3e
+  type: storage
+  from:
+    hosts:
+    - d4bf50fc-48eb-41d1-9921-0f5ac4348774
+    service: storagebox0
+  to:
+    host: ef0ee03f-ca36-4ada-ae0e-ddc1cb3e29a7
+    service: sshfs
+    port: 0
+  protocol: mount
+  auth:
+    mount_path: /mnt/storagebox0
+  metadata:
+    purpose: storagebox0 mount (woodpecker)
+    criticality: high
+  projects:
+  - infralink
+- id: 4c7c2f5a-3b6d-4a1c-9f27-8d5f4b3a2c1d
+  type: storage
+  from:
+    hosts:
+    - f4e169d7-6d93-476d-bd82-7bbb88d09a9d
+    service: storagebox0
+  to:
+    host: ef0ee03f-ca36-4ada-ae0e-ddc1cb3e29a7
+    service: sshfs
+    port: 0
+  protocol: mount
+  auth:
+    mount_path: /mnt/storagebox0
+  metadata:
+    purpose: storagebox0 mount (app/services)
+    criticality: high
+  projects:
+  - infralink
+- id: 605176be-a5ba-46b3-9fd0-56af83055625
+  type: ssh
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: '*'
+  to:
+    host: d4bf50fc-48eb-41d1-9921-0f5ac4348774
+    service: ssh
+    port: 22
+  protocol: ssh
+  auth:
+    username: devops
+  metadata:
+    purpose: bastion ssh (devops) to infralink1
+    criticality: high
+  projects:
+  - infralink
+- id: 32888af2-f576-4f0b-972d-fde992b714b7
+  type: ssh
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: '*'
+  to:
+    host: d4bf50fc-48eb-41d1-9921-0f5ac4348774
+    service: ssh
+    port: 22
+  protocol: ssh
+  auth:
+    username: root
+  metadata:
+    purpose: bastion ssh (root) to infralink1
+    criticality: high
+  projects:
+  - infralink
+- id: 78c36dc3-aeec-41ff-a1fd-eebdeab7afca
+  type: ssh
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: '*'
+  to:
+    host: 7c55d433-41de-4b77-8e36-2c1cfd771b77
+    service: ssh
+    port: 22
+  protocol: ssh
+  auth:
+    username: devops
+  metadata:
+    purpose: bastion ssh (devops) to infralink2
+    criticality: high
+  projects:
+  - infralink
+- id: faa96650-3846-4dc2-94b5-b778c0bc1b4b
+  type: ssh
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: '*'
+  to:
+    host: 7c55d433-41de-4b77-8e36-2c1cfd771b77
+    service: ssh
+    port: 22
+  protocol: ssh
+  auth:
+    username: root
+  metadata:
+    purpose: bastion ssh (root) to infralink2
+    criticality: high
+  projects:
+  - infralink
+- id: f4292712-a803-4a9c-a66b-cb30e96284ee
+  type: ssh
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: '*'
+  to:
+    host: f4e169d7-6d93-476d-bd82-7bbb88d09a9d
+    service: ssh
+    port: 22
+  protocol: ssh
+  auth:
+    username: devops
+  metadata:
+    purpose: bastion ssh (devops) to infralink3
+    criticality: high
+  projects:
+  - infralink
+- id: ee0ea921-c27f-454c-b754-e8fac76f8c23
+  type: ssh
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: '*'
+  to:
+    host: f4e169d7-6d93-476d-bd82-7bbb88d09a9d
+    service: ssh
+    port: 22
+  protocol: ssh
+  auth:
+    username: root
+  metadata:
+    purpose: bastion ssh (root) to infralink3
+    criticality: high
+  projects:
+  - infralink
+- id: 0124883b-cd36-48ba-afbc-0cc9e6544721
+  type: ssh
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: '*'
+  to:
+    host: b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
+    service: ssh
+    port: 22
+  protocol: ssh
+  auth:
+    username: devops
+  metadata:
+    purpose: bastion ssh (devops) to infralink4
+    criticality: high
+  projects:
+  - infralink
+- id: e0a58930-8342-45c3-82b1-802d7d6797bf
+  type: ssh
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: '*'
+  to:
+    host: b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
+    service: ssh
+    port: 22
+  protocol: ssh
+  auth:
+    username: root
+  metadata:
+    purpose: bastion ssh (root) to infralink4
+    criticality: high
+  projects:
+  - infralink
+- id: 7665088f-df25-4247-9bb0-7c58bb84e08a
+  type: monitoring
+  from:
+    hosts:
+    - b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
+    service: elasticsearch-exporter
+  to:
+    host: b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
+    service: elasticsearch
+    port: 9200
+  protocol: http
+  metadata:
+    purpose: elasticsearch exporter access to elasticsearch
+    criticality: high
+  projects:
+  - infralink
+- id: ad04df9e-647c-4ac0-b8da-f8bdccd4f7b8
+  type: monitoring
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: prometheus
+  to:
+    host: 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: cadvisor
+    port: 8080
+  protocol: http/prometheus
+  metadata:
+    purpose: Prometheus scrape (cadvisor, bastion)
+    criticality: high
+  projects:
+  - infralink
+- id: 5c84dcee-c2d8-466f-9cf0-df349ef4d899
+  type: monitoring
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: prometheus
+  to:
+    host: d4bf50fc-48eb-41d1-9921-0f5ac4348774
+    service: cadvisor
+    port: 8080
+  protocol: http/prometheus
+  metadata:
+    purpose: Prometheus scrape (cadvisor, infralink1)
+    criticality: high
+  projects:
+  - infralink
+- id: 8a5fc684-1d64-429b-93aa-4ab2477e0b13
+  type: monitoring
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: prometheus
+  to:
+    host: 7c55d433-41de-4b77-8e36-2c1cfd771b77
+    service: cadvisor
+    port: 8080
+  protocol: http/prometheus
+  metadata:
+    purpose: Prometheus scrape (cadvisor, infralink2)
+    criticality: high
+  projects:
+  - infralink
+- id: 7f8d6281-b97e-4d07-b0e2-00537a359b9c
+  type: monitoring
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: prometheus
+  to:
+    host: f4e169d7-6d93-476d-bd82-7bbb88d09a9d
+    service: cadvisor
+    port: 8080
+  protocol: http/prometheus
+  metadata:
+    purpose: Prometheus scrape (cadvisor, infralink3)
+    criticality: high
+  projects:
+  - infralink
+- id: 0754587a-1bf0-4eb6-843e-9af57469f33a
+  type: monitoring
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: prometheus
+  to:
+    host: b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
+    service: cadvisor
+    port: 8080
+  protocol: http/prometheus
+  metadata:
+    purpose: Prometheus scrape (cadvisor, infralink4)
+    criticality: high
+  projects:
+  - infralink
+- id: cbf20775-3d6a-4b57-acb9-2903321d8050
+  type: monitoring
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: prometheus
+  to:
+    host: 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: grafana
+    port: 3000
+  protocol: http/prometheus
+  metadata:
+    purpose: Prometheus scrape (grafana)
+    criticality: medium
+  projects:
+  - infralink
+- id: ce0a6171-4902-497b-8398-5425c4e6ca88
+  type: monitoring
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: prometheus
+  to:
+    host: 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: woodpecker
+    port: 8000
+  protocol: http/prometheus
+  metadata:
+    purpose: Prometheus scrape (woodpecker)
+    criticality: medium
+  projects:
+  - infralink
+- id: 2142eef8-7486-4ac7-b1a5-7f768f8206af
+  type: monitoring
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: prometheus
+  to:
+    host: 7c55d433-41de-4b77-8e36-2c1cfd771b77
+    service: redis-exporter
+    port: 9121
+  protocol: http/prometheus
+  metadata:
+    purpose: Prometheus scrape (redis-exporter, infralink2)
+    criticality: high
+  projects:
+  - infralink
+- id: 83b36053-0b78-4123-8c5d-465cbccef88c
+  type: monitoring
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: prometheus
+  to:
+    host: b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
+    service: postfix-exporter
+    port: 9154
+  protocol: http/prometheus
+  metadata:
+    purpose: Prometheus scrape (postfix-exporter, infralink4 if running)
+    criticality: medium
+  projects:
+  - infralink
+- id: d06d05a7-c34d-46c1-8e81-d84519bb2122
+  type: monitoring
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: prometheus
+  to:
+    host: 7c55d433-41de-4b77-8e36-2c1cfd771b77
+    service: mysqld-exporter
+    port: 9104
+  protocol: http/prometheus
+  metadata:
+    purpose: Prometheus scrape (mysqld-exporter, infralink2)
+    criticality: high
+  projects:
+  - infralink
+- id: baa42917-7e8a-412e-aa3e-ee853cbaf199
+  type: monitoring
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: prometheus
+  to:
+    host: b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
+    service: mysqld-exporter
+    port: 9104
+  protocol: http/prometheus
+  metadata:
+    purpose: Prometheus scrape (mysqld-exporter, infralink4 if running)
+    criticality: medium
+  projects:
+  - infralink
+- id: b8c93b84-d009-4a55-b22b-12c7f8bb67a5
+  type: api
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: grafana
+  to:
+    host: 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: prometheus
+    port: 9090
+  protocol: http/prometheus
+  metadata:
+    purpose: Grafana queries Prometheus API
+    criticality: high
+  projects:
+  - infralink
+- id: bf541684-e3d1-455d-a6d4-9d841ba61b03
+  type: monitoring
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: blackbox
+  to:
+    host: f4e169d7-6d93-476d-bd82-7bbb88d09a9d
+    service: nginx
+    port: 80
+  protocol: http
+  metadata:
+    purpose: Blackbox HTTP probe (wordpress frontdoor)
+    criticality: medium
+  projects:
+  - infralink
+- id: f0d7292f-1aaa-47ca-96a2-bedfc569958a
+  type: monitoring
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: blackbox
+  to:
+    host: b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
+    service: cdn
+    port: 443
+  protocol: https
+  metadata:
+    purpose: Blackbox HTTPS probe (cdn edge)
+    criticality: medium
+  projects:
+  - infralink
+- id: 3bb49dc2-5125-4398-b5de-aabaf2a12af3
+  type: api
+  from:
+    hosts:
+    - f4e169d7-6d93-476d-bd82-7bbb88d09a9d
+    service: nginx
+  to:
+    host: f4e169d7-6d93-476d-bd82-7bbb88d09a9d
+    service: php-fpm
+    port: 9000
+  protocol: fastcgi
+  metadata:
+    purpose: Nginx upstream to PHP-FPM (wordpress)
+    criticality: high
+  projects:
+  - infralink
+- id: 1f2fac9e-4eeb-4c24-8d21-ae8fff279098
+  type: api
+  from:
+    hosts:
+    - b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
+    service: nginx
+  to:
+    host: f4e169d7-6d93-476d-bd82-7bbb88d09a9d
+    service: wordpress
+    port: 80
+  protocol: http
+  metadata:
+    purpose: CDN edge fetches origin (wordpress)
+    criticality: high
+  projects:
+  - infralink
+- id: 2f9d3a2f-27c8-4c1f-b44a-7f7f9c7c9c0e
+  type: storage
+  from:
+    hosts:
+    - 7c55d433-41de-4b77-8e36-2c1cfd771b77
+    service: storagebox0
+  to:
+    host: ef0ee03f-ca36-4ada-ae0e-ddc1cb3e29a7
+    service: sshfs
+    port: 0
+  protocol: mount
+  auth:
+    mount_path: /mnt/storagebox0
+  metadata:
+    purpose: storagebox0 mount (databases)
+    criticality: high
+  projects:
+  - infralink
+- id: 4b0c8d1a-5a1b-4f3d-9c7c-2e0a9d1f3c2b
+  type: storage
+  from:
+    hosts:
+    - b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
+    service: storagebox0
+  to:
+    host: ef0ee03f-ca36-4ada-ae0e-ddc1cb3e29a7
+    service: sshfs
+    port: 0
+  protocol: mount
+  auth:
+    mount_path: /mnt/storagebox0
+  metadata:
+    purpose: storagebox0 mount (cdn)
+    criticality: high
+  projects:
+  - infralink
+- id: 073e058b-fa43-4d17-9561-16a98f7d0247
+  type: email
+  from:
+    hosts:
+    - f4e169d7-6d93-476d-bd82-7bbb88d09a9d
+    service: wordpress
+  to:
+    host: b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
+    service: postfix
+    port: 2586
+  protocol: smtp
+  auth:
+    username: smtp_gateway_username
+    secret_ref: smtp_gateway_password
+    role: relay
+  metadata:
+    purpose: WordPress transactional email via postfix relay
+    criticality: high
+  projects:
+  - infralink
+- id: 261a2189-5801-47b4-8447-5548d78aaa37
+  type: telemetry
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    - d4bf50fc-48eb-41d1-9921-0f5ac4348774
+    - 7c55d433-41de-4b77-8e36-2c1cfd771b77
+    - f4e169d7-6d93-476d-bd82-7bbb88d09a9d
+    - b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
+    service: '*'
+  to:
+    host: b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
+    service: otel-collector
+    port: 4317
+  protocol: otlp/grpc
+  metadata:
+    purpose: OTLP gRPC ingest to otel collector
+    criticality: medium
+  projects:
+  - infralink
+- id: f9fd4c51-6c05-4dd5-a197-796b02f1014f
+  type: telemetry
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    - d4bf50fc-48eb-41d1-9921-0f5ac4348774
+    - 7c55d433-41de-4b77-8e36-2c1cfd771b77
+    - f4e169d7-6d93-476d-bd82-7bbb88d09a9d
+    - b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
+    service: '*'
+  to:
+    host: b87a38b5-dc5f-460a-aa55-0e3c1e6bab59
+    service: otel-collector
+    port: 4318
+  protocol: otlp/http
+  metadata:
+    purpose: OTLP HTTP ingest to otel collector
+    criticality: medium
+  projects:
+  - infralink
+- id: a20a499b-154d-4f40-b325-d0c91958c6dc
+  type: monitoring
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: blackbox
+  to:
+    host: f4e169d7-6d93-476d-bd82-7bbb88d09a9d
+    service: nginx
+    port: 443
+  protocol: https
+  metadata:
+    purpose: Blackbox HTTPS probe (n8n public endpoint)
+    criticality: medium
+    dns_name: n8n.i4chan.org
+  projects:
+  - infralink
+- id: 6981a7f9-0e3a-4f14-8efb-68b44e7ffac8
+  type: monitoring
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: blackbox
+  to:
+    host: 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: grafana
+    port: 3000
+  protocol: http
+  metadata:
+    purpose: Blackbox HTTP probe (Grafana UI)
+    criticality: medium
+  projects:
+  - infralink
+- id: 3dc4902f-456f-47ed-8c0a-4209dc118d49
+  type: monitoring
+  from:
+    hosts:
+    - 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: blackbox
+  to:
+    host: 817caaa5-9ec3-4f70-9e52-a4f9baba849f
+    service: woodpecker
+    port: 8000
+  protocol: http
+  metadata:
+    purpose: Blackbox HTTP probe (Woodpecker UI)
+    criticality: medium
+  projects:
+  - infralink
+- id: 62452b47-498c-4a35-b673-825d010f5411
+  type: monitoring
+  from:
+    hosts:
+    - 7ffe46b7-0eb4-40cb-8e14-ea679b9948f4
+    service: prometheus
+  to:
+    host: 9157ddeb-cb6d-4d55-8252-9db358f5d932
+    service: node-exporter
+    port: 9100
+  protocol: http/prometheus
+  metadata:
+    purpose: Prometheus scrape (citadel node-exporter)
+    criticality: high
+  projects:
+  - cyberstorm-core
+- id: 825d010f-5411-4b8c-b673-62452b47498c
+  type: monitoring
+  from:
+    hosts:
+    - 7ffe46b7-0eb4-40cb-8e14-ea679b9948f4
+    service: prometheus
+  to:
+    host: 9157ddeb-cb6d-4d55-8252-9db358f5d932
+    service: postgres-exporter
+    port: 9187
+  protocol: http/prometheus
+  metadata:
+    purpose: Prometheus scrape (citadel postgres)
+    criticality: high
+  projects:
+  - cyberstorm-core
+- id: b673-825d-010f-5411-62452b47498c
+  type: monitoring
+  from:
+    hosts:
+    - 7ffe46b7-0eb4-40cb-8e14-ea679b9948f4
+    service: prometheus
+  to:
+    host: 9157ddeb-cb6d-4d55-8252-9db358f5d932
+    service: redis-exporter
+    port: 9121
+  protocol: http/prometheus
+  metadata:
+    purpose: Prometheus scrape (citadel redis)
+    criticality: high
+  projects:
+  - cyberstorm-core
+- id: 498c-825d-010f-5411-62452b47498c
+  type: database
+  from:
+    hosts:
+    - 9157ddeb-cb6d-4d55-8252-9db358f5d932
+    service: woodpecker-server
+  to:
+    host: 9157ddeb-cb6d-4d55-8252-9db358f5d932
+    service: postgresql
+    port: 5432
+  protocol: postgres
+  auth:
+    username: rw_woodpecker
+    database: woodpecker
+    secret_ref: postgresql_rw_password_woodpecker
+    role: rw
+  metadata:
+    purpose: Woodpecker database connection
+  projects:
+  - cyberstorm-core
+- id: 825d-010f-5411-6245-2b47498c498c
+  type: queue
+  from:
+    hosts:
+    - 9157ddeb-cb6d-4d55-8252-9db358f5d932
+    service: woodpecker-server
+  to:
+    host: 9157ddeb-cb6d-4d55-8252-9db358f5d932
+    service: redis
+    port: 6379
+  protocol: redis
+  metadata:
+    purpose: Woodpecker queue connection
+  projects:
+  - cyberstorm-core

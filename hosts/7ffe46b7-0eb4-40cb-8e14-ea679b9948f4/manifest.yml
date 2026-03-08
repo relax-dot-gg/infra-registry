@@ -4,24 +4,25 @@ hosts:
     tailscale_ip: 100.123.0.63
     canonical_name: cyberstorm-watchtower
     magicdns_name: cyberstorm-watchtower.shrimp-crested.ts.net
-    group: cyberstorm
     cloud: hetzner-robot
     status: active
     use_exit_node: false
     services:
-      - golem
-      - prometheus
-      - grafana
-      - gatus
-      - pushgateway
-      - node-exporter
+    - golem
+    - prometheus
+    - grafana
+    - gatus
+    - pushgateway
+    - node-exporter
     observability:
       ready: false
       managed_services: []
       unmanaged_services: []
-      notes: "Monitoring stack (Prom/Grafana/Gatus/Pushgateway) + golem"
+      notes: Monitoring stack (Prom/Grafana/Gatus/Pushgateway) + golem
     docker_version: '28'
     dns_hostnames: []
     legacy_instances: []
     bws_project: cyberstorm-infra
     bws_machine_account: cyberstorm-watchtower
+    projects:
+    - cyberstorm-core

@@ -2,7 +2,6 @@ hosts:
   f4e169d7-6d93-476d-bd82-7bbb88d09a9d:
     canonical_name: infralink3
     status: active
-    group: infralink-dev
     cloud: hetzner-cloud
     tailscale_name: infralink3
     tailscale_ip: 100.77.73.34
@@ -30,7 +29,7 @@ hosts:
       port_overrides:
         mariadb: 9104
       unmanaged_services: []
-      notes: "exporters present."
+      notes: exporters present.
     roles:
       storagebox0: {}
     docker_version: '28'
@@ -41,4 +40,6 @@ hosts:
     - ax162
     bws_project: infralink-dev
     bws_machine_account: infralink3
-    notes: "dev template from relaxgg_ax162; update tailscale_ip and BWS settings"
+    notes: dev template from relaxgg_ax162; update tailscale_ip and BWS settings
+    projects:
+    - infralink

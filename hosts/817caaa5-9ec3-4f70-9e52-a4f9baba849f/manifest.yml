@@ -2,7 +2,6 @@ hosts:
   817caaa5-9ec3-4f70-9e52-a4f9baba849f:
     canonical_name: infralink0
     status: active
-    group: infralink-dev
     cloud: hetzner-cloud
     tailscale_name: infralink0
     tailscale_ip: 100.82.194.85
@@ -26,4 +25,6 @@ hosts:
     legacy_instances: []
     bws_project: infralink-dev
     bws_machine_account: infralink0
-    notes: "dev template from relaxgg_bastion; update tailscale_ip and BWS settings"
+    notes: dev template from relaxgg_bastion; update tailscale_ip and BWS settings
+    projects:
+    - infralink
