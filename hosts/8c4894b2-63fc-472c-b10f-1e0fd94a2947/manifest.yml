@@ -29,7 +29,7 @@ hosts:
       unmanaged_services:
       - nginx
       notes: cdn profile; needs certbot + gitops nginx.
-    storagebox0_mount: true
+    storagebox0_mount: false
     docker_version: null
     probe_path: /health
     dns_hostnames:
