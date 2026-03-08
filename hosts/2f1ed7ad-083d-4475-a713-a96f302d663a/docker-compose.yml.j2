@@ -4,8 +4,9 @@
 {% set mariadb_data_dir = "/data/mysql" %}
 {% set mariadb_extra_volumes = ["/opt/services/config/mariadb/relaxgg-db4.cnf:/etc/mysql/conf.d/relaxgg-db4.cnf:ro"] %}
 {% set mariadb_env_extra = {"MARIADB_AUTO_UPGRADE": "1"} %}
+{% set mariadb_root_password = _2f1ed7ad_mariadb_root_password | default("kX9mPvL2wQnR7tYs4bHj") %}
 {% set postgres_data_dir = "/data/postgresql" %}
-{% set postgresql_root_password = _2f1ed7ad_postgresql_root_password | default(_2f1ed7ad_mariadb_root_password) %}
+{% set postgresql_root_password = _2f1ed7ad_postgresql_root_password | default(mariadb_root_password) %}
 {% set redis_data_dir = "/data/redis" %}
 {% set redis_port = "6379" %}
 {% set redis_exporter_port = "9121" %}
@@ -25,7 +26,6 @@ services:
     ports:
       - "5432:5432"
 
-{% set mariadb_root_password = _2f1ed7ad_mariadb_root_password %}
 {% include "services/mariadb.yml.j2" %}
 
 {% set mysqld_exporter_dsn = "root:" ~ mariadb_root_password ~ "@(127.0.0.1:3306)/" %}
