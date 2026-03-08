@@ -19,19 +19,10 @@ hosts:
     robot_dc: null
     services:
     - nginx
-    - cdn
     - cadvisor
-    observability:
-      ready: true
-      managed_services:
-      - node-exporter
-      - cadvisor
-      port_overrides:
-        cadvisor: 8082
-      unmanaged_services:
-      - nginx
-      notes: cdn profile; needs certbot + gitops nginx.
-    storagebox0_mount: true
+    - node-exporter
+    - cdn
+    storagebox0_mount: false
     docker_version: '28'
     probe_path: /health
     dns_hostnames:
@@ -46,3 +37,10 @@ hosts:
     bws_machine_account: reblogme-cdn-055
     projects:
     - reblogme
+    bws_extra_projects:
+    - relaxgg-infra
+    - cyberstorm-infra
+    tls_certs:
+    - name: cdn001
+      host: cdn001.reblogme.com
+      min_days: 14

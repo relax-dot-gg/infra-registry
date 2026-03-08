@@ -326,6 +326,7 @@ services:
     requires_secrets:
       - cloudflare_edit_dns_cyberstorm
       - cloudflare_edit_dns_bdsmlr
+      - cloudflare_edit_dns_reblogme
 
   apache:
     description: "Apache httpd"

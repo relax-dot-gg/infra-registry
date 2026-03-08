@@ -1,3 +1,9 @@
+# reblogme-cdn-055 (7860ced7-b6dc-41f7-9847-109d16f83008)
+
+{% set acme_domains = ['cdn001.reblogme.com', 'cdn002.reblogme.com', 'cdn012.reblogme.com'] %}
+{% set acme_dns_provider = 'cloudflare' %}
+{% set acme_dns_token = cloudflare_edit_dns_reblogme %}
+
 services:
   nginx:
     image: ghcr.io/relax-dot-gg/nginx:latest
@@ -10,39 +16,13 @@ services:
     volumes:
       - ./config/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./config/conf.d:/etc/nginx/conf.d:ro
-      - /etc/ssl:/etc/ssl:ro
+      - ./config/nginx/certs:/etc/nginx/certs:ro
+    depends_on:
+      - lego
+      - imageproxy
 
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.49.1
-    container_name: cadvisor
-    restart: unless-stopped
-    privileged: true
-    ports:
-      - "8082:8080"
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      - /dev/disk/:/dev/disk:ro
-    devices:
-      - /dev/kmsg
-
-  node-exporter:
-    image: prom/node-exporter:latest
-    container_name: node-exporter
-    restart: always
-    command:
-      - '--path.rootfs=/host'
-      - '--path.procfs=/host/proc'
-      - '--path.sysfs=/host/sys'
-      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
-      - '--web.config.file=/etc/node_exporter/web.config.yml'
-    volumes:
-      - /:/host:ro,rslave
-      - ./config/node_exporter/web.config.yml:/etc/node_exporter/web.config.yml:ro
-    ports:
-      - "9100:9100"
-    network_mode: host
-    pid: host
-{% include "services/edge-prober.yml.j2" %}
+{% include "services/lego-dns.yml.j2" %}
+{% include "services/imageproxy.yml.j2" %}
+{% include "services/cadvisor.yml.j2" %}
+{% include "services/node-exporter.yml.j2" %}
+{% include "services/nginx-vts-exporter.yml.j2" %}
