@@ -2,26 +2,30 @@
     image: certbot/certbot:latest
     container_name: certbot
     restart: unless-stopped
-    network_mode: host
     environment:
 {% if certbot_domains is defined %}
       - CERTBOT_DOMAINS={{ certbot_domains | join(' ') }}
 {% else %}
       - CERTBOT_DOMAINS=
 {% endif %}
-      - CERTBOT_EMAIL={{ certbot_email | default("ops@freechat.zone") }}
+      - CERTBOT_EMAIL={{ certbot_email | default("ops@fwd.ltd") }}
+{% if certbot_webroot is defined %}
+      - CERTBOT_WEBROOT={{ certbot_webroot }}
+{% endif %}
 {% if postfix_instances is defined %}
       # Mapping of certbot domains to cert directories (for sync script)
       - CERT_SYNC_MAP={% for inst in postfix_instances %}{% if inst.fullchain_path is defined and not inst.fullchain_path.startswith('/opt/services/mta/certbot') %}mta.{{ inst.primary_domain }}:{{ inst.fullchain_path | replace('/fullchain.pem', '') }}{% if not loop.last %},{% endif %}{% endif %}{% endfor %}
-
 {% endif %}
     entrypoint:
       - /bin/sh
       - -c
     volumes:
-      - /opt/services/mta/certbot:/etc/letsencrypt
-      - /opt/services/mta/certbot/lib:/var/lib/letsencrypt
-      - /opt/services/mta/certbot/log:/var/log/letsencrypt
+{% if certbot_webroot is defined %}
+      - {{ certbot_webroot }}:/var/www/certbot
+{% endif %}
+      - {{ certbot_cert_dir | default('./config/nginx/certs') }}:/etc/letsencrypt
+      - {{ certbot_cert_dir | default('./config/nginx/certs') }}/lib:/var/lib/letsencrypt
+      - {{ certbot_cert_dir | default('./config/nginx/certs') }}/log:/var/log/letsencrypt
 {% if postfix_instances is defined %}
       # Mount mta directories for cert sync (Docker can't mount symlinks)
 {% for inst in postfix_instances %}
@@ -38,7 +42,7 @@
         #!/bin/sh
         # Parse CERT_SYNC_MAP to find target directory
         IFS=','
-        for mapping in $CERT_SYNC_MAP; do
+        for mapping in $$CERT_SYNC_MAP; do
           domain=$${mapping%%:*}
           dir=$${mapping#*:}
           if [ "$$domain" = "$$RENEWED_DOMAINS" ] && [ -d "/mta/$${domain#mta.}" ]; then
@@ -61,15 +65,19 @@
           fi
         done
         unset IFS
-
 {% endif %}
+{% if certbot_webroot is defined %}
+        AUTH_ARGS="--webroot -w $${CERTBOT_WEBROOT}"
+{% else %}
+        AUTH_ARGS="--standalone --preferred-challenges http-01 --http-01-address 0.0.0.0"
+{% endif %}
+        
         # Ensure each requested certificate exists/upgrades; keep-until-expiring prevents unnecessary reissue.
         for domain in $${CERTBOT_DOMAINS}; do
-          certbot certonly --standalone --non-interactive --agree-tos --keep-until-expiring \
-            --preferred-challenges http-01 --http-01-address 0.0.0.0 \
+          certbot certonly $${AUTH_ARGS} --non-interactive --agree-tos --keep-until-expiring \
             --email "$${CERTBOT_EMAIL}" -d "$${domain}" --deploy-hook "{% if postfix_instances is defined %}/tmp/sync-certs.sh{% else %}/bin/true{% endif %}" || true;
         done
         while true; do
-          certbot renew --non-interactive --standalone --preferred-challenges http-01 --http-01-address 0.0.0.0 --deploy-hook "{% if postfix_instances is defined %}/tmp/sync-certs.sh{% else %}/bin/true{% endif %}";
+          certbot renew --non-interactive $${AUTH_ARGS} --deploy-hook "{% if postfix_instances is defined %}/tmp/sync-certs.sh{% else %}/bin/true{% endif %}";
           sleep "$${CERTBOT_INTERVAL:-12h}";
         done
