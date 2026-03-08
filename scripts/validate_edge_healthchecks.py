@@ -39,11 +39,14 @@ def validate_edge_healthchecks(edges: List[Dict[str, Any]]) -> List[str]:
             errors.append(f"{edge_id}: missing healthcheck block")
             continue
 
-        if not healthcheck.get("type"):
+        healthcheck_type_value = healthcheck.get("type")
+        if not healthcheck_type_value:
             errors.append(f"{edge_id}: healthcheck missing type")
+            continue
+
         if not healthcheck.get("interval"):
             errors.append(f"{edge_id}: healthcheck missing interval")
-        healthcheck_type = str(healthcheck.get("type", "")).lower()
+        healthcheck_type = str(healthcheck_type_value).lower()
         if healthcheck_type not in allowed_healthcheck_types:
             errors.append(f"{edge_id}: healthcheck.type must be one of {sorted(allowed_healthcheck_types)}")
 
