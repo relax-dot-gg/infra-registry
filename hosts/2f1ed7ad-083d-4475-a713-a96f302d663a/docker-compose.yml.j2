@@ -1,13 +1,13 @@
 # relaxgg-db4 (2f1ed7ad-083d-4475-a713-a96f302d663a)
 # Services: golem, MariaDB + exporter, PostgreSQL + exporter, Redis + exporter, node-exporter, cadvisor
 
-{% set mariadb_data_dir = /data/mysql %}
-{% set mariadb_extra_volumes = [/opt/services/config/mariadb/relaxgg-db4.cnf:/etc/mysql/conf.d/relaxgg-db4.cnf:ro] %}
-{% set mariadb_env_extra = {MARIADB_AUTO_UPGRADE: 1} %}
-{% set postgres_data_dir = /data/postgresql %}
-{% set redis_data_dir = /data/redis %}
-{% set redis_port = 6379 %}
-{% set redis_exporter_port = 9121 %}
+{% set mariadb_data_dir = "/data/mysql" %}
+{% set mariadb_extra_volumes = ["/opt/services/config/mariadb/relaxgg-db4.cnf:/etc/mysql/conf.d/relaxgg-db4.cnf:ro"] %}
+{% set mariadb_env_extra = {"MARIADB_AUTO_UPGRADE": "1"} %}
+{% set postgres_data_dir = "/data/postgresql" %}
+{% set redis_data_dir = "/data/redis" %}
+{% set redis_port = "6379" %}
+{% set redis_exporter_port = "9121" %}
 {% set redis_password = _2f1ed7ad_redis_password %}
 
 services:
@@ -28,7 +28,7 @@ services:
 {% include "services/mariadb.yml.j2" %}
 
 {% set mysqld_exporter_dsn = "root:" ~ mariadb_root_password ~ "@(127.0.0.1:3306)/" %}
-{% set mysqld_exporter_port = 9104 %}
+{% set mysqld_exporter_port = "9104" %}
 {% include "services/mysqld-exporter.yml.j2" %}
 
   postgres-exporter:
@@ -43,7 +43,7 @@ services:
     depends_on:
       - postgresql
 
-{% set redis_port_bindings = [6379:6379] %}
+{% set redis_port_bindings = ["6379:6379"] %}
 {% include "services/redis.yml.j2" %}
 
   # === INFRA ===
