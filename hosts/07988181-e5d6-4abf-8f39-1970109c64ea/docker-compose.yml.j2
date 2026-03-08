@@ -44,6 +44,7 @@ services:
       - CL_ALLOW_ORIGINS=*
       - CL_LOG_LEVEL=info
       - CL_MINIMUM_CONTRACT_PAYMENT_LINK_JUELS=1000000000000000000
+      - CL_WEB_SERVER_TLS_HTTPS_PORT=0
     depends_on:
       - postgresql
     command: >
