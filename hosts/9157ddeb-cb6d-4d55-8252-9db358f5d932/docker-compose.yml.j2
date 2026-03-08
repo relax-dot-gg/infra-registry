@@ -131,11 +131,8 @@ services:
     environment:
       - USER_UID=1000
       - USER_GID=1000
-      - GITEA__database__DB_TYPE=postgres
-      - GITEA__database__HOST=postgresql:5432
-      - GITEA__database__NAME=gitea
-      - GITEA__database__USER=gitea
-      - GITEA__database__PASSWD={{ _9157ddeb_postgresql_rw_password_gitea }}
+      - GITEA__database__DB_TYPE=sqlite3
+      - GITEA__database__PATH=/data/gitea.db
       - GITEA__server__DOMAIN=100.73.228.90
       - GITEA__server__ROOT_URL=http://100.73.228.90:3000/
       - GITEA__server__HTTP_ADDR=0.0.0.0
