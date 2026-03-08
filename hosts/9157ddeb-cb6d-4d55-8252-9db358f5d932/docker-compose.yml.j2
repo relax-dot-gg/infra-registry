@@ -96,7 +96,7 @@ services:
       - WOODPECKER_GITEA_SECRET={{ _9157ddeb_gitea_client_secret | default('', true) }}
       - WOODPECKER_AGENT_SECRET={{ _9157ddeb_agent_secret }}
       - WOODPECKER_LOG_LEVEL=warn
-      - WOODPECKER_REPO_OWNERS=allenday,cyberstorm-dev,fwh-ltd,relax-dot-gg,relayos
+      - WOODPECKER_REPO_OWNERS=allenday,cyberstorm-dev,fwh-ltd,relax-dot-gg,relayos,relaxgg
       - WOODPECKER_PLUGINS_PRIVILEGED=woodpeckerci/plugin-docker-buildx
       - WOODPECKER_DEFAULT_PIPELINE_TIMEOUT=120
       - WOODPECKER_DATABASE_DRIVER=postgres
