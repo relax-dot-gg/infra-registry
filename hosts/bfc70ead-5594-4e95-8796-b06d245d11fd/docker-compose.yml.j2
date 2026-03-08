@@ -23,9 +23,6 @@ services:
         target: /entrypoint.sh
         mode: 0755
 
-configs:
-  google_weather_entrypoint:
-    file: ./config/google-weather-entrypoint.sh
 
 {% include "services/node-exporter.yml.j2" %}
 {% include "services/cadvisor.yml.j2" %}
