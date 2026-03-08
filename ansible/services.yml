@@ -313,6 +313,13 @@ services:
     compose_service: imageproxy
     requires_secrets: []
 
+  lego:
+    description: "ACME DNS-01 certificate provisioner"
+    group: utility
+    compose_service: lego
+    requires_secrets:
+      - cloudflare_edit_dns_cyberstorm
+
   apache:
     description: "Apache httpd"
     group: web
