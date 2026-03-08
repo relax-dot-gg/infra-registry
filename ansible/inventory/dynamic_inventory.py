@@ -18,8 +18,15 @@ SCRIPT_DIR = Path(__file__).parent
 REPO_ROOT = SCRIPT_DIR.parent.parent
 REGISTRY_FILE = SCRIPT_DIR / "uuid_registry.yml"
 NETWORK_ROOT = REPO_ROOT / "network" / "main-dev"
-SCRIPTS_DIR = REPO_ROOT / "scripts"
-sys.path.append(str(SCRIPTS_DIR))
+
+# Look for lib/ in the project root or parent project root
+if (REPO_ROOT / "lib").exists():
+    sys.path.append(str(REPO_ROOT))
+elif (REPO_ROOT.parent / "lib").exists():
+    sys.path.append(str(REPO_ROOT.parent))
+elif (REPO_ROOT / "scripts").exists():
+    sys.path.append(str(REPO_ROOT / "scripts"))
+
 from lib.network_registry import load_network_hosts  # noqa: E402
 
 
