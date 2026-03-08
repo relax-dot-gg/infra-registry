@@ -67,7 +67,7 @@
         unset IFS
 {% endif %}
 {% if certbot_webroot is defined %}
-        AUTH_ARGS="--webroot -w $${CERTBOT_WEBROOT}"
+        AUTH_ARGS="--webroot -w /var/www/certbot"
 {% else %}
         AUTH_ARGS="--standalone --preferred-challenges http-01 --http-01-address 0.0.0.0"
 {% endif %}
