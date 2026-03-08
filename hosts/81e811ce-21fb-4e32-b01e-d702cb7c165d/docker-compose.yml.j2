@@ -13,7 +13,7 @@ services:
     volumes:
       - /opt/services/chainlink-data:/.chainlink
     environment:
-      - CL_DATABASE_URL=postgresql://chainlink:k0tHiaJtkMHeorxm@172.31.48.4:5432/mainnet_tmp
+      - CL_DATABASE_URL=postgresql://chainlink:k0tHiaJtkMHeorxm@100.92.221.118:5432/mainnet
       - CL_CHAIN_ADAPTERS_ETH_URL=wss://eth-mainnet.g.alchemy.com/v2/P-sft3UGJe01tTVOg7aUKebvEexwumpl
       - CL_ADMIN_CREDENTIALS_FILE=/.chainlink/.api
       - CL_PASSWORD_FILE=/.chainlink/.password
