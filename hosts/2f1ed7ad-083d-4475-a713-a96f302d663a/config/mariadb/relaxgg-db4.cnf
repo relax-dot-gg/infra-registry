@@ -1,7 +1,6 @@
 [mysqld]
 server_id = 4
 read_only = ON
-super_read_only = ON
 log_bin = mariadb-bin
 relay_log = mariadb-relay-bin
 relay_log_recovery = ON
@@ -12,9 +11,7 @@ expire_logs_days = 14
 
 # InnoDB sizing (initial)
 innodb_buffer_pool_size = 96G
-innodb_buffer_pool_instances = 8
 innodb_log_file_size = 4G
-innodb_log_files_in_group = 2
 innodb_flush_method = O_DIRECT
 innodb_flush_log_at_trx_commit = 1
 innodb_io_capacity = 4000
