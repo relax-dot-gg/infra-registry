@@ -43,6 +43,7 @@ hosts:
     bws_project: bdsmlr
     bws_extra_projects:
     - relaxgg-infra
+    - cyberstorm-infra
     bws_machine_account: bdsmlr-cdn-034
     projects:
     - bdsmlr
