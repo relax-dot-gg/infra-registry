@@ -33,6 +33,7 @@ steps:
   validate-legacy:
     image: python:3.11-slim
     environment:
+      NODE_EXPORTER_PASSWORD: "ci_placeholder"
       GITHUB_TOKEN:
         from_secret: github_token
     commands:
