@@ -26,6 +26,7 @@ steps:
       - python3 scripts/fleet_validate.py
       - python3 scripts/generate_prometheus_config_auth.py --output /tmp/prom.yml
       - python3 scripts/generate_gatus_config.py
+      - python3 $CI_WORKSPACE/scripts/validate_edge_healthchecks.py $CI_WORKSPACE/network/main-dev/edges/edges.yml
       - echo "Modern GitOps validation passed"
 
   # === VALIDATE LEGACY (v1) ===
