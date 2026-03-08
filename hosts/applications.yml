@@ -1,11 +1,5 @@
 schema_version: "1.0"
 applications:
-  monitoring:
-    description: "Global monitoring stack"
-    members:
-      - host: "7ffe46b7-0eb4-40cb-8e14-ea679b9948f4"
-        services: ["prometheus", "grafana", "gatus"]
-    edges: "auto"
   cyberstorm-core:
     description: "Cyberstorm Core Stack"
     members:
@@ -13,4 +7,12 @@ applications:
         services: ["nginx", "woodpecker-server", "woodpecker-agent", "gitea", "postgresql", "postgres-exporter", "redis", "redis-exporter", "node-exporter", "statsd-exporter"]
       - host: "7ffe46b7-0eb4-40cb-8e14-ea679b9948f4"
         services: ["gatus", "grafana", "prometheus", "pushgateway", "node-exporter", "nginx", "blackbox", "edge-prober"]
+    edges: "auto"
+  bdsmlr:
+    description: "BDSMLR Architecture Stack"
+    members:
+      - host: "002d015e-cd70-44e7-87d8-909c60ace2b3"
+        services: ["mariadb", "redis", "elasticsearch"]
+      - host: "8c4894b2-63fc-472c-b10f-1e0fd94a2947"
+        services: ["nginx", "imageproxy", "node-exporter", "cadvisor"]
     edges: "auto"

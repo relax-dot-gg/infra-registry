@@ -1,0 +1,52 @@
+hosts:
+  8c4894b2-63fc-472c-b10f-1e0fd94a2947:
+    tailscale_name: bdsmlr-cdn-034
+    tailscale_ip: 100.69.132.28
+    canonical_name: bdsmlr-cdn-034
+    display_name: bdsmlr-cdn-034
+    cloud: buyvm
+    status: active
+    use_exit_node: false
+    public_ip: 205.185.119.51
+    public_ipv6: null
+    public_ip_secondary: null
+    private_ip: null
+    hcloud_project: null
+    gcp_project: null
+    gcp_zone: null
+    robot_id: null
+    robot_product: null
+    robot_dc: null
+    services:
+    - nginx
+    - cdn
+    observability:
+      managed_services:
+      - node-exporter
+      - cadvisor
+      port_overrides:
+        cadvisor: 8082
+      unmanaged_services:
+      - nginx
+      notes: cdn profile; needs certbot + gitops nginx.
+    storagebox0_mount: true
+    docker_version: null
+    probe_path: /health
+    dns_hostnames:
+    - cdn012.bdsmlr.com
+    - cdn013.bdsmlr.com
+    - cdn101.bdsmlr.com
+    legacy_instances:
+    - cdn034
+    created: '2025-12-09'
+    updated: '2025-12-14'
+    bws_project: bdsmlr
+    bws_extra_projects:
+    - relaxgg-infra
+    bws_machine_account: bdsmlr-cdn-034
+    projects:
+    - bdsmlr
+    tls_certs:
+    - name: cdn012
+      host: cdn012.bdsmlr.com
+      min_days: 14

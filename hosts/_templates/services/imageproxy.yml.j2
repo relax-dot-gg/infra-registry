@@ -1,0 +1,19 @@
+{% set imageproxy_addr = imageproxy_addr | default('0.0.0.0:8080') %}
+{% set imageproxy_allowed_hosts = imageproxy_allowed_hosts | default('s3.wasabisys.com') %}
+{% set imageproxy_cache_max = imageproxy_cache_max | default('50G') %}
+
+  imageproxy:
+    image: ghcr.io/relax-dot-gg/imageproxy:latest
+    container_name: imageproxy
+    restart: unless-stopped
+    environment:
+      IMAGEPROXY_ADDR: "{{ imageproxy_addr }}"
+      IMAGEPROXY_ALLOWED_HOSTS: "{{ imageproxy_allowed_hosts }}"
+      CACHE_DIR: "/var/cache/imageproxy"
+      CACHE_TMP: "/var/cache/imageproxy-tmp"
+      CACHE_MAX: "{{ imageproxy_cache_max }}"
+      PRUNE_INTERVAL: "300"
+      CACHE_TTL: "7d"
+    volumes:
+      - ./data/imageproxy-cache:/var/cache/imageproxy
+      - /tmp:/var/cache/imageproxy-tmp
