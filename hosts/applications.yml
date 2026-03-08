@@ -15,4 +15,8 @@ applications:
         services: ["mariadb", "redis", "elasticsearch"]
       - host: "8c4894b2-63fc-472c-b10f-1e0fd94a2947"
         services: ["nginx", "imageproxy", "node-exporter", "cadvisor"]
+      - host: "3b7fdb50-4b74-415a-ba68-a8e0623a65c3"
+        services: ["nginx", "imageproxy", "node-exporter", "cadvisor"]
+      - host: "f39d28e1-b4ea-4ac6-ab3a-ae35b5a70aa8"
+        services: ["nginx", "imageproxy", "node-exporter", "cadvisor"]
     edges: "auto"

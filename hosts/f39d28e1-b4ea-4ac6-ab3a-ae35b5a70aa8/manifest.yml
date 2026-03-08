@@ -19,17 +19,10 @@ hosts:
     robot_dc: null
     services:
     - nginx
+    - cadvisor
+    - node-exporter
     - cdn
-    observability:
-      managed_services:
-      - node-exporter
-      - cadvisor
-      port_overrides:
-        cadvisor: 8082
-      unmanaged_services:
-      - nginx
-      notes: cdn profile; needs certbot + gitops nginx.
-    storagebox0_mount: true
+    storagebox0_mount: false
     docker_version: null
     probe_path: /health
     dns_hostnames:
@@ -44,3 +37,10 @@ hosts:
     bws_machine_account: bdsmlr-cdn-036
     projects:
     - bdsmlr
+    bws_extra_projects:
+    - relaxgg-infra
+    - cyberstorm-infra
+    tls_certs:
+    - name: cdn012
+      host: cdn012.bdsmlr.com
+      min_days: 14
