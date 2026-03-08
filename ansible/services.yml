@@ -307,6 +307,12 @@ services:
       gap_window: 24h
       max_gap: 600
 
+  nginx-vts-exporter:
+    description: "Standalone exporter for legacy grafana metrics translation"
+    group: telemetry
+    compose_service: nginx-vts-exporter
+    requires_secrets: []
+
   imageproxy:
     description: "Image caching proxy for CDN"
     group: utility
