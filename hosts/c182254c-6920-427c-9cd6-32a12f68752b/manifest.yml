@@ -1,0 +1,18 @@
+hosts:
+  c182254c-6920-427c-9cd6-32a12f68752b:
+    tailscale_name: relaxgg-static
+    tailscale_ip: 100.82.126.34
+    canonical_name: relaxgg-static
+    display_name: relaxgg-static
+    cloud: hetzner-cloud
+    status: active
+    use_exit_node: false
+    bws_project: relaxgg-infra
+    bws_machine_account: relaxgg-static
+    services:
+    - node-exporter
+    observability:
+      notes: self-deploy cron re-enabled; gitops active. Verified chat.freechat.zone
+        via Host header.
+    projects:
+    - relaxgg

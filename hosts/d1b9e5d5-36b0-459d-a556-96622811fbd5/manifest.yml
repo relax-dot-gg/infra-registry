@@ -1,0 +1,43 @@
+hosts:
+  d1b9e5d5-36b0-459d-a556-96622811fbd5:
+    tailscale_name: relaxgg-databases
+    tailscale_ip: 100.78.109.111
+    canonical_name: relaxgg-databases
+    display_name: relaxgg-databases
+    cloud: hetzner-cloud
+    status: active
+    use_exit_node: true
+    public_ip: null
+    public_ipv6: null
+    public_ip_secondary: null
+    private_ip: 10.0.0.2
+    hcloud_project: relax-gg
+    gcp_project: null
+    gcp_zone: null
+    robot_id: null
+    robot_product: null
+    robot_dc: null
+    services:
+    - postgresql
+    - mariadb
+    - redis
+    observability:
+      ready: true
+      managed_services:
+      - node-exporter
+      - postgres-exporter
+      - mysqld-exporter
+      - postgresql
+      - mariadb
+      - redis-exporter
+      - redis
+      unmanaged_services: []
+    docker_version: '28'
+    dns_hostnames: []
+    legacy_instances: []
+    created: '2025-12-14'
+    updated: '2025-12-14'
+    bws_project: relaxgg-infra
+    bws_machine_account: relaxgg-databases
+    projects:
+    - relaxgg

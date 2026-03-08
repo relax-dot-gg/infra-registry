@@ -1,0 +1,60 @@
+hosts:
+  002d015e-cd70-44e7-87d8-909c60ace2b3:
+    tailscale_name: bdsmlr-db
+    tailscale_ip: 100.99.100.7
+    canonical_name: bdsmlr-db
+    display_name: bdsmlr-db
+    cloud: scaleway
+    status: active
+    use_exit_node: false
+    public_ip: 51.159.1.140
+    public_ipv6: 2001:bc8:6005:1:dac4:97ff:fe68:a58
+    public_ip_secondary: null
+    private_ip: null
+    hcloud_project: null
+    gcp_project: null
+    gcp_zone: null
+    robot_id: null
+    robot_product: null
+    robot_dc: null
+    scaleway_metadata:
+      server_id: sd-146868
+      datacenter: DC5
+      offer: Core-5-M
+      os: ubuntu
+      reverse_dns: 51-159-1-140.rev.poneytelecom.eu
+      invoice_id: p-6685214
+      billing_period: 2025-12-01 to 2025-12-31
+      quantity: 1
+      amount_eur: 430,09
+    services:
+    - mysql
+    - elasticsearch
+    - redis
+    roles:
+      storagebox0: {}
+    observability:
+      ready: true
+      managed_services:
+      - node-exporter
+      - cadvisor
+      - mysqld-exporter
+      - mysql
+      - elasticsearch
+      - redis
+      - redis-exporter
+      - elasticsearch-exporter
+      notes: fully managed under gitops; redis present in gitops compose (warning
+        likely stale).
+    docker_version: '20.10'
+    legacy_instances:
+    - db
+    - db_mysqld
+    created: '2025-12-09'
+    updated: '2025-12-22'
+    bws_project: bdsmlr
+    bws_extra_projects:
+    - relaxgg-infra
+    bws_machine_account: bdsmlr-db
+    projects:
+    - bdsmlr

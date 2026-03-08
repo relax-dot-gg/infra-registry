@@ -1,0 +1,38 @@
+hosts:
+  97da6b29-9b36-4d78-999d-739e6529f17d:
+    tailscale_name: relaxgg-bastion
+    tailscale_ip: 100.91.20.46
+    canonical_name: relaxgg-bastion
+    display_name: relaxgg-bastion
+    cloud: hetzner-cloud
+    status: active
+    use_exit_node: false
+    public_ip: 91.99.122.86
+    public_ipv6: 2a01:4f8:c013:6838::1
+    public_ip_secondary: null
+    private_ip: null
+    hcloud_project: relax-gg
+    gcp_project: null
+    gcp_zone: null
+    robot_id: null
+    robot_product: null
+    robot_dc: null
+    services:
+    - prometheus
+    - grafana
+    - tailscale-exit-node
+    - stackdriver-bigquery
+    - stackdriver-pubsub
+    roles:
+      storagebox0: {}
+    docker_version: '28'
+    dns_hostnames: []
+    legacy_instances: []
+    created: '2025-12-08'
+    updated: '2025-12-14'
+    bws_project: relaxgg-admin
+    bws_extra_projects:
+    - bdsmlr
+    bws_machine_account: relaxgg-bastion
+    projects:
+    - relaxgg

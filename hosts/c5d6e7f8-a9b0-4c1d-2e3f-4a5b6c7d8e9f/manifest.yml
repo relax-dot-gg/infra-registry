@@ -1,0 +1,52 @@
+hosts:
+  c5d6e7f8-a9b0-4c1d-2e3f-4a5b6c7d8e9f:
+    tailscale_name: bdsmlr-wp-1
+    tailscale_ip: 100.75.44.75
+    canonical_name: bdsmlr-wordpress-shop
+    display_name: bdsmlr-wordpress-shop
+    cloud: gcp
+    status: active
+    use_exit_node: false
+    public_ip: 34.134.67.145
+    public_ipv6: null
+    public_ip_secondary: null
+    private_ip: null
+    hcloud_project: null
+    gcp_project: bdsmlr-prod
+    gcp_zone: null
+    robot_id: null
+    robot_product: null
+    robot_dc: null
+    services:
+    - wordpress
+    - nginx
+    service_dependencies:
+      wordpress:
+      - service: mariadb
+        host: cloudsql:bdsmlr-prod:us-central1:bdsmlr-prod-01
+        port: 3306
+        notes: via cloud-sql-proxy container (wordpress-db-1); migrate to managed
+          host later.
+    observability:
+      managed_services:
+      - node-exporter
+      skip_mysql_root_check: true
+      unmanaged_services:
+      - wordpress
+      - php-fpm
+      - mariadb
+      - caddy
+      missing_exporters:
+      - cadvisor
+      notes: 'gitops bootstrapped; nginx+wordpress now managed. WARN: wordpress service
+        not defined in services.yml (validation warning).'
+    docker_version: null
+    dns_hostnames:
+    - shop.bdsmlr.com
+    legacy_instances: []
+    created: '2025-12-14'
+    updated: '2025-12-14'
+    bws_project: bdsmlr
+    bws_machine_account: bdsmlr-wordpress-shop
+    projects:
+    - bdsmlr

@@ -1,0 +1,40 @@
+hosts:
+  a5b6c7d8-e9f0-4a1b-2c3d-4e5f6a7b8c9d:
+    tailscale_name: null
+    tailscale_ip: null
+    canonical_name: gcs-fwd-staging
+    display_name: gcs-fwd-staging
+    cloud: gcp-storage
+    status: active
+    use_exit_node: false
+    public_ip: null
+    public_ipv6: null
+    public_ip_secondary: null
+    private_ip: null
+    hcloud_project: null
+    gcp_project: fwd-staging
+    gcp_zone: null
+    robot_id: null
+    robot_product: null
+    robot_dc: null
+    services:
+    - storage
+    docker_version: null
+    dns_hostnames:
+    - isexychat.com
+    - isexychat.in
+    - isexychat.net
+    - isexychat.app
+    - camming.pro
+    - cammingpro.com
+    - adultreviews.today
+    - mylifecom.com
+    - livestream.studio
+    - legacy.isexychat.com
+    legacy_instances: []
+    created: '2025-12-14'
+    updated: '2025-12-14'
+    bws_project: freechatzone
+    bws_machine_account: gcs-fwd-staging
+    projects:
+    - gcp_storage

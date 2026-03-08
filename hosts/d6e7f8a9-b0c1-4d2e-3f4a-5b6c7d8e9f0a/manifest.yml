@@ -1,0 +1,36 @@
+hosts:
+  d6e7f8a9-b0c1-4d2e-3f4a-5b6c7d8e9f0a:
+    tailscale_name: bdsmlr-prod-wp-2
+    tailscale_ip: 100.103.13.57
+    canonical_name: bdsmlr-account
+    display_name: bdsmlr-account
+    cloud: gcp
+    status: active
+    use_exit_node: false
+    public_ip: 34.172.42.42
+    public_ipv6: null
+    public_ip_secondary: null
+    private_ip: null
+    hcloud_project: null
+    gcp_project: bdsmlr-prod
+    gcp_zone: null
+    robot_id: null
+    robot_product: null
+    robot_dc: null
+    services:
+    - wordpress
+    - nginx
+    observability:
+      notes: 'gitops bootstrapped; nginx+wordpress managed (caddy retired). Set LANG=C.UTF-8
+        to fix ansible locale. WARN: wordpress service not defined in services.yml
+        (validation warning).'
+    docker_version: null
+    dns_hostnames:
+    - account.bdsmlr.com
+    legacy_instances: []
+    created: '2025-12-14'
+    updated: '2025-12-14'
+    bws_project: bdsmlr
+    bws_machine_account: bdsmlr-account
+    projects:
+    - bdsmlr

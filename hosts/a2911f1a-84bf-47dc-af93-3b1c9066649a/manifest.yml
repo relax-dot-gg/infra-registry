@@ -1,0 +1,30 @@
+hosts:
+  a2911f1a-84bf-47dc-af93-3b1c9066649a:
+    tailscale_name: bdsmlr-wordpress
+    tailscale_ip: 100.92.9.31
+    canonical_name: bdsmlr-wordpress
+    display_name: bdsmlr-wordpress
+    cloud: hetzner-cloud
+    status: active
+    use_exit_node: false
+    public_ip: 91.99.181.74
+    public_ipv6: 2a01:4f8:c17:5cd0::1
+    hcloud_project: bdsmlr-com
+    bws_project: bdsmlr
+    bws_machine_account: bdsmlr-wordpress
+    services:
+    - nginx
+    - nginx-exporter
+    - wordpress
+    - node-exporter
+    - cadvisor
+    notes: 'warnings: nginx-exporter/wordpress not defined in services.yml; nginx
+      restarting after deploy'
+    service_dependencies:
+      wordpress:
+      - service: mariadb
+        host: f15fa76f-7f48-498d-9a00-756fad9e3053
+        port: 3306
+        notes: null
+    projects:
+    - bdsmlr

@@ -1,0 +1,53 @@
+hosts:
+  14855947-a035-4e3d-9075-2c8b8a8706dc:
+    tailscale_name: reblogme-app
+    tailscale_ip: 100.99.100.4
+    canonical_name: reblogme-app
+    display_name: reblogme-app
+    cloud: hetzner-robot
+    status: active
+    use_exit_node: false
+    public_ip: 142.132.153.252
+    public_ipv6: 2a01:4f8:261:2992::2
+    public_ip_secondary: null
+    private_ip: null
+    hcloud_project: null
+    gcp_project: null
+    gcp_zone: null
+    robot_id: 1688444
+    robot_product: SX134
+    robot_dc: FSN1-DC17
+    services:
+    - node-exporter
+    - cadvisor
+    notes: 'bootstrap_host failed: nginx amplify repo invalid signature; local deletions
+      in hosts/14855947.../config/postfix/*'
+    observability:
+      managed_services:
+      - node-exporter
+      - cadvisor
+      port_overrides:
+        cadvisor: 8082
+      unmanaged_services:
+      - mariadb
+      - redis
+      - nginx
+      - php-fpm
+      - laravel-echo
+      missing_exporters:
+      - mysqld-exporter
+      - redis-exporter
+      notes: cron has app schedules + backups; migrate later.
+    docker_version: '25.0'
+    dns_hostnames:
+    - '*.reblogme.com'
+    - api.reblogme.com
+    - cdn0.reblogme.com
+    legacy_instances:
+    - reblogme_main
+    created: '2025-12-08'
+    updated: '2025-12-14'
+    bws_project: reblogme
+    bws_machine_account: reblogme-app
+    projects:
+    - reblogme

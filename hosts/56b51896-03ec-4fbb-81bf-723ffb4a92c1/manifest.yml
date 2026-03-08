@@ -1,0 +1,41 @@
+hosts:
+  56b51896-03ec-4fbb-81bf-723ffb4a92c1:
+    tailscale_name: relaxgg-airflow
+    tailscale_ip: 100.78.160.8
+    canonical_name: relaxgg-airflow
+    display_name: relaxgg-airflow
+    cloud: hetzner-cloud
+    status: active
+    use_exit_node: true
+    public_ip: null
+    public_ipv6: null
+    public_ip_secondary: null
+    private_ip: 10.0.0.5
+    hcloud_project: relax-gg
+    gcp_project: null
+    gcp_zone: null
+    robot_id: null
+    robot_product: null
+    robot_dc: null
+    services:
+    - airflow
+    observability:
+      ready: true
+      managed_services:
+      - node-exporter
+      - cadvisor
+      - airflow-exporter
+      port_overrides:
+        cadvisor: 8081
+      unmanaged_services: []
+      notes: airflow stack fully managed; statsd_exporter present.
+    storagebox0_mount: true
+    docker_version: '28'
+    dns_hostnames: []
+    legacy_instances: []
+    created: '2025-12-14'
+    updated: '2025-12-14'
+    bws_project: relaxgg-infra
+    bws_machine_account: relaxgg-airflow
+    projects:
+    - relaxgg

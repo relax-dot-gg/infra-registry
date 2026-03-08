@@ -1,0 +1,46 @@
+hosts:
+  f39d28e1-b4ea-4ac6-ab3a-ae35b5a70aa8:
+    tailscale_name: bdsmlr-cdn-036
+    tailscale_ip: 100.87.103.18
+    canonical_name: bdsmlr-cdn-036
+    display_name: bdsmlr-cdn-036
+    cloud: buyvm
+    status: active
+    use_exit_node: false
+    public_ip: 209.141.51.83
+    public_ipv6: null
+    public_ip_secondary: null
+    private_ip: null
+    hcloud_project: null
+    gcp_project: null
+    gcp_zone: null
+    robot_id: null
+    robot_product: null
+    robot_dc: null
+    services:
+    - nginx
+    - cdn
+    observability:
+      managed_services:
+      - node-exporter
+      - cadvisor
+      port_overrides:
+        cadvisor: 8082
+      unmanaged_services:
+      - nginx
+      notes: cdn profile; needs certbot + gitops nginx.
+    storagebox0_mount: true
+    docker_version: null
+    probe_path: /health
+    dns_hostnames:
+    - cdn012.bdsmlr.com
+    - cdn013.bdsmlr.com
+    - cdn101.bdsmlr.com
+    legacy_instances:
+    - cdn036
+    created: '2025-12-09'
+    updated: '2025-12-14'
+    bws_project: bdsmlr
+    bws_machine_account: bdsmlr-cdn-036
+    projects:
+    - bdsmlr

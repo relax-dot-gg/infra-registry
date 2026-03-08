@@ -1,0 +1,56 @@
+hosts:
+  b1a554f8-76ed-4d98-91bb-f0fbfc2818d1:
+    hostname: gex44
+    tailscale_name: relaxgg-gex44
+    tailscale_ip: 100.82.220.106
+    canonical_name: relaxgg-gex44
+    display_name: relaxgg-gex44
+    cloud: hetzner-robot
+    status: active
+    use_exit_node: false
+    public_ip: 78.46.72.53
+    public_ipv6: 2a01:4f8:120:5003::2
+    public_ip_secondary: null
+    private_ip: null
+    hcloud_project: null
+    gcp_project: null
+    gcp_zone: null
+    robot_id: 2485813
+    robot_product: GEX44
+    robot_dc: FSN1-DC3
+    services:
+    - gpu
+    - n8n
+    - airflow-worker
+    - postgres
+    - redis
+    - qdrant
+    observability:
+      ready: true
+      managed_services:
+      - node-exporter
+      - cadvisor
+      - airflow-worker
+      - airflow-exporter
+      - dcgm-exporter
+      unmanaged_services:
+      - redis
+      - qdrant
+      - n8n
+      - stash
+      notes: gpu node; heavy migration needed (n8n/redis/qdrant/solr).
+    docker_version: null
+    dns_hostnames: []
+    legacy_instances: []
+    created: '2025-12-08'
+    updated: '2025-12-14'
+    bws_project: relaxgg-infra
+    bws_extra_projects:
+    - relaxgg-infra
+    bws_machine_account: relaxgg-woodpecker
+    roles:
+      storagebox0: {}
+      airflow-worker:
+        concurrency: 2
+    projects:
+    - relaxgg

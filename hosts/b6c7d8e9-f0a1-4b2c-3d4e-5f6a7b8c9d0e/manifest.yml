@@ -1,0 +1,33 @@
+hosts:
+  b6c7d8e9-f0a1-4b2c-3d4e-5f6a7b8c9d0e:
+    tailscale_name: null
+    tailscale_ip: null
+    canonical_name: gcs-reblogme-prod
+    display_name: gcs-reblogme-prod
+    cloud: gcp-storage
+    status: active
+    use_exit_node: false
+    public_ip: null
+    public_ipv6: null
+    public_ip_secondary: null
+    private_ip: null
+    hcloud_project: null
+    gcp_project: reblogme-prod
+    gcp_zone: null
+    robot_id: null
+    robot_product: null
+    robot_dc: null
+    services:
+    - storage
+    docker_version: null
+    dns_hostnames:
+    - reblogme.com
+    - beta.reblogme.com
+    - app-dev.reblogme.com
+    legacy_instances: []
+    created: '2025-12-14'
+    updated: '2025-12-14'
+    bws_project: reblogme
+    bws_machine_account: gcs-reblogme-prod
+    projects:
+    - gcp_storage

@@ -1,0 +1,34 @@
+hosts:
+  7f7b43f1-984c-4a44-8715-db7e7aefc10a:
+    tailscale_name: nisto
+    tailscale_ip: 100.82.66.12
+    canonical_name: cyberstorm-nisto
+    display_name: cyberstorm-nisto
+    cloud: hetzner-cloud
+    status: active
+    use_exit_node: false
+    public_ip: 46.224.122.106
+    public_ipv6: null
+    public_ip_secondary: null
+    private_ip: null
+    hcloud_project: null
+    bws_project: cyberstorm
+    bws_extra_projects:
+    - relaxgg-infra
+    - relaxgg-common
+    bws_machine_account: cyberstorm-nisto
+    services:
+    - node-exporter
+    - cadvisor
+    observability:
+      ready: true
+      managed_services:
+      - node-exporter
+      - cadvisor
+      notes: fully managed under gitops; manual table 52 route added for docker0 (172.17.0.0/16).
+    docker_version: '28'
+    dns_hostnames: []
+    created: '2026-01-31'
+    updated: '2026-01-31'
+    projects:
+    - cyberstorm

@@ -1,0 +1,31 @@
+hosts:
+  d8e9f0a1-b2c3-4d4e-5f6a-7b8c9d0e1f2a:
+    tailscale_name: null
+    tailscale_ip: null
+    canonical_name: gcs-cyberstorm-dev
+    display_name: gcs-cyberstorm-dev
+    cloud: gcp-storage
+    status: active
+    use_exit_node: false
+    public_ip: null
+    public_ipv6: null
+    public_ip_secondary: null
+    private_ip: null
+    hcloud_project: null
+    gcp_project: cyberstorm-dev
+    gcp_zone: null
+    robot_id: null
+    robot_product: null
+    robot_dc: null
+    services:
+    - storage
+    docker_version: null
+    dns_hostnames:
+    - didgit.dev
+    legacy_instances: []
+    created: '2025-12-14'
+    updated: '2025-12-14'
+    bws_project: relaxgg-common
+    bws_machine_account: gcs-cyberstorm-dev
+    projects:
+    - gcp_storage

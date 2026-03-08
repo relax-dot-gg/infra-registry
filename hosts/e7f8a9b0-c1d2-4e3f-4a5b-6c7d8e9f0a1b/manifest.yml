@@ -1,0 +1,31 @@
+hosts:
+  e7f8a9b0-c1d2-4e3f-4a5b-6c7d8e9f0a1b:
+    tailscale_name: bdsmlr-dev-wp-4
+    tailscale_ip: 100.117.119.118
+    canonical_name: bdsmlr-wordpress-dev
+    display_name: bdsmlr-dev-wp-4
+    cloud: gcp
+    status: active
+    use_exit_node: false
+    public_ip: 35.242.205.114
+    public_ipv6: null
+    public_ip_secondary: null
+    private_ip: null
+    hcloud_project: null
+    gcp_project: bdsmlr-dev
+    gcp_zone: europe-west3-c
+    robot_id: null
+    robot_product: null
+    robot_dc: null
+    services:
+    - wordpress
+    docker_version: null
+    dns_hostnames:
+    - dev-wp-4.bdsmlr.com
+    legacy_instances: []
+    created: '2025-12-14'
+    updated: '2025-12-14'
+    bws_project: bdsmlr
+    bws_machine_account: bdsmlr-wordpress-dev
+    projects:
+    - bdsmlr

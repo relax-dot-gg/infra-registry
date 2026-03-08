@@ -1,0 +1,40 @@
+hosts:
+  07988181-e5d6-4abf-8f39-1970109c64ea:
+    tailscale_name: chainlink-primary
+    tailscale_ip: 100.92.221.118
+    canonical_name: chainlink-primary
+    display_name: chainlink-primary
+    cloud: gcp
+    status: active
+    use_exit_node: false
+    public_ip: 35.226.174.230
+    public_ipv6: null
+    public_ip_secondary: null
+    private_ip: null
+    hcloud_project: null
+    gcp_project: cryptonode-ops-dev
+    gcp_zone: null
+    robot_id: null
+    robot_product: null
+    robot_dc: null
+    services:
+    - chainlink
+    observability:
+      managed_services:
+      - node-exporter
+      - cadvisor
+      unmanaged_services:
+      - chainlink
+      notes: chainlink app unmanaged; self-deploy enabled.
+    docker_version: '20.10'
+    dns_hostnames: []
+    legacy_instances:
+    - mainnet-chainlink-gcp-primary
+    created: '2025-12-09'
+    updated: '2025-12-14'
+    bws_project: chainlink
+    bws_extra_projects:
+    - relaxgg-common
+    bws_machine_account: chainlink-primary
+    projects:
+    - chainlink

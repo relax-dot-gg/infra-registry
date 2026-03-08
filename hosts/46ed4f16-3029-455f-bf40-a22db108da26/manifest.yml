@@ -1,0 +1,42 @@
+hosts:
+  46ed4f16-3029-455f-bf40-a22db108da26:
+    tailscale_name: relayos-staging-db
+    tailscale_ip: 100.89.135.65
+    canonical_name: relayos-staging-db
+    display_name: relayos-staging-db
+    cloud: hetzner-cloud
+    status: active
+    use_exit_node: true
+    public_ip: null
+    public_ipv6: null
+    public_ip_secondary: null
+    private_ip: null
+    hcloud_project: relayos-com
+    gcp_project: null
+    gcp_zone: null
+    robot_id: null
+    robot_product: null
+    robot_dc: null
+    services:
+    - mariadb
+    - redis
+    notes: 'warnings: redis service name mismatch in compose validation'
+    observability:
+      ready: true
+      managed_services:
+      - node-exporter
+      - mariadb
+      - redis
+      - mysqld-exporter
+      - redis-exporter
+      unmanaged_services: []
+      notes: gitops-managed mariadb + redis.
+    docker_version: null
+    dns_hostnames: []
+    legacy_instances: []
+    created: '2025-12-08'
+    updated: '2025-12-14'
+    bws_project: relayos
+    bws_machine_account: relayos-staging-db
+    projects:
+    - relayos

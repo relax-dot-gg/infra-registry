@@ -1,0 +1,58 @@
+hosts:
+  94e0015b-a2b6-4c13-8c57-8df2f1c5b9c5:
+    tailscale_name: bbchat-irc
+    tailscale_ip: 100.78.244.105
+    canonical_name: bbchat-irc
+    display_name: bbchat-irc
+    cloud: hetzner-cloud
+    status: active
+    use_exit_node: false
+    public_ip: 49.13.140.254
+    public_ipv6: 2a01:4f8:c014:38e1::1
+    public_ip_secondary: null
+    private_ip: null
+    hcloud_project: bb-chat
+    gcp_project: null
+    gcp_zone: null
+    robot_id: null
+    robot_product: null
+    robot_dc: null
+    services:
+    - inspircd
+    - jitsi
+    - nginx
+    - apache
+    - wordpress
+    - cadvisor
+    - chatflow
+    observability:
+      managed_services:
+      - node-exporter
+      - cadvisor
+      port_overrides:
+        cadvisor: 7770
+      unmanaged_services:
+      - inspircd
+      - anope
+      - nginx
+      - kiwibnc
+      - mysql-to-pubsub
+      - webircgateway
+      notes: large unmanaged stack; self-deploy enabled. Docker downgrade to 28 failed
+        (needs --allow-downgrades). certbot needed for IRC.
+    docker_version: '29.0'
+    dns_hostnames:
+    - bb.chat
+    - irc.bb.chat
+    - bnc.bb.chat
+    - anope.bb.chat
+    - jvb.bb.chat
+    - irc.freechat.zone
+    legacy_instances:
+    - jitsi-jvb
+    created: '2025-12-08'
+    updated: '2025-12-14'
+    bws_project: bbchat
+    bws_machine_account: bbchat-irc
+    projects:
+    - bbchat

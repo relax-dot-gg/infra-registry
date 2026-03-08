@@ -1,0 +1,43 @@
+hosts:
+  c8f3a291-7d4e-4b8c-9a5f-2e1d0c9b8a7f:
+    tailscale_name: relaxgg-mta
+    tailscale_ip: 100.127.45.55
+    canonical_name: relaxgg-mta
+    display_name: relaxgg-mta
+    cloud: hetzner-cloud
+    status: active
+    use_exit_node: false
+    public_ip: 5.161.101.141
+    public_ipv6: 2a01:4ff:f0:bed8::1
+    public_ip_secondary: 5.161.17.242
+    private_ip: null
+    hcloud_project: relax.gg
+    gcp_project: null
+    gcp_zone: null
+    robot_id: null
+    robot_product: null
+    robot_dc: null
+    services:
+    - postfix
+    - certbot
+    observability:
+      managed_services:
+      - node-exporter
+      - postfix-exporter
+      - postfix
+      unmanaged_services: []
+      notes: postfix exporter running; verify postfix daemon if needed.
+    docker_version: null
+    dns_hostnames:
+    - mta.freechat.zone
+    - mta.aiplaymates.ai
+    - mta.bb.chat
+    - mta.i4chan.org
+    - mta.relax.gg
+    legacy_instances: []
+    created: '2025-12-14'
+    updated: '2025-12-17'
+    bws_project: relaxgg-email
+    bws_machine_account: freechatzone-mta
+    projects:
+    - relaxgg

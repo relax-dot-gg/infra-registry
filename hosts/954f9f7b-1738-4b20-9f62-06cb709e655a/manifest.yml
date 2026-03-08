@@ -1,0 +1,42 @@
+hosts:
+  954f9f7b-1738-4b20-9f62-06cb709e655a:
+    tailscale_name: relayos-staging
+    tailscale_ip: 100.83.85.72
+    canonical_name: relayos-staging
+    display_name: relayos-staging
+    cloud: hetzner-cloud
+    status: active
+    use_exit_node: false
+    public_ip: 138.199.162.129
+    public_ipv6: 2a01:4f8:c014:3973::1
+    public_ip_secondary: null
+    private_ip: null
+    hcloud_project: relayos-com
+    gcp_project: null
+    gcp_zone: null
+    robot_id: null
+    robot_product: null
+    robot_dc: null
+    services:
+    - cadvisor
+    observability:
+      managed_services:
+      - node-exporter
+      - cadvisor
+      port_overrides:
+        cadvisor: 8082
+      unmanaged_services:
+      - apache
+      - inspircd
+      - coturn
+      - nginx
+      notes: blueprint host for bbchat-irc migration.
+    docker_version: '28'
+    dns_hostnames: []
+    legacy_instances: []
+    created: '2025-12-08'
+    updated: '2025-12-14'
+    bws_project: relayos
+    bws_machine_account: relayos-staging
+    projects:
+    - relayos

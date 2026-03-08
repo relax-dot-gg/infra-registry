@@ -1,0 +1,48 @@
+hosts:
+  b6fbaef5-9101-4e21-871b-c60d037fa800:
+    tailscale_name: reblogme-cdn-044
+    tailscale_ip: 100.124.63.124
+    canonical_name: reblogme-cdn-044
+    display_name: reblogme-cdn-044
+    cloud: hostingby
+    status: active
+    use_exit_node: false
+    public_ip: 185.126.65.61
+    public_ipv6: 2a0b:b600:3c05:3::18d
+    public_ip_secondary: null
+    private_ip: null
+    hcloud_project: null
+    gcp_project: null
+    gcp_zone: null
+    robot_id: null
+    robot_product: null
+    robot_dc: null
+    services:
+    - nginx
+    - cdn
+    - cadvisor
+    observability:
+      ready: true
+      managed_services:
+      - node-exporter
+      - cadvisor
+      port_overrides:
+        cadvisor: 8082
+      unmanaged_services:
+      - nginx
+      notes: cdn profile; needs certbot + gitops nginx.
+    storagebox0_mount: true
+    docker_version: '28'
+    probe_path: /health
+    dns_hostnames:
+    - cdn001.reblogme.com
+    - cdn002.reblogme.com
+    - cdn012.reblogme.com
+    legacy_instances:
+    - reblogme_cdn044
+    created: '2025-12-09'
+    updated: '2025-12-15'
+    bws_project: reblogme
+    bws_machine_account: reblogme-cdn-044
+    projects:
+    - reblogme

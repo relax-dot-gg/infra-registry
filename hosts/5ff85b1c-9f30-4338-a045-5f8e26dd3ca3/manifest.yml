@@ -1,0 +1,40 @@
+hosts:
+  5ff85b1c-9f30-4338-a045-5f8e26dd3ca3:
+    tailscale_name: bbchat-redis
+    tailscale_ip: 100.110.230.38
+    canonical_name: bbchat-redis
+    display_name: bbchat-redis
+    cloud: hetzner-cloud
+    status: active
+    use_exit_node: true
+    public_ip: 91.107.198.153
+    public_ipv6: 2a01:4f8:c013:8acb::1
+    public_ip_secondary: null
+    private_ip: null
+    hcloud_project: bb-chat
+    gcp_project: null
+    gcp_zone: null
+    robot_id: null
+    robot_product: null
+    robot_dc: null
+    services:
+    - redis
+    - cadvisor
+    observability:
+      ready: true
+      managed_services:
+      - node-exporter
+      - cadvisor
+      - redis
+      - redis-exporter
+      unmanaged_services: []
+      notes: redis running, exporter present.
+    docker_version: null
+    dns_hostnames: []
+    legacy_instances: []
+    created: '2025-12-08'
+    updated: '2025-12-14'
+    bws_project: bbchat
+    bws_machine_account: bbchat-redis
+    projects:
+    - bbchat

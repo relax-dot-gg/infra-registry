@@ -1,0 +1,38 @@
+hosts:
+  f15fa76f-7f48-498d-9a00-756fad9e3053:
+    tailscale_name: bdsmlr-db2
+    tailscale_ip: 100.68.254.62
+    canonical_name: bdsmlr-db2
+    display_name: bdsmlr-db2
+    cloud: hetzner-cloud
+    status: active
+    use_exit_node: false
+    public_ip: 49.13.209.24
+    public_ipv6: 2a01:4f8:c17:beb7::1
+    hcloud_project: bdsmlr-com
+    bws_project: bdsmlr
+    bws_machine_account: bdsmlr-wordpress-db
+    bws_extra_projects:
+    - relaxgg-infra
+    services:
+    - redis
+    - redis-exporter
+    - mariadb
+    - mysqld-exporter
+    - cadvisor
+    - node-exporter
+    - solr
+    - zookeeper
+    notes: 'warnings: redis/solr service names differ from compose (solr1/solr2/solr-init);
+      redis-exporter not defined in services.yml'
+    observability:
+      managed_services:
+      - node-exporter
+      - cadvisor
+      - redis
+      - redis-exporter
+      - mariadb
+      - mysqld-exporter
+      notes: 'wordpress db host: managed services for prom fallback.'
+    projects:
+    - bdsmlr

@@ -1,0 +1,53 @@
+hosts:
+  fa2b9872-d94c-4b20-a73a-57a205560769:
+    tailscale_name: relaxgg-ax162
+    tailscale_ip: 100.69.66.115
+    canonical_name: relaxgg-ax162
+    display_name: relaxgg-ax162
+    cloud: hetzner-robot
+    status: active
+    use_exit_node: false
+    public_ip: 162.55.23.32
+    public_ipv6: 2a01:4f8:2190:285a::2
+    public_ip_secondary: null
+    private_ip: null
+    hcloud_project: null
+    gcp_project: null
+    gcp_zone: null
+    robot_id: 2440889
+    robot_product: AX162-R
+    robot_dc: FSN1-DC19
+    services:
+    - n8n
+    - nginx
+    - airflow-worker
+    - postgres
+    observability:
+      ready: true
+      managed_services:
+      - node-exporter
+      - cadvisor
+      - nginx
+      - airflow-worker
+      - airflow-exporter
+      port_overrides:
+        mariadb: 9104
+      mysql_root_port: 3307
+      unmanaged_services: []
+      notes: airflow worker + exporters present.
+    storagebox0_mount: true
+    docker_version: '27.3'
+    dns_hostnames:
+    - n8n.i4chan.org
+    legacy_instances:
+    - ax162
+    created: '2025-12-08'
+    updated: '2025-12-14'
+    bws_project: relaxgg-data
+    bws_machine_account: relaxgg-ax162
+    roles:
+      storagebox0: {}
+      airflow-worker:
+        concurrency: 90
+    projects:
+    - relaxgg

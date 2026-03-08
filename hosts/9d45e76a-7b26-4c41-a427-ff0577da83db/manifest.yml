@@ -1,0 +1,64 @@
+hosts:
+  9d45e76a-7b26-4c41-a427-ff0577da83db:
+    tailscale_name: bdsmlr-worker
+    tailscale_ip: 100.109.104.111
+    canonical_name: bdsmlr-worker
+    display_name: bdsmlr-worker
+    cloud: scaleway
+    status: active
+    use_exit_node: false
+    public_ip: 51.159.57.162
+    public_ipv6: null
+    public_ip_secondary: null
+    private_ip: null
+    hcloud_project: null
+    gcp_project: null
+    gcp_zone: null
+    robot_id: null
+    robot_product: null
+    robot_dc: null
+    scaleway_metadata:
+      server_id: sd-160628
+      datacenter: DC5
+      offer: Pro-6-M
+      os: ubuntu
+      reverse_dns: 51-159-57-162.rev.poneytelecom.eu
+      invoice_id: p-6685966
+      billing_period: 2025-12-01 to 2025-12-31
+      quantity: 1
+      amount_eur: 92,39
+    services:
+    - queue-worker
+    - nginx
+    - cadvisor
+    notes: 'warnings: queue-worker not defined in services.yml'
+    observability:
+      ready: true
+      managed_services:
+      - node-exporter
+      - cadvisor
+      - nginx
+      - nginx-vts-exporter
+      - php-fpm-exporter
+      unmanaged_services:
+      - php-fpm
+      - memcached
+      notes: nginx and exporters managed; php-fpm/memcached remain unmanaged; no outbound
+        mail expected.
+    storagebox0_mount: true
+    docker_version: '20.10'
+    dns_hostnames:
+    - '*.bdsmlr.com'
+    - api.bdsmlr.com
+    - support.bdsmlr.com
+    legacy_instances:
+    - subdom
+    - subdom_nginx
+    created: '2025-12-12'
+    updated: '2026-02-07'
+    bws_project: bdsmlr
+    bws_extra_projects:
+    - relaxgg-infra
+    bws_machine_account: bdsmlr-sub
+    projects:
+    - bdsmlr

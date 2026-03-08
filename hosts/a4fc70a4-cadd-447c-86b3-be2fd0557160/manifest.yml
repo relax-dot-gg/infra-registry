@@ -1,0 +1,48 @@
+hosts:
+  a4fc70a4-cadd-447c-86b3-be2fd0557160:
+    tailscale_name: relaxgg-analytics
+    tailscale_ip: 100.93.157.126
+    canonical_name: relaxgg-analytics
+    display_name: relaxgg-analytics
+    cloud: hetzner-robot
+    status: active
+    use_exit_node: false
+    public_ip: 162.55.28.155
+    public_ipv6: 2a01:4f8:2190:20ea::2
+    public_ip_secondary: null
+    private_ip: null
+    hcloud_project: null
+    gcp_project: null
+    gcp_zone: null
+    robot_id: 2709756
+    robot_product: AX162-R
+    robot_dc: FSN1-DC19
+    services:
+    - mariadb
+    - elasticsearch
+    - elasticsearch-exporter
+    observability:
+      ready: true
+      managed_services:
+      - node-exporter
+      - cadvisor
+      - mariadb
+      - mysqld-exporter
+      - elasticsearch
+      - elasticsearch-exporter
+      unmanaged_services: []
+      notes: gitops-managed mariadb stack with exporters; self-deploy re-enabled.
+    storagebox0_mount: true
+    docker_version: '28'
+    dns_hostnames:
+    - airflow.relax.gg
+    - n8n.relax.gg
+    legacy_instances: []
+    created: '2025-12-08'
+    updated: '2025-12-14'
+    bws_project: relaxgg-infra
+    bws_extra_projects:
+    - bdsmlr
+    bws_machine_account: relaxgg-analytics
+    projects:
+    - relaxgg

@@ -1,0 +1,70 @@
+hosts:
+  311dbc7e-b50c-45c7-a2ab-4377b972ee63:
+    tailscale_name: bdsmlr-app
+    tailscale_ip: 100.90.65.63
+    canonical_name: bdsmlr-app
+    display_name: bdsmlr-app
+    cloud: scaleway
+    status: active
+    use_exit_node: false
+    public_ip: 195.154.26.125
+    public_ipv6: null
+    public_ip_secondary: 51.158.25.233
+    private_ip: null
+    hcloud_project: null
+    gcp_project: null
+    gcp_zone: null
+    robot_id: null
+    robot_product: null
+    robot_dc: null
+    scaleway_metadata:
+      server_id: sd-133633
+      datacenter: DC5
+      offer: Core-4-M-SSD
+      os: ubuntu
+      reverse_dns: 195-154-26-125.rev.poneytelecom.eu
+      invoice_id: p-6685211
+      billing_period: 2025-12-01 to 2025-12-31
+      quantity: 1
+      amount_eur: 202,39
+    services:
+    - nginx
+    - mail
+    - redis
+    - php-fpm
+    notes: 'warnings: mail/php-fpm not defined in services.yml; redis compose check
+      expects redis service name'
+    observability:
+      ready: true
+      managed_services:
+      - node-exporter
+      - cadvisor
+      - nginx
+      - redis
+      - redis-exporter
+      - php-fpm
+      - php-fpm-exporter
+      port_overrides:
+        cadvisor: 8080
+      unmanaged_services:
+      - php-fpm
+      - laravel-echo
+      notes: nginx is now managed; php-fpm + laravel-echo still unmanaged.
+    storagebox0_mount: true
+    docker_version: '28.1'
+    dns_hostnames:
+    - bdsmlr.com
+    - echo.bdsmlr.com
+    - img.bdsmlr.com
+    - mail.bdsmlr.com
+    - postman.bdsmlr.com
+    - tumblrimport.bdsmlr.com
+    legacy_instances:
+    - main
+    - main_nginx
+    created: '2025-12-09'
+    updated: '2025-12-22'
+    bws_project: bdsmlr
+    bws_machine_account: bdsmlr-app
+    projects:
+    - bdsmlr

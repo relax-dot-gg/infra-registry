@@ -1,0 +1,39 @@
+hosts:
+  7531509e-06d2-4dd2-8267-4d139e4bae1e:
+    tailscale_name: bbchat-mariadb
+    tailscale_ip: 100.93.217.87
+    canonical_name: bbchat-mariadb
+    display_name: bbchat-mariadb
+    cloud: hetzner-cloud
+    status: active
+    use_exit_node: true
+    public_ip: 91.99.188.181
+    public_ipv6: 2a01:4f8:c010:85bd::1
+    public_ip_secondary: null
+    private_ip: null
+    hcloud_project: bb-chat
+    gcp_project: null
+    gcp_zone: null
+    robot_id: null
+    robot_product: null
+    robot_dc: null
+    services:
+    - mariadb
+    notes: mariadb runs baremetal (systemd), not in docker
+    observability:
+      ready: true
+      managed_services:
+      - node-exporter
+      - mariadb
+      - mysqld-exporter
+      unmanaged_services: []
+      notes: mysqld exporter present.
+    docker_version: null
+    dns_hostnames: []
+    legacy_instances: []
+    created: '2025-12-08'
+    updated: '2025-12-14'
+    bws_project: bbchat
+    bws_machine_account: bbchat-mariadb
+    projects:
+    - bbchat

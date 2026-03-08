@@ -1,0 +1,26 @@
+hosts:
+  c2e61593-2e14-47d7-9549-ba5c7c5ebcb6:
+    tailscale_name: bbchat-mspokes-db
+    tailscale_ip: 100.102.68.55
+    canonical_name: bbchat-mspokes-db
+    display_name: bbchat-mspokes-db
+    cloud: hetzner-cloud
+    status: inactive
+    use_exit_node: false
+    public_ip: 162.55.163.93
+    public_ipv6: null
+    public_ip_secondary: null
+    private_ip: null
+    hcloud_project: bb-chat
+    gcp_project: null
+    gcp_zone: null
+    robot_id: null
+    robot_product: null
+    robot_dc: null
+    services:
+    - mariadb
+    - mysqld-exporter
+    - cadvisor
+    - node-exporter
+    projects:
+    - bbchat
