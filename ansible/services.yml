@@ -319,6 +319,7 @@ services:
     compose_service: lego
     requires_secrets:
       - cloudflare_edit_dns_cyberstorm
+      - cloudflare_edit_dns_bdsmlr
 
   apache:
     description: "Apache httpd"
