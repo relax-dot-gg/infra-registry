@@ -17,9 +17,8 @@ edges:
   projects:
   - infralink
   healthcheck:
-    explicit: true
+    type: tcp
     interval: 60s
-    conditions: ["[STATUS] == 200"]
 - id: 1f01a0f8-67fd-4235-b673-010f54113dbc
   type: monitoring
   from:
@@ -37,9 +36,8 @@ edges:
   projects:
   - infralink
   healthcheck:
-    explicit: true
+    type: tcp
     interval: 60s
-    conditions: ["[STATUS] == 200"]
 - id: abddf2a0-8b5a-43fe-a182-9ace87ad2a9a
   type: monitoring
   from:
@@ -57,9 +55,8 @@ edges:
   projects:
   - infralink
   healthcheck:
-    explicit: true
+    type: tcp
     interval: 60s
-    conditions: ["[STATUS] == 200"]
 - id: c92f8585-ea68-4d15-9b3c-c799718071f7
   type: monitoring
   from:
@@ -77,9 +74,8 @@ edges:
   projects:
   - infralink
   healthcheck:
-    explicit: true
+    type: tcp
     interval: 60s
-    conditions: ["[STATUS] == 200"]
 - id: 1049797e-908a-4703-8001-877de3503b09
   type: monitoring
   from:
@@ -97,7 +93,7 @@ edges:
   projects:
   - infralink
   healthcheck:
-    explicit: true
+    type: http
     interval: 60s
     conditions: ["[STATUS] == 200"]
 - id: 748c34ad-6024-4e07-9235-564cd84d1ead
@@ -117,9 +113,8 @@ edges:
   projects:
   - infralink
   healthcheck:
-    explicit: true
+    type: tcp
     interval: 60s
-    conditions: ["[STATUS] == 200"]
 - id: 1e75563f-0f4b-404c-aa8c-dd46f0f8bbb9
   type: monitoring
   from:
@@ -137,7 +132,7 @@ edges:
   projects:
   - infralink
   healthcheck:
-    explicit: true
+    type: http
     interval: 60s
     conditions: ["[STATUS] == 200"]
 - id: b07177f9-0a4b-4064-9b3e-35e8ad9c23ae
@@ -157,7 +152,7 @@ edges:
   projects:
   - infralink
   healthcheck:
-    explicit: true
+    type: http
     interval: 60s
     conditions: ["[STATUS] == 200"]
 - id: f6af7a2f-698f-44ba-82ec-bffc63f2a448
@@ -176,6 +171,10 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    type: http
+    interval: 60s
+    conditions: ["[STATUS] == 200"]
 - id: 004a9d3a-c1d1-4e6f-b73e-f3f83825c9ca
   type: api
   from:
@@ -192,6 +191,9 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    type: tcp
+    interval: 300s
 - id: 8ff25203-33fa-4b89-a52f-cef071757d01
   type: database
   from:
@@ -213,6 +215,9 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    type: query
+    interval: 300s
 - id: 0f0a5f01-5d1f-43fd-8d40-4cbf3f7b9df0
   type: database
   from:
@@ -234,6 +239,9 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    type: query
+    interval: 300s
 - id: 5a2d2f2a-9ab8-4d88-8c7e-2b29a3f56b45
   type: database
   from:
@@ -255,6 +263,9 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    type: query
+    interval: 300s
 - id: ffc7f343-6869-4235-bd2f-6623c4029c96
   type: database
   from:
@@ -276,6 +287,9 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    type: query
+    interval: 300s
 - id: 393b66f1-e3f4-420c-ae69-aed52568c603
   type: api
   from:
@@ -292,6 +306,9 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    type: tcp
+    interval: 300s
 - id: 08bc8b02-674d-4c0e-9225-bee04a77ae6f
   type: api
   from:
@@ -308,6 +325,9 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    type: tcp
+    interval: 300s
 - id: 6c51a06e-3e7b-43ed-896a-00800e6dc956
   type: security
   from:
@@ -323,6 +343,9 @@ edges:
     criticality: medium
   projects:
   - infralink
+  healthcheck:
+    type: tcp
+    interval: 300s
 - id: 7150ca75-8288-437b-a937-7625d4b7ce25
   type: database
   from:
@@ -344,6 +367,9 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    type: query
+    interval: 300s
 - id: 43ec07f9-3dd8-4a3d-99c0-d4b359d74969
   type: queue
   from:
@@ -364,6 +390,9 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    type: tcp
+    interval: 300s
 - id: 29ef679b-65c5-4206-9025-e6d1d7025013
   type: storage
   from:
@@ -382,6 +411,9 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    type: tcp
+    interval: 300s
 - id: 77f7c7b8-6c18-4c4b-8b65-8c6f2a5bdb7f
   type: queue
   from:
@@ -402,6 +434,9 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    type: tcp
+    interval: 300s
 - id: 8c5b0c9a-6b8a-4b0b-9c43-5f2c9c8b6f5d
   type: storage
   from:
@@ -420,6 +455,9 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    type: tcp
+    interval: 300s
 - id: 2b9e3e64-8d9f-4a1b-9f0b-4c2d7e6c1a3e
   type: storage
   from:
@@ -438,6 +476,9 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    type: tcp
+    interval: 300s
 - id: 4c7c2f5a-3b6d-4a1c-9f27-8d5f4b3a2c1d
   type: storage
   from:
@@ -456,6 +497,9 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    type: tcp
+    interval: 300s
 - id: 605176be-a5ba-46b3-9fd0-56af83055625
   type: ssh
   from:
@@ -474,6 +518,9 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    type: tcp
+    interval: 300s
 - id: 32888af2-f576-4f0b-972d-fde992b714b7
   type: ssh
   from:
@@ -492,6 +539,9 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    type: tcp
+    interval: 300s
 - id: 78c36dc3-aeec-41ff-a1fd-eebdeab7afca
   type: ssh
   from:
@@ -510,6 +560,9 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    type: tcp
+    interval: 300s
 - id: faa96650-3846-4dc2-94b5-b778c0bc1b4b
   type: ssh
   from:
@@ -528,6 +581,9 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    type: tcp
+    interval: 300s
 - id: f4292712-a803-4a9c-a66b-cb30e96284ee
   type: ssh
   from:
@@ -546,6 +602,9 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    type: tcp
+    interval: 300s
 - id: ee0ea921-c27f-454c-b754-e8fac76f8c23
   type: ssh
   from:
@@ -564,6 +623,9 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    type: tcp
+    interval: 300s
 - id: 0124883b-cd36-48ba-afbc-0cc9e6544721
   type: ssh
   from:
@@ -582,6 +644,9 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    type: tcp
+    interval: 300s
 - id: e0a58930-8342-45c3-82b1-802d7d6797bf
   type: ssh
   from:
@@ -600,6 +665,9 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    type: tcp
+    interval: 300s
 - id: 7665088f-df25-4247-9bb0-7c58bb84e08a
   type: monitoring
   from:
@@ -616,6 +684,10 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    type: http
+    interval: 60s
+    conditions: ["[STATUS] == 200"]
 - id: ad04df9e-647c-4ac0-b8da-f8bdccd4f7b8
   type: monitoring
   from:
@@ -633,7 +705,7 @@ edges:
   projects:
   - infralink
   healthcheck:
-    explicit: true
+    type: http
     interval: 60s
     conditions: ["[STATUS] == 200"]
 - id: 5c84dcee-c2d8-466f-9cf0-df349ef4d899
@@ -653,7 +725,7 @@ edges:
   projects:
   - infralink
   healthcheck:
-    explicit: true
+    type: http
     interval: 60s
     conditions: ["[STATUS] == 200"]
 - id: 8a5fc684-1d64-429b-93aa-4ab2477e0b13
@@ -673,7 +745,7 @@ edges:
   projects:
   - infralink
   healthcheck:
-    explicit: true
+    type: http
     interval: 60s
     conditions: ["[STATUS] == 200"]
 - id: 7f8d6281-b97e-4d07-b0e2-00537a359b9c
@@ -693,7 +765,7 @@ edges:
   projects:
   - infralink
   healthcheck:
-    explicit: true
+    type: http
     interval: 60s
     conditions: ["[STATUS] == 200"]
 - id: 0754587a-1bf0-4eb6-843e-9af57469f33a
@@ -713,7 +785,7 @@ edges:
   projects:
   - infralink
   healthcheck:
-    explicit: true
+    type: http
     interval: 60s
     conditions: ["[STATUS] == 200"]
 - id: cbf20775-3d6a-4b57-acb9-2903321d8050
@@ -732,6 +804,10 @@ edges:
     criticality: medium
   projects:
   - infralink
+  healthcheck:
+    type: http
+    interval: 60s
+    conditions: ["[STATUS] == 200"]
 - id: ce0a6171-4902-497b-8398-5425c4e6ca88
   type: monitoring
   from:
@@ -748,6 +824,10 @@ edges:
     criticality: medium
   projects:
   - infralink
+  healthcheck:
+    type: http
+    interval: 60s
+    conditions: ["[STATUS] == 200"]
 - id: 2142eef8-7486-4ac7-b1a5-7f768f8206af
   type: monitoring
   from:
@@ -764,6 +844,10 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    type: http
+    interval: 60s
+    conditions: ["[STATUS] == 200"]
 - id: 83b36053-0b78-4123-8c5d-465cbccef88c
   type: monitoring
   from:
@@ -780,6 +864,10 @@ edges:
     criticality: medium
   projects:
   - infralink
+  healthcheck:
+    type: http
+    interval: 60s
+    conditions: ["[STATUS] == 200"]
 - id: d06d05a7-c34d-46c1-8e81-d84519bb2122
   type: monitoring
   from:
@@ -796,6 +884,10 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    type: http
+    interval: 60s
+    conditions: ["[STATUS] == 200"]
 - id: baa42917-7e8a-412e-aa3e-ee853cbaf199
   type: monitoring
   from:
@@ -812,6 +904,10 @@ edges:
     criticality: medium
   projects:
   - infralink
+  healthcheck:
+    type: http
+    interval: 60s
+    conditions: ["[STATUS] == 200"]
 - id: b8c93b84-d009-4a55-b22b-12c7f8bb67a5
   type: api
   from:
@@ -828,6 +924,9 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    type: tcp
+    interval: 300s
 - id: bf541684-e3d1-455d-a6d4-9d841ba61b03
   type: monitoring
   from:
@@ -845,7 +944,7 @@ edges:
   projects:
   - infralink
   healthcheck:
-    explicit: true
+    type: http
     interval: 60s
     conditions: ["[STATUS] == 200"]
 - id: f0d7292f-1aaa-47ca-96a2-bedfc569958a
@@ -864,6 +963,10 @@ edges:
     criticality: medium
   projects:
   - infralink
+  healthcheck:
+    type: https
+    interval: 60s
+    conditions: ["[STATUS] == 200"]
 - id: 3bb49dc2-5125-4398-b5de-aabaf2a12af3
   type: api
   from:
@@ -880,6 +983,9 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    type: tcp
+    interval: 300s
 - id: 1f2fac9e-4eeb-4c24-8d21-ae8fff279098
   type: api
   from:
@@ -896,6 +1002,9 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    type: tcp
+    interval: 300s
 - id: 2f9d3a2f-27c8-4c1f-b44a-7f7f9c7c9c0e
   type: storage
   from:
@@ -914,6 +1023,9 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    type: tcp
+    interval: 300s
 - id: 4b0c8d1a-5a1b-4f3d-9c7c-2e0a9d1f3c2b
   type: storage
   from:
@@ -932,6 +1044,9 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    type: tcp
+    interval: 300s
 - id: 073e058b-fa43-4d17-9561-16a98f7d0247
   type: email
   from:
@@ -952,6 +1067,9 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    type: tcp
+    interval: 300s
 - id: 261a2189-5801-47b4-8447-5548d78aaa37
   type: telemetry
   from:
@@ -972,6 +1090,9 @@ edges:
     criticality: medium
   projects:
   - infralink
+  healthcheck:
+    type: tcp
+    interval: 300s
 - id: f9fd4c51-6c05-4dd5-a197-796b02f1014f
   type: telemetry
   from:
@@ -992,6 +1113,9 @@ edges:
     criticality: medium
   projects:
   - infralink
+  healthcheck:
+    type: tcp
+    interval: 300s
 - id: a20a499b-154d-4f40-b325-d0c91958c6dc
   type: monitoring
   from:
@@ -1010,7 +1134,7 @@ edges:
   projects:
   - infralink
   healthcheck:
-    explicit: true
+    type: https
     interval: 60s
     conditions: ["[STATUS] == 200"]
 - id: 6981a7f9-0e3a-4f14-8efb-68b44e7ffac8
@@ -1029,6 +1153,10 @@ edges:
     criticality: medium
   projects:
   - infralink
+  healthcheck:
+    type: http
+    interval: 60s
+    conditions: ["[STATUS] == 200"]
 - id: 3dc4902f-456f-47ed-8c0a-4209dc118d49
   type: monitoring
   from:
@@ -1045,6 +1173,10 @@ edges:
     criticality: medium
   projects:
   - infralink
+  healthcheck:
+    type: http
+    interval: 60s
+    conditions: ["[STATUS] == 200"]
 - id: 62452b47-498c-4a35-b673-825d010f5411
   type: monitoring
   from:
@@ -1062,9 +1194,8 @@ edges:
   projects:
   - cyberstorm-core
   healthcheck:
-    explicit: true
+    type: tcp
     interval: 60s
-    conditions: ["[STATUS] == 200"]
 - id: 825d010f-5411-4b8c-b673-62452b47498c
   type: monitoring
   from:
@@ -1081,6 +1212,10 @@ edges:
     criticality: high
   projects:
   - cyberstorm-core
+  healthcheck:
+    type: http
+    interval: 60s
+    conditions: ["[STATUS] == 200"]
 - id: b673-825d-010f-5411-62452b47498c
   type: monitoring
   from:
@@ -1097,6 +1232,10 @@ edges:
     criticality: high
   projects:
   - cyberstorm-core
+  healthcheck:
+    type: http
+    interval: 60s
+    conditions: ["[STATUS] == 200"]
 - id: 498c-825d-010f-5411-62452b47498c
   type: database
   from:
@@ -1117,6 +1256,9 @@ edges:
     purpose: Woodpecker database connection
   projects:
   - cyberstorm-core
+  healthcheck:
+    type: query
+    interval: 300s
 - id: 825d-010f-5411-6245-2b47498c498c
   type: queue
   from:
@@ -1132,3 +1274,6 @@ edges:
     purpose: Woodpecker queue connection
   projects:
   - cyberstorm-core
+  healthcheck:
+    type: tcp
+    interval: 300s
