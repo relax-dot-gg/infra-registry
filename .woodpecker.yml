@@ -2,7 +2,7 @@
 # Validates infrastructure data against management logic (both main and v1)
 
 when:
-  - event: [push, pull_request]
+  - event: [push, pull_request, manual]
 
 steps:
   # === VALIDATE MODERN (main) ===
