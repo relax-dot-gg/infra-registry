@@ -340,6 +340,18 @@ services:
     compose_service: php-fpm
     requires_secrets: []
 
+  queue-worker:
+    description: "Generic queue worker"
+    group: web
+    compose_service: queue-worker
+    requires_secrets: []
+
+  mail:
+    description: "Mail server (postfix alias)"
+    group: mail
+    compose_service: postfix
+    requires_secrets: []
+
   cloudflared:
     description: "Cloudflare tunnel agent"
     group: infra

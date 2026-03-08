@@ -16,6 +16,10 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    explicit: true
+    interval: 60s
+    conditions: ["[STATUS] == 200"]
 - id: 1f01a0f8-67fd-4235-b673-010f54113dbc
   type: monitoring
   from:
@@ -32,6 +36,10 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    explicit: true
+    interval: 60s
+    conditions: ["[STATUS] == 200"]
 - id: abddf2a0-8b5a-43fe-a182-9ace87ad2a9a
   type: monitoring
   from:
@@ -48,6 +56,10 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    explicit: true
+    interval: 60s
+    conditions: ["[STATUS] == 200"]
 - id: c92f8585-ea68-4d15-9b3c-c799718071f7
   type: monitoring
   from:
@@ -64,6 +76,10 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    explicit: true
+    interval: 60s
+    conditions: ["[STATUS] == 200"]
 - id: 1049797e-908a-4703-8001-877de3503b09
   type: monitoring
   from:
@@ -80,6 +96,10 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    explicit: true
+    interval: 60s
+    conditions: ["[STATUS] == 200"]
 - id: 748c34ad-6024-4e07-9235-564cd84d1ead
   type: monitoring
   from:
@@ -96,6 +116,10 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    explicit: true
+    interval: 60s
+    conditions: ["[STATUS] == 200"]
 - id: 1e75563f-0f4b-404c-aa8c-dd46f0f8bbb9
   type: monitoring
   from:
@@ -112,6 +136,10 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    explicit: true
+    interval: 60s
+    conditions: ["[STATUS] == 200"]
 - id: b07177f9-0a4b-4064-9b3e-35e8ad9c23ae
   type: monitoring
   from:
@@ -128,6 +156,10 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    explicit: true
+    interval: 60s
+    conditions: ["[STATUS] == 200"]
 - id: f6af7a2f-698f-44ba-82ec-bffc63f2a448
   type: monitoring
   from:
@@ -600,6 +632,10 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    explicit: true
+    interval: 60s
+    conditions: ["[STATUS] == 200"]
 - id: 5c84dcee-c2d8-466f-9cf0-df349ef4d899
   type: monitoring
   from:
@@ -616,6 +652,10 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    explicit: true
+    interval: 60s
+    conditions: ["[STATUS] == 200"]
 - id: 8a5fc684-1d64-429b-93aa-4ab2477e0b13
   type: monitoring
   from:
@@ -632,6 +672,10 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    explicit: true
+    interval: 60s
+    conditions: ["[STATUS] == 200"]
 - id: 7f8d6281-b97e-4d07-b0e2-00537a359b9c
   type: monitoring
   from:
@@ -648,6 +692,10 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    explicit: true
+    interval: 60s
+    conditions: ["[STATUS] == 200"]
 - id: 0754587a-1bf0-4eb6-843e-9af57469f33a
   type: monitoring
   from:
@@ -664,6 +712,10 @@ edges:
     criticality: high
   projects:
   - infralink
+  healthcheck:
+    explicit: true
+    interval: 60s
+    conditions: ["[STATUS] == 200"]
 - id: cbf20775-3d6a-4b57-acb9-2903321d8050
   type: monitoring
   from:
@@ -792,6 +844,10 @@ edges:
     criticality: medium
   projects:
   - infralink
+  healthcheck:
+    explicit: true
+    interval: 60s
+    conditions: ["[STATUS] == 200"]
 - id: f0d7292f-1aaa-47ca-96a2-bedfc569958a
   type: monitoring
   from:
@@ -953,6 +1009,10 @@ edges:
     dns_name: n8n.i4chan.org
   projects:
   - infralink
+  healthcheck:
+    explicit: true
+    interval: 60s
+    conditions: ["[STATUS] == 200"]
 - id: 6981a7f9-0e3a-4f14-8efb-68b44e7ffac8
   type: monitoring
   from:
@@ -1001,6 +1061,10 @@ edges:
     criticality: high
   projects:
   - cyberstorm-core
+  healthcheck:
+    explicit: true
+    interval: 60s
+    conditions: ["[STATUS] == 200"]
 - id: 825d010f-5411-4b8c-b673-62452b47498c
   type: monitoring
   from:
