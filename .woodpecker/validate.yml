@@ -1,0 +1,47 @@
+# Woodpecker CI configuration for infra-registry
+# Validates infrastructure data against management logic (both main and v1)
+
+when:
+  - event: [push, pull_request, manual]
+
+steps:
+  # === VALIDATE MODERN (main) ===
+  # Ensures new manifest.yml files and infralink topology are correct
+  validate-modern:
+    image: python:3.11-slim
+    environment:
+      # Required for schema validation and port matching
+      NODE_EXPORTER_PASSWORD: "ci_placeholder"
+      GITHUB_TOKEN:
+        from_secret: github_token
+    commands:
+      - apt-get update -qq && apt-get install -y -qq git curl unzip
+      # Use the token for authenticated clone
+      - git clone --depth 1 --branch main https://x-access-token:$${GITHUB_TOKEN}@github.com/relax-dot-gg/infra-management.git /tmp/infra-main
+      - cd /tmp/infra-main
+      - git submodule update --init --recursive
+      - rm -rf registry && ln -s $CI_WORKSPACE registry
+      - pip install pyyaml jinja2 pydantic --quiet
+      - export PYTHONPATH=$PYTHONPATH:.
+      - python3 scripts/fleet_validate.py
+      - python3 scripts/generate_prometheus_config_auth.py --output /tmp/prom.yml
+      - python3 scripts/generate_gatus_config.py
+      - echo "Modern GitOps validation passed"
+
+  # === VALIDATE LEGACY (v1) ===
+  # Ensures legacy uuid_registry.yml remains compatible with the v1 stack
+  validate-legacy:
+    image: python:3.11-slim
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_token
+    commands:
+      - apt-get update -qq && apt-get install -y -qq git
+      - git clone --depth 1 --branch v1 https://x-access-token:$${GITHUB_TOKEN}@github.com/relax-dot-gg/infra-management.git /tmp/infra-v1
+      - cd /tmp/infra-v1
+      # v1 expects registry in a specific relative path
+      - mkdir -p ansible/inventory/
+      - cp $CI_WORKSPACE/ansible/inventory/uuid_registry.yml ansible/inventory/
+      - pip install pyyaml --quiet
+      - python3 scripts/generate_prometheus_config_auth.py --output /tmp/prom-v1.yml
+      - echo "Legacy v1 validation passed"
