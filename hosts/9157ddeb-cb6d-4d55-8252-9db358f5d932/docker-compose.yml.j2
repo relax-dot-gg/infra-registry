@@ -71,6 +71,28 @@ services:
 {% set redis_port_bindings = ['6379:6379'] %}
 {% include "services/redis.yml.j2" %}
 
+  # === CARAPACE QUEUE ===
+  carapace-queue-manager:
+    image: ghcr.io/cyberstorm-dev/carapace:latest
+    container_name: carapace-queue-manager
+    restart: unless-stopped
+    network_mode: host
+    command:
+      - carapace
+      - queue
+      - --daemon
+      - --policy
+      - permissive
+    environment:
+      - GITEA_URL=http://100.73.228.90:3000
+      - GITEA_TOKEN={{ _9157ddeb_gitea_token }}
+      - GITEA_REPO=openclaw/nisto-home
+      - REDIS_URL=redis://:{{ _9157ddeb_redis_password }}@127.0.0.1:6379/0
+      - POLL_INTERVAL=15
+    depends_on:
+      - gitea
+      - redis
+
   # === CI ===
   woodpecker-server:
     image: woodpeckerci/woodpecker-server:v3.13.0
