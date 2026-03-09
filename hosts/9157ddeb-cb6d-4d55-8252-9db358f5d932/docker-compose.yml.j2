@@ -123,6 +123,21 @@ services:
     depends_on:
       - woodpecker-server
 
+  carapace:
+    image: ghcr.io/cyberstorm-dev/carapace:latest
+    restart: always
+    command: ["carapace", "queue", "--daemon", "--poll-interval", "60"]
+    environment:
+      - REDIS_URL=redis://:{{ _9157ddeb_redis_password }}@citadel:6379/0
+      - GITEA_URL=http://100.73.228.90:3000
+      - GITEA_TOKEN={{ _9157ddeb_gitea_token }}
+      - GITEA_REPO=openclaw/nisto-home
+      - POLL_INTERVAL=60
+    extra_hosts:
+      - "citadel:100.73.228.90"
+    depends_on:
+      - redis
+
   # === GITEA (self-hosted git) ===
   gitea:
     image: gitea/gitea:1.25.4
