@@ -13,7 +13,7 @@ hosts:
     - gitea
     - postgresql
     - redis
-    - carapace
+    - carapace-queue-manager
     - golem
     - node-exporter
     - statsd-exporter
