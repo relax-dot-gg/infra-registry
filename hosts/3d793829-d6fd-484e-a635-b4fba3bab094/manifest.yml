@@ -1,0 +1,27 @@
+hosts:
+  3d793829-d6fd-484e-a635-b4fba3bab094:
+    tailscale_name: relaxgg-media-origin
+    tailscale_ip: 100.98.53.103
+    canonical_name: media-origin
+    display_name: media-origin
+    cloud: hetzner-auction
+    status: active
+    use_exit_node: false
+    public_ip: null
+    services:
+    - nginx
+    - imgproxy
+    - node-exporter
+    - cadvisor
+    docker_version: '28'
+    bws_project: relaxgg-infra
+    bws_machine_account: media-origin
+    projects:
+    - relaxgg
+    - bdsmlr
+    - reblogme
+    bws_extra_projects:
+    - bdsmlr
+    - reblogme
+    - cyberstorm-infra
+    notes: Central Media Transcoding Hub (imgproxy Pro + 14TB RAID0 Cache at /data)

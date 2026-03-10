@@ -1,0 +1,26 @@
+# imgproxy Pro service template
+# Required environment variables from BWS:
+#   imgproxy_key - Hex-encoded key for signed URLs
+#   imgproxy_salt - Hex-encoded salt for signed URLs
+#   imgproxy_licence - imgproxy Pro license key (from relaxgg-common)
+#   AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY - for S3 sources
+
+  imgproxy:
+    image: ghcr.io/relax-dot-gg/imgproxy-pro:latest
+    container_name: imgproxy
+    restart: unless-stopped
+    environment:
+      IMGPROXY_LISTEN: ":8080"
+      IMGPROXY_KEY: "${imgproxy_key:-}"
+      IMGPROXY_SALT: "${imgproxy_salt:-}"
+      IMGPROXY_LICENSE_KEY: "${imgproxy_licence:-}"
+      IMGPROXY_USE_S3: "true"
+      IMGPROXY_S3_REGION: "us-east-1"
+      IMGPROXY_S3_ENDPOINT: "https://s3.wasabisys.com"
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID:-}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY:-}"
+      # Pro features
+      IMGPROXY_MAX_ANIMATION_FRAMES: "64"
+      IMGPROXY_GIF_OPTIMIZATION: "true"
+      IMGPROXY_AUTO_WEBP_ACCEPT: "true"
+      IMGPROXY_AUTO_AVIF_ACCEPT: "true"

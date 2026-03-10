@@ -1,0 +1,22 @@
+# media-origin (3d793829-d6fd-484e-a635-b4fba3bab094)
+# Central Media Transcoding Hub with 14TB RAID0 Cache
+
+services:
+  nginx:
+    image: ghcr.io/relax-dot-gg/nginx:latest
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "8081:8081"
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./config/conf.d:/etc/nginx/conf.d:ro
+      # 14TB RAID 0 Cache at /data
+      - /data/nginx-cache:/var/cache/nginx:rw
+    depends_on:
+      - imgproxy
+
+{% include "services/imgproxy.yml.j2" %}
+{% include "services/cadvisor.yml.j2" %}
+{% include "services/node-exporter.yml.j2" %}
