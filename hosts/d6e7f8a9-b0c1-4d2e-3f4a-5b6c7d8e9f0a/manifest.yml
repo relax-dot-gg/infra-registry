@@ -18,18 +18,15 @@ hosts:
     robot_product: null
     robot_dc: null
     services:
-    - wordpress
-    - nginx
+    - imgproxy
     observability:
-      notes: 'gitops bootstrapped; nginx+wordpress managed (caddy retired). Set LANG=C.UTF-8
-        to fix ansible locale. WARN: wordpress service not defined in services.yml
-        (validation warning).'
+      notes: "gitops bootstrapped; imgproxy managed; legacy wordpress/nginx removed."
     docker_version: null
     dns_hostnames:
     - account.bdsmlr.com
     legacy_instances: []
-    created: '2025-12-14'
-    updated: '2025-12-14'
+    created: "2025-12-14"
+    updated: "2026-03-10"
     bws_project: bdsmlr
     bws_machine_account: bdsmlr-account
     projects:
