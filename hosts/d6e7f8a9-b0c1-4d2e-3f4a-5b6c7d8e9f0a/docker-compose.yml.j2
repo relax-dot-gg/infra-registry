@@ -4,11 +4,11 @@ services:
     container_name: node-exporter
     restart: always
     command:
-      - "--path.rootfs=/host"
-      - "--path.procfs=/host/proc"
-      - "--path.sysfs=/host/sys"
-      - "--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)"
-      - "--web.config.file=/etc/node_exporter/web.config.yml"
+      - '--path.rootfs=/host'
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+      - '--web.config.file=/etc/node_exporter/web.config.yml'
     volumes:
       - /:/host:ro,rslave
       - ./config/node_exporter/web.config.yml:/etc/node_exporter/web.config.yml:ro
@@ -16,22 +16,4 @@ services:
       - "9100:9100"
     network_mode: host
     pid: host
-
-  imgproxy:
-    image: darthsim/imgproxy:latest
-    container_name: imgproxy
-    restart: unless-stopped
-    environment:
-      IMGPROXY_KEY: 55195c8a820e04a280007dc5e0109ebdddc0bb3296ce00955a39e3ed0a4b6e90
-      IMGPROXY_SALT: f551741ec0077374bf1bfda19f11c9e73100dfdd5501384755b7b8d7e3255717
-      IMGPROXY_ALLOWED_SOURCES: "*"
-      IMGPROXY_ALLOW_ORIGIN: "*"
-      IMGPROXY_ENABLE_WEBP_DETECTION: "true"
-      IMGPROXY_ENABLE_AVIF_DETECTION: "true"
-      IMGPROXY_BIND: ":8080"
-      IMGPROXY_USE_ETAG: "true"
-      IMGPROXY_AUTO_ROTATE: "true"
-    ports:
-      - "8080:8080"
-
 {% include "services/edge-prober.yml.j2" %}
